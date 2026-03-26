@@ -72,7 +72,7 @@ Jika Anda ingin membagikan akses localhost agar bisa dibuka di perangkat lain (H
 
 ### 1. **Jalankan Server Laravel**
 
-    ```bash  
+    ```bash
     php artisan serve --host=0.0.0.0 --port=8000
     ```
 
