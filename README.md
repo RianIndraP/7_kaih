@@ -1,114 +1,114 @@
-# Panduan Memulai Ulang Project (Ngrok Mode)
+# 🚀 Monitoring Kebiasaan Harian - SMK N 5 Telkom Banda Aceh
 
-Ikuti langkah-langkah ini setiap kali Anda menyalakan laptop untuk melanjutkan pengembangan atau demo.
+Aplikasi berbasis web menggunakan Laravel 12 untuk memantau aktivitas dan kebiasaan harian siswa.
 
-## 1. Jalankan Server Laravel
+---
 
-Buka terminal di VS Code dan jalankan perintah:
+## 🛠️ Prasyarat (Prerequisites)
 
-```bash
-php artisan serve --host=0.0.0.0 --port=8000
-```
+Sebelum menjalankan proyek ini, pastikan Anda sudah menginstal:
 
-> [!IMPORTANT]
-> Catatan: Pastikan terminal ini tetap terbuka.
+-   **PHP >= 8.3**
+-   **Composer**
+-   **Node.js & NPM**
+-   **MySQL / MariaDB**
 
-## 2. Jalankan Ngrok Tunnel
+---
 
-Buka Terminal Baru (klik ikon + di terminal VS Code), lalu jalankan:
+## 📥 Langkah Instalasi (Local Development)
 
-```bash
-npx ngrok http 8000
-```
+Ikuti langkah-langkah berikut untuk menjalankan proyek di komputer Anda:
 
-> [!NOTE]
-> Catatan: Tunggu hingga status menjadi online.
+### 1. **Clone Repositori**
 
-## 3. Update Konfigurasi (Wajib Jika Link Berubah)
+    ```bash
+    git clone https://github.com/RianIndraP/7_kaih.git
+    cd nama-repo
+    ```
 
-Karena menggunakan akun gratis, link Ngrok akan berubah setiap kali di-restart.
+### 2. **Install Dependensi PHP**
 
-Salin URL baru dari terminal Ngrok (contoh: `https://xxxx-xxxx.ngrok-free.app`).
-Buka file .env, cari APP_URL, dan ganti dengan link baru tersebut:
+    ```bash
+    composer install
+    ```
 
-```env
-APP_URL=https://xxxx-xxxx.ngrok-free.app
-```
+### 3. **Instal Dependensi Frontend**
 
-Jalankan perintah pembersihan cache di terminal:
+    ```bash
+    npm install
+    ```
 
-```bash
-php artisan config:clear
-php artisan cache:clear
-```
+### 4. **Konfigurasi Environment**
 
-## 4. Akses Aplikasi
+Salin file `.env.example` menjadi `.env`:
 
-Bagikan link Ngrok tersebut ke device lain atau buka di browser Anda.
+    ```bash
+    cp .env.example .env
+    ```
 
--   Tips: Jika muncul halaman biru "ngrok - Interstitial Page", cukup klik tombol "Visit Site".
+Buka file `.env` dan sesuaikan pengaturan database Anda (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
 
-## 💡 Tips Troubleshooting
+### 5. **Generate App Key**
 
--   Error 419 (Page Expired): Lakukan php artisan config:clear dan refresh browser (F5).
--   Notifikasi Tidak Muncul: Pastikan terminal Ngrok dan Laravel Serve berjalan lancar (tidak ada error).
--   Loading Lama: Cek koneksi internet (Ngrok butuh koneksi stabil untuk mengirim data dari laptop ke publik).
-<!-- <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+    ```bash
+    php artisan key:generate
+    ```
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## 🗄️ Konfigurasi Database (Manual SQL)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Proyek ini menggunakan metode impor SQL manual (bukan Laravel Migrations).
 
--   [Simple, fast routing engine](https://laravel.com/docs/routing).
--   [Powerful dependency injection container](https://laravel.com/docs/container).
--   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
--   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
--   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
--   [Robust background job processing](https://laravel.com/docs/queues).
--   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Buat database baru di phpMyAdmin dengan nama 7_kaih.
+2. Cari file SQL di folder `/database/sql/7_kaih.sql`
+3. **Impor** file tersebut ke dalam database `7_kaih` yang baru di buat.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🌐 Menjalankan Aplikasi (Mode Publik / Ngrok)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Jika Anda ingin membagikan akses localhost agar bisa dibuka di perangkat lain (HP/Laptop teman), gunakan langkah berikut:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. **Jalankan Server Laravel**
 
-## Laravel Sponsors
+    ```bash
+    php artisan serve --host=0.0.0.0 --port=8000
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 2. **Jalankan Ngrok Tunnel** (Buka terminal baru)
 
-### Premium Partners
+    ```bash
+    npx ngrok http 8000
+    ```
 
--   **[Vehikl](https://vehikl.com)**
--   **[Tighten Co.](https://tighten.co)**
--   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
--   **[64 Robots](https://64robots.com)**
--   **[Curotec](https://www.curotec.com/services/technologies/laravel)**
--   **[DevSquad](https://devsquad.com/hire-laravel-developers)**
--   **[Redberry](https://redberry.international/laravel-development)**
--   **[Active Logic](https://activelogic.com)**
+### 3. **Update .env**
 
-## Contributing
+Salin URL HTTPS dari Ngrok (misal: `https://ngrok-free.app`) dan tempel di file `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    ```env
+    APP_URL=https://ngrok-free.app
+    ```
 
-## Code of Conduct
+### 4. **Bersihkan Cache**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    ```bash
+    php artisan config:clear
+    ```
 
-## Security Vulnerabilities
+### 5. **Akses Aplikasi**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Buka URL Ngrok tersebut di browser. Jika muncul halaman "Visit Site", klik tombol tersebut untuk masuk.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT). -->
+## 📝 Lisensi
+
+Proyek ini dikembangkan untuk lingkungan internal SMK N 5 Telkom Banda Aceh.
+
+---
+
+### Tips Tambahan:
+
+-   **Folder Database**: Jangan lupa buat folder bernama `database/sql` di dalam proyek Anda dan masukkan file `.sql` Anda ke sana sebelum di-`push` ke GitHub.
+-   **Git Ignore**: Pastikan file `.env` Anda tetap ada di dalam file `.gitignore` agar informasi pribadi (seperti password database) tidak tersebar ke GitHub.
