@@ -72,29 +72,29 @@ Jika Anda ingin membagikan akses localhost agar bisa dibuka di perangkat lain (H
 
 ### 1. **Jalankan Server Laravel**
 
-    ```bash
-    php artisan serve --host=0.0.0.0 --port=8000
-    ```
+```bash
+php artisan serve --host=0.0.0.0 --port=8000
+```
 
 ### 2. **Jalankan Ngrok Tunnel** (Buka terminal baru)
 
-    ```bash
-    npx ngrok http 8000
-    ```
+```bash
+npx ngrok http 8000
+```
 
 ### 3. **Update .env**
 
 Salin URL HTTPS dari Ngrok (misal: `https://ngrok-free.app`) dan tempel di file `.env`:
 
-    ```env
-    APP_URL=https://ngrok-free.app
-    ```
+```env
+APP_URL=https://ngrok-free.app
+```
 
 ### 4. **Bersihkan Cache**
 
-    ```bash
-    php artisan config:clear
-    ```
+```bash
+php artisan config:clear
+```
 
 ### 5. **Akses Aplikasi**
 
