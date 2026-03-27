@@ -87,7 +87,7 @@
 
                 <div class="p-5 flex items-center gap-5">
                     {{-- Foto --}}
-                    <div class="flex-shrink-0">
+                    <div class="shrink-0">
                         <div class="w-24 h-24 rounded-full bg-gray-200 border-4 border-gray-300
                                     flex items-center justify-center overflow-hidden">
                             @if (!empty($user->photo))
@@ -134,7 +134,7 @@
                        class="flex items-center gap-3 w-full border border-gray-200 hover:border-blue-300
                               hover:bg-blue-50 rounded-lg px-4 py-3 transition-colors group">
                         <div class="w-8 h-8 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center
-                                    justify-center flex-shrink-0 transition-colors">
+                                    justify-center shrink-0 transition-colors">
                             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0
@@ -148,7 +148,7 @@
                             </p>
                             <p class="text-xs text-gray-500 mt-0.5">Catat kebiasaan harian kamu</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors shrink-0"
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -159,7 +159,7 @@
                        class="flex items-center gap-3 w-full border border-gray-200 hover:border-purple-300
                               hover:bg-purple-50 rounded-lg px-4 py-3 transition-colors group">
                         <div class="w-8 h-8 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center
-                                    justify-center flex-shrink-0 transition-colors">
+                                    justify-center shrink-0 transition-colors">
                             <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0
@@ -172,7 +172,7 @@
                             </p>
                             <p class="text-xs text-gray-500 mt-0.5">Lihat pesan terbaru dari guru wali</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 group-hover:text-purple-500 transition-colors flex-shrink-0"
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-purple-500 transition-colors shrink-0"
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -195,7 +195,7 @@
                 {{-- Warning: hanya muncul jika BELUM semua diisi --}}
                 @if (!$semuaSudahIsi)
                     <div class="flex items-center gap-2 border border-yellow-300 bg-yellow-50 rounded-lg px-3 py-2.5">
-                        <svg class="w-4 h-4 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-yellow-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
                                      001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -275,7 +275,7 @@
     {{-- ===== NOTIFICATION BANNER BAWAH ===== --}}
     @if (!$kebiasaanHariIni)
         <div class="flex items-center gap-3 bg-white border border-yellow-200 rounded-xl px-5 py-3 shadow-sm">
-            <svg class="w-5 h-5 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-yellow-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
                          001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -283,13 +283,13 @@
             <p class="text-sm text-gray-700">Anda belum mengisi data kebiasaan hari ini</p>
             <a href="{{ route('student.kebiasaan') }}"
                class="ml-auto text-xs font-semibold text-blue-600 hover:text-blue-800
-                      hover:underline flex-shrink-0 transition-colors">
+                      hover:underline shrink-0 transition-colors">
                 Isi Sekarang →
             </a>
         </div>
     @else
         <div class="flex items-center gap-3 bg-white border border-green-200 rounded-xl px-5 py-3 shadow-sm">
-            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
             <p class="text-sm text-gray-700">Kebiasaan hari ini sudah diisi. Pertahankan! 🎉</p>

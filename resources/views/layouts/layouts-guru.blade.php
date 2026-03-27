@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <title>@yield('title', 'SMK N 5 Telkom Banda Aceh')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite('resources/css/app.css')
     <style>
         .sidebar-transition { transition: transform 0.3s ease-in-out; }
         .nav-active { background-color: #eff6ff; color: #1d4ed8; }

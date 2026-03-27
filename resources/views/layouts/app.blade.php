@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SMK N 5 Telkom Banda Aceh | Dashboard')</title>
     @vite('resources/css/app.css')
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles to match exactly */
         .sidebar-logo {
