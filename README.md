@@ -21,38 +21,38 @@ Ikuti langkah-langkah berikut untuk menjalankan proyek di komputer Anda:
 
 ### 1. **Clone Repositori**
 
-    ```bash
-    git clone https://github.com/RianIndraP/7_kaih.git
-    cd nama-repo
-    ```
+```bash
+git clone https://github.com/RianIndraP/7_kaih.git
+cd nama-repo
+```
 
 ### 2. **Install Dependensi PHP**
 
-    ```bash
-    composer install
-    ```
+```bash
+composer install
+```
 
 ### 3. **Instal Dependensi Frontend**
 
-    ```bash
-    npm install
-    ```
+```bash
+npm install
+```
 
 ### 4. **Konfigurasi Environment**
 
 Salin file `.env.example` menjadi `.env`:
 
-    ```bash
-    cp .env.example .env
-    ```
+```bash
+cp .env.example .env
+```
 
 Buka file `.env` dan sesuaikan pengaturan database Anda (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
 
 ### 5. **Generate App Key**
 
-    ```bash
-    php artisan key:generate
-    ```
+```bash
+php artisan key:generate
+```
 
 ---
 
