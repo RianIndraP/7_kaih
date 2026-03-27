@@ -1,54 +1,80 @@
-# 🚀 Monitoring Kebiasaan Harian - SMK N 5 Telkom Banda Aceh
+# 🚀 Monitoring Kebiasaan Harian
 
-Aplikasi berbasis web menggunakan Laravel 12 untuk memantau aktivitas dan kebiasaan harian siswa.
+### SMK N 5 Telkom Banda Aceh
+
+Aplikasi berbasis web menggunakan **Laravel 12** untuk memantau aktivitas dan kebiasaan harian siswa.
 
 ---
 
 ## 🛠️ Prasyarat (Prerequisites)
 
-Sebelum menjalankan proyek ini, pastikan Anda sudah menginstal:
+Pastikan sudah menginstal:
 
--   **PHP >= 8.3**
--   **Composer**
--   **Node.js & NPM**
--   **MySQL / MariaDB**
+* PHP >= 8.3
+* Composer
+* Node.js & NPM
+* MySQL / MariaDB
 
 ---
 
-## 📥 Langkah Instalasi (Local Development)
+## 📥 Instalasi (Setelah Clone Repository)
 
-Ikuti langkah-langkah berikut untuk menjalankan proyek di komputer Anda:
+> ⚠️ **Catatan:** Jika Anda mendapatkan project ini dari `git clone`, maka **tidak perlu menjalankan ****`git init`**** atau ****`git remote`**** lagi**.
 
-### 1. **Clone Repositori**
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/RianIndraP/7_kaih.git
-cd nama-repo
+cd 7_kaih
 ```
 
-### 2. **Install Dependensi PHP**
+---
+
+### 2. Install Dependensi Backend
 
 ```bash
 composer install
 ```
 
-### 3. **Instal Dependensi Frontend**
+---
+
+### 3. Install Dependensi Frontend
 
 ```bash
 npm install
 ```
 
-### 4. **Konfigurasi Environment**
+---
 
-Salin file `.env.example` menjadi `.env`:
+### 4. Jalankan Vite (WAJIB ⚠️)
+
+> ❗ Tanpa ini, Tailwind CSS & JavaScript tidak akan berjalan.
+
+```bash
+npm run dev
+```
+
+📌 Biarkan terminal ini tetap berjalan selama development.
+
+---
+
+### 5. Konfigurasi Environment
 
 ```bash
 cp .env.example .env
 ```
 
-Buka file `.env` dan sesuaikan pengaturan database Anda (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
+Edit bagian database di `.env`:
 
-### 5. **Generate App Key**
+```env
+DB_DATABASE=7_kaih
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+---
+
+### 6. Generate App Key
 
 ```bash
 php artisan key:generate
@@ -56,59 +82,163 @@ php artisan key:generate
 
 ---
 
-## 🗄️ Konfigurasi Database (Manual SQL)
+## 🗄️ Setup Database (Manual SQL)
 
-Proyek ini menggunakan metode impor SQL manual (bukan Laravel Migrations).
+Project ini **tidak menggunakan migration**, gunakan file SQL manual:
 
-1. Buat database baru di phpMyAdmin dengan nama 7_kaih.
-2. Cari file SQL di folder `/database/sql/7_kaih.sql`
-3. **Impor** file tersebut ke dalam database `7_kaih` yang baru di buat.
+1. Buat database baru:
+   `7_kaih`
+
+2. Import file:
+
+```
+/database/sql/7_kaih.sql
+```
 
 ---
 
-## 🌐 Menjalankan Aplikasi (Mode Publik / Ngrok)
+## ▶️ Menjalankan Aplikasi
 
-Jika Anda ingin membagikan akses localhost agar bisa dibuka di perangkat lain (HP/Laptop teman), gunakan langkah berikut:
+Jalankan Laravel:
 
-### 1. **Jalankan Server Laravel**
+```bash
+php artisan serve
+```
+
+Akses di browser:
+
+```
+http://localhost:8000
+```
+
+---
+
+## 🌐 Mode Publik (Ngrok)
+
+Jika ingin diakses dari HP / perangkat lain:
+
+### 1. Jalankan Laravel
 
 ```bash
 php artisan serve --host=0.0.0.0 --port=8000
 ```
 
-### 2. **Jalankan Ngrok Tunnel** (Buka terminal baru)
+### 2. Jalankan Ngrok
 
 ```bash
 npx ngrok http 8000
 ```
 
-### 3. **Update .env**
-
-Salin URL HTTPS dari Ngrok (misal: `https://ngrok-free.app`) dan tempel di file `.env`:
+### 3. Update `.env`
 
 ```env
-APP_URL=https://ngrok-free.app
+APP_URL=https://xxxx.ngrok-free.app
 ```
 
-### 4. **Bersihkan Cache**
+### 4. Clear Cache
 
 ```bash
 php artisan config:clear
 ```
 
-### 5. **Akses Aplikasi**
+---
 
-Buka URL Ngrok tersebut di browser. Jika muncul halaman "Visit Site", klik tombol tersebut untuk masuk.
+## 🔄 Workflow Development
+
+Gunakan **2 terminal**:
+
+Terminal 1:
+
+```bash
+php artisan serve
+```
+
+Terminal 2:
+
+```bash
+npm run dev
+```
+
+---
+
+## ☁️ Workflow GitHub
+
+### 1. Lakukan Perubahan pada Project
+
+Edit atau tambahkan file sesuai kebutuhan.
+
+---
+
+### 2. Cek Perubahan
+
+```bash
+git status
+```
+
+---
+
+### 3. Tambahkan Perubahan
+
+```bash
+git add .
+```
+
+---
+
+### 4. Commit Perubahan
+
+```bash
+git commit -m "pesan perubahan"
+```
+
+---
+
+### 5. Ambil Update Terbaru (Disarankan)
+
+```bash
+git pull origin main
+```
+
+---
+
+### 6. Push ke GitHub
+
+```bash
+git push origin main
+```
+
+---
+
+## ⚠️ Important Notes
+
+* File `.env` **tidak boleh di-upload ke GitHub**
+* Pastikan `.env` sudah ada di `.gitignore`
+* Jangan upload:
+
+  * `/vendor`
+  * `/node_modules`
+
+---
+
+## 💡 Troubleshooting
+
+**CSS tidak muncul / berantakan:**
+
+```bash
+npm run dev
+```
+
+**Error config / env:**
+
+```bash
+php artisan config:clear
+```
 
 ---
 
 ## 📝 Lisensi
 
-Proyek ini dikembangkan untuk lingkungan internal SMK N 5 Telkom Banda Aceh.
+Digunakan untuk lingkungan internal
+**SMK N 5 Telkom Banda Aceh**
 
 ---
-
-### Tips Tambahan:
-
--   **Folder Database**: Jangan lupa buat folder bernama `database/sql` di dalam proyek Anda dan masukkan file `.sql` Anda ke sana sebelum di-`push` ke GitHub.
--   **Git Ignore**: Pastikan file `.env` Anda tetap ada di dalam file `.gitignore` agar informasi pribadi (seperti password database) tidak tersebar ke GitHub.
