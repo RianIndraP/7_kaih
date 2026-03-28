@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\Kelas;
 
 class ProfileController extends Controller
 {
@@ -17,11 +17,8 @@ class ProfileController extends Controller
         // Get the authenticated user
         $user = Auth::user();
         
-        // Get all classes for dropdown
-        $kelas = Kelas::orderBy('nama_kelas')->get();
-        
-        // Pass user data and classes to the view
-        return view('profil.siswa', compact('user', 'kelas'));
+        // Pass user data to the view
+        return view('profil.siswa', compact('user'));
     }
 
     /**
@@ -31,6 +28,7 @@ class ProfileController extends Controller
     {
         // Validate the request data
         $validated = $request->validate([
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'nama' => 'required|string|max:255',
             'kelas' => 'required|string|max:50',
             'nisn' => 'required|string|max:20',
@@ -49,15 +47,34 @@ class ProfileController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'alamat' => 'nullable|string|max:500',
+        ], [
+            'foto.image' => 'Foto harus berupa gambar.',
+            'foto.max' => 'Ukuran foto maksimal 5MB.',
+            'foto.mimes' => 'Format foto harus jpeg, png, jpg, atau gif.',
         ]);
 
         try {
             // Get the authenticated user
             $user = Auth::user();
-            
+
+            // 2. Logika Update atau Insert Foto
+            if ($request->hasFile('foto')) {
+                // Hapus foto lama dari storage jika user sudah punya foto sebelumnya
+                if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                    Storage::disk('public')->delete($user->foto);
+                }
+
+                // Simpan foto baru
+                $path = $request->file('foto')->store('profile_photos', 'public');
+
+                // Masukkan path ke array data yang akan diupdate
+                $validated['foto'] = $path;
+            }
+
             // Update user profile data
             $user->update([
                 'name' => $validated['nama'],
+                'foto' => $validated['foto'] ?? $user->foto,
                 'nisn' => $validated['nisn'],
                 'kelas_id' => $validated['kelas'],
                 'tempat_lahir' => $validated['tempat_lahir'],
@@ -81,9 +98,8 @@ class ProfileController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Profil berhasil disimpan!',
-                'data' => $validated
+                'data' => $user
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
