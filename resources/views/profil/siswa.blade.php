@@ -97,8 +97,8 @@
                 <span class="text-xs text-gray-500 w-28 flex-shrink-0">Kelas</span>
                 <span class="text-xs text-gray-400 mx-2">:</span>
                 <select id="p_kelas" class="inline-edit flex-1 cursor-pointer">
-                    @foreach (['X RPL 1','X RPL 2','XI RPL 1','XI RPL 2','XII RPL 1','XII RPL 2'] as $k)
-                        <option value="{{ $k }}" {{ ($user->kelas ?? '') == $k ? 'selected' : '' }}>{{ $k }}</option>
+                    @foreach ($kelas as $k)
+                        <option value="{{ $k->id }}" {{ ($user->kelas_id ?? '') == $k->id ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
                     @endforeach
                 </select>
             </div>

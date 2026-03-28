@@ -8,7 +8,7 @@
 
     {{-- ===== GREETING ===== --}}
     <p class="text-sm font-medium text-gray-800 mb-5">
-        Selamat Datang, <span class="font-semibold">{{ $guru?->nama_lengkap ?? auth()->user()->name }}</span> 👋
+        Selamat Datang, <span class="font-semibold">{{ auth()->user()->name }}</span> 👋
     </p>
 
     {{-- ===== TOP ROW: Profil Guru + Status Siswa ===== --}}
@@ -45,12 +45,25 @@
                 <div class="space-y-1.5">
                     <p class="text-sm text-gray-700">
                         Nama: <span class="font-semibold text-gray-900">
-                            {{ $guru?->nama_lengkap ?? auth()->user()->name }}
+                            {{ auth()->user()->name }}
                         </span>
                     </p>
+                    @if(auth()->user()->nip)
                     <p class="text-sm text-gray-700">
                         NIP: <span class="font-semibold text-gray-900">
-                            {{ $guru?->nip ?? '-' }}
+                            {{ auth()->user()->nip }}
+                        </span>
+                    </p>
+                    @elseif(auth()->user()->nik)
+                    <p class="text-sm text-gray-700">
+                        NIK: <span class="font-semibold text-gray-900">
+                            {{ auth()->user()->nik }}
+                        </span>
+                    </p>
+                    @endif
+                    <p class="text-sm text-gray-700">
+                        Status Pegawai: <span class="font-semibold text-gray-900">
+                            {{ $guru?->status_pegawai ?? '-' }}
                         </span>
                     </p>
                 </div>

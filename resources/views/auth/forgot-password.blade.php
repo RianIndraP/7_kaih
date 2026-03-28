@@ -24,7 +24,7 @@
         <h1 class="text-2xl font-bold text-gray-800 text-center mb-2">Lupa Password</h1>
         
         <p class="text-sm text-gray-600 text-center mb-8 leading-relaxed">
-            Masukkan NISN/NIP Anda untuk memverifikasi akun
+            Masukkan NISN/NIP/Username Anda untuk memverifikasi akun
         </p>
         
         <form class="space-y-5" method="POST" action="{{ route('forgot-password') }}">
@@ -40,13 +40,13 @@
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
-                    NISN/NIP
+                    NISN / NIP / Username
                 </label>
                 <input
                     type="text"
                     name="identifier"
                     value="{{ old('identifier') }}"
-                    placeholder="Masukkan NISN/NIP Anda"
+                    placeholder="Masukkan NISN, NIP, atau Username Anda"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white">
             </div>
             

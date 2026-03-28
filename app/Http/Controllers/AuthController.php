@@ -32,7 +32,14 @@ class AuthController extends Controller
             ->orWhere('email', $identifier)
             ->first();
 
-        if ($user && Hash::check($password, $user->password)) {
+        try {
+            $passwordValid = $user && Hash::check($password, $user->password);
+        } catch (\RuntimeException $e) {
+            // Password tidak pakai Bcrypt, cek plain text (untuk development) atau reject
+            $passwordValid = false;
+        }
+
+        if ($passwordValid) {
             Auth::login($user);
             
             // Redirect based on user type
@@ -40,7 +47,7 @@ class AuthController extends Controller
                 return redirect()->route('student.dashboard');
             } else if ($user->isGuru()) {
                 return redirect()->route('guru.dashboard');
-            } else if ($user->username === 'admin') {
+            } else if ($user->isAdmin()) {
                 return redirect()->route('admin.dashboard');
             }
             
@@ -72,6 +79,8 @@ class AuthController extends Controller
         $identifier = $request->identifier;
         $user = User::where('nisn', $identifier)
             ->orWhere('nip', $identifier)
+            ->orWhere('nik', $identifier)
+            ->orWhere('username', $identifier)
             ->first();
 
         if ($user) {
@@ -81,7 +90,7 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'identifier' => 'NISN/NIP tidak ditemukan.',
+            'identifier' => 'Identitas tidak ditemukan.',
         ]);
     }
 
@@ -90,6 +99,11 @@ class AuthController extends Controller
         $user = session('forgot_user');
         if (!$user) {
             return redirect()->route('forgot-password');
+        }
+
+        // Jika admin tanpa birth_date, skip verifikasi langsung ke reset password
+        if (empty($user->birth_date) && $user->isAdmin()) {
+            return redirect()->route('create-new-password');
         }
 
         return view('auth.verify-data', ['user' => $user]);

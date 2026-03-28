@@ -16,6 +16,10 @@ use App\Http\Controllers\Guru\KirimPesanController as GuruKirimPesanController;
 use App\Http\Controllers\Guru\PesanBantuanController as GuruPesanBantuanController;
 use App\Http\Controllers\Guru\GantiPasswordController as GuruGantiPasswordController;
 use App\Http\Controllers\Guru\ListMuridController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PesanBantuanController as AdminPesanBantuanController;
+use App\Http\Controllers\Admin\ManajemenSiswaController as AdminManajemenSiswaController;
+use App\Http\Controllers\Admin\ManajemenGuruController as AdminManajemenGuruController;
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 Route::get('/', function () {
@@ -112,5 +116,44 @@ Route::middleware(['auth'])->prefix('guru')->name('guru.')->group(function () {
     // Ganti Password
     // Route::get('/ganti-password', [GuruGantiPasswordController::class, 'index'])->name('ganti-password');
     // Route::post('/ganti-password', [GuruGantiPasswordController::class, 'update'])->name('ganti-password.update');
+
+});
+
+// ── Admin (protected) ─────────────────────────────────────────────────────────
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Profil Operator
+    Route::get('/profil', [AdminDashboardController::class, 'profil'])->name('profil');
+    Route::put('/profil', [AdminDashboardController::class, 'updateProfil'])->name('profil.update');
+
+    // Pesan Bantuan
+    Route::get('/pesan-bantuan', [AdminPesanBantuanController::class, 'index'])->name('pesan-bantuan');
+
+    // Data 7 Kebiasaan
+    Route::get('/kebiasaan', [AdminDashboardController::class, 'kebiasaan'])->name('kebiasaan');
+
+    // Pengaturan
+    Route::get('/pengaturan', [AdminDashboardController::class, 'pengaturan'])->name('pengaturan');
+    Route::post('/pengaturan/password', [AdminDashboardController::class, 'updatePassword'])->name('pengaturan.password');
+
+    // Manajemen Siswa
+    Route::get('/siswa', [AdminManajemenSiswaController::class, 'index'])->name('siswa');
+    Route::post('/siswa', [AdminManajemenSiswaController::class, 'store'])->name('siswa.store');
+    Route::post('/siswa/{id}', [AdminManajemenSiswaController::class, 'update'])->name('siswa.update');
+    Route::delete('/siswa/{id}', [AdminManajemenSiswaController::class, 'destroy'])->name('siswa.destroy');
+    Route::post('/siswa/kelas', [AdminManajemenSiswaController::class, 'addKelas'])->name('siswa.kelas.store');
+    Route::post('/siswa/import', [AdminManajemenSiswaController::class, 'import'])->name('siswa.import');
+    Route::get('/siswa/{id}/data', [AdminManajemenSiswaController::class, 'getData'])->name('siswa.data');
+
+    // Manajemen Guru
+    Route::get('/guru', [AdminManajemenGuruController::class, 'index'])->name('guru');
+    Route::post('/guru', [AdminManajemenGuruController::class, 'store'])->name('guru.store');
+    Route::post('/guru/{id}', [AdminManajemenGuruController::class, 'update'])->name('guru.update');
+    Route::delete('/guru/{id}', [AdminManajemenGuruController::class, 'destroy'])->name('guru.destroy');
+    Route::post('/guru/import', [AdminManajemenGuruController::class, 'import'])->name('guru.import');
+    Route::get('/guru/{id}/data', [AdminManajemenGuruController::class, 'getData'])->name('guru.data');
 
 });

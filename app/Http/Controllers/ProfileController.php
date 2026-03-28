@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Kelas;
 
 class ProfileController extends Controller
 {
@@ -16,8 +17,11 @@ class ProfileController extends Controller
         // Get the authenticated user
         $user = Auth::user();
         
-        // Pass user data to the view
-        return view('profil.siswa', compact('user'));
+        // Get all classes for dropdown
+        $kelas = Kelas::orderBy('nama_kelas')->get();
+        
+        // Pass user data and classes to the view
+        return view('profil.siswa', compact('user', 'kelas'));
     }
 
     /**
@@ -55,7 +59,7 @@ class ProfileController extends Controller
             $user->update([
                 'name' => $validated['nama'],
                 'nisn' => $validated['nisn'],
-                'kelas' => $validated['kelas'],
+                'kelas_id' => $validated['kelas'],
                 'tempat_lahir' => $validated['tempat_lahir'],
                 'birth_date' => $validated['tanggal_lahir'],
                 'ttl' => $validated['tempat_lahir'] . ', ' . date('d F Y', strtotime($validated['tanggal_lahir'])),

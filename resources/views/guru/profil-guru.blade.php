@@ -69,7 +69,7 @@
                     <span class="text-xs text-gray-500 w-20 flex-shrink-0">Nama</span>
                     <span class="text-xs text-gray-400 mx-2">:</span>
                     <input type="text" id="p_nama"
-                           value="{{ $guru->nama_lengkap ?? $user->name }}"
+                           value="{{ $user->name }}"
                            class="inline-edit flex-1" placeholder="Nama lengkap"/>
                 </div>
 
@@ -96,9 +96,19 @@
                     <span class="text-xs text-gray-500 w-20 flex-shrink-0">NIP</span>
                     <span class="text-xs text-gray-400 mx-2">:</span>
                     <input type="text" id="p_nip"
-                           value="{{ $guru->nip ?? '' }}"
+                           value="{{ $user->nip ?? '-' }}"
                            class="inline-edit flex-1 bg-gray-50 cursor-not-allowed"
                            placeholder="NIP" readonly/>
+                </div>
+
+                {{-- NIK --}}
+                <div class="flex items-center py-2">
+                    <span class="text-xs text-gray-500 w-20 flex-shrink-0">NIK</span>
+                    <span class="text-xs text-gray-400 mx-2">:</span>
+                    <input type="text" id="p_nik"
+                           value="{{ $user->nik ?? '-' }}"
+                           class="inline-edit flex-1 bg-gray-50 cursor-not-allowed"
+                           placeholder="NIK" readonly/>
                 </div>
 
             </div>
@@ -127,9 +137,9 @@
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700
                                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
                                    hover:border-gray-300 transition-colors cursor-pointer bg-white">
-                        <option value="" disabled {{ empty($guru->jenis_kelamin) ? 'selected' : '' }}>Gender</option>
-                        <option value="Laki-laki" {{ ($guru->jenis_kelamin ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="Perempuan" {{ ($guru->jenis_kelamin ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                        <option value="" disabled {{ empty($user->gender) ? 'selected' : '' }}>Gender</option>
+                        <option value="Laki-laki" {{ ($user->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="Perempuan" {{ ($user->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                     </select>
                 </div>
 
@@ -152,7 +162,7 @@
 
                 <div>
                     <input type="tel" id="f_hp"
-                           value="{{ $guru->no_telepon ?? '' }}"
+                           value="{{ $user->no_telepon ?? '' }}"
                            placeholder="Nomor yang dapat dihubungi"
                            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
                                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
@@ -161,7 +171,7 @@
 
                 <div>
                     <input type="email" id="f_email"
-                           value="{{ $guru->email_pribadi ?? $user->email ?? '' }}"
+                           value="{{ $user->email ?? '' }}"
                            placeholder="Email"
                            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
                                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400

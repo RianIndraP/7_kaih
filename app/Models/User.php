@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,8 +29,10 @@ class User extends Authenticatable
         'email',
         'password',
         'birth_date',
-        'tempat_lahir',
-        'kelas',
+        'kelas_id',
+        'is_alumni',
+        'tanggal_masuk',
+        'angkatan',
         'ttl',
         'hobi',
         'cita_cita',
@@ -42,6 +45,10 @@ class User extends Authenticatable
         'latitude',
         'longitude',
         'alamat',
+        'guru_wali_id',
+        'foto',
+        'tempat_lahir',
+        'no_hp',
     ];
 
     /**
@@ -64,6 +71,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'birth_date' => 'date',
+            'tanggal_masuk' => 'date',
+            'is_alumni' => 'boolean',
             'password' => 'hashed',
         ];
     }
@@ -85,6 +94,40 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the kelas for this student.
+     */
+    public function kelas(): BelongsTo
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    /**
+     * Check if user should be marked as alumni (3 years from July entry to May)
+     */
+    public function shouldBeAlumni(): bool
+    {
+        if (empty($this->tanggal_masuk)) {
+            return false;
+        }
+        
+        $entryDate = $this->tanggal_masuk;
+        
+        // Calculate the alumni date: July year 1 to May year 3
+        // Entry is July of year 1, alumni becomes May of year 3 (after ~2 years 10 months)
+        $alumniDate = $entryDate->copy()->addYears(2)->setMonth(5)->setDay(31);
+        
+        return now()->greaterThanOrEqualTo($alumniDate);
+    }
+
+    /**
+     * Check if user is an alumni
+     */
+    public function isAlumni(): bool
+    {
+        return $this->is_alumni;
+    }
+
+    /**
      * Check if user is a guru (has nip, nippkp, or nik)
      */
     public function isGuru(): bool
@@ -98,6 +141,14 @@ class User extends Authenticatable
     public function isSiswa(): bool
     {
         return !empty($this->nisn);
+    }
+
+    /**
+     * Check if user is an admin (no nip, nik, or nisn)
+     */
+    public function isAdmin(): bool
+    {
+        return empty($this->nisn) && empty($this->nip) && empty($this->nik);
     }
 
     /**

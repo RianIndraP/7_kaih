@@ -137,7 +137,7 @@
 
                             <td class="px-4 py-3 font-medium text-gray-800">{{ $siswa->name }}</td>
                             <td class="px-4 py-3 text-gray-600">{{ $siswa->nisn ?? '-' }}</td>
-                            <td class="px-4 py-3 text-gray-600">{{ $siswa->kelas ?? '-' }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ $siswa->kelas?->nama_kelas ?? '-' }}</td>
 
                             {{-- Dropdown status --}}
                             <td class="px-4 py-3">
@@ -358,13 +358,15 @@ function renderTabel(data, libur) {
             return '<option value="' + v + '"' + (s.status === v ? ' selected' : '') + '>' + lbl + '</option>';
         }).join('');
 
+        var kelasNama = (typeof s.kelas === 'object' && s.kelas !== null) ? s.kelas.nama_kelas : (s.kelas || '-');
+
         return '<tr class="border-b border-gray-100 hover:bg-gray-50 absen-row" data-siswa-id="' + s.siswa_id + '">' +
             '<td class="px-4 py-3 text-gray-500">' + (i+1) + '</td>' +
             '<td class="px-4 py-3"><input type="checkbox" class="select-cb w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer" ' +
                 'data-siswa="' + s.siswa_id + '" onchange="toggleEdit(this)" ' + checked + ' ' + disCb + '/></td>' +
             '<td class="px-4 py-3 font-medium text-gray-800">' + s.nama + '</td>' +
             '<td class="px-4 py-3 text-gray-600">' + s.nisn + '</td>' +
-            '<td class="px-4 py-3 text-gray-600">' + s.kelas + '</td>' +
+            '<td class="px-4 py-3 text-gray-600">' + kelasNama + '</td>' +
             '<td class="px-4 py-3"><div class="relative">' +
                 '<select class="status-select appearance-none w-full border rounded-lg px-3 py-1.5 pr-8 text-sm ' +
                     'focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ' + selCls + '" ' +

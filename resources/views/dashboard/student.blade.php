@@ -112,7 +112,7 @@
                             NISN: <span class="font-semibold text-gray-900">{{ $user->nisn ?? '-' }}</span>
                         </p>
                         <p class="text-sm text-gray-700">
-                            Kelas: <span class="font-semibold text-gray-900">{{ $user->kelas ?? '-' }}</span>
+                            Kelas: <span class="font-semibold text-gray-900">{{ $user->kelas?->nama_kelas ?? '-' }}</span>
                         </p>
                     </div>
                 </div>

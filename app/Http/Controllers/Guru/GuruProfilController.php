@@ -41,6 +41,8 @@ class GuruProfilController extends Controller
         $user->update([
             'name'          => $request->nama ?? $user->name,
             'email'         => $request->email ?? $user->email,
+            'gender' => $request->gender ?? $user->gender,
+            'no_telepon'    => $request->hp ?? $user->no_telepon,
             'tempat_lahir'  => $request->tempat_lahir ?? $user->tempat_lahir,
             'birth_date'    => $request->tanggal_lahir ?? $user->birth_date,
             'alamat'        => $request->alamat ?? $user->alamat,
@@ -48,14 +50,11 @@ class GuruProfilController extends Controller
             'longitude'     => $request->longitude ?? $user->longitude,
         ]);
 
-        // Update data guru jika ada
+        // Update data guru jika ada (hanya field spesifik guru)
         if ($guru) {
             $guru->update([
                 'status_pegawai' => $request->status_guru ?? $guru->status_pegawai,
-                'jenis_kelamin'  => $request->gender ?? $guru->jenis_kelamin,
                 'unit_kerja'     => $request->unit_kerja ?? $guru->unit_kerja,
-                'no_telepon'     => $request->hp ?? $guru->no_telepon,
-                'email_pribadi'  => $request->email ?? $guru->email_pribadi,
             ]);
         }
 
