@@ -100,7 +100,7 @@ class ListMuridController extends Controller
                 'id'             => $siswa->id,
                 'nama'           => $siswa->name,
                 'nisn'           => $siswa->nisn ?? '-',
-                'kelas'          => $siswa->kelas ?? '-',
+                'kelas'          => $siswa->kelas?->nama_kelas ?? '-',
                 'tanggal_lahir'  => $siswa->birth_date
                     ? Carbon::parse($siswa->birth_date)->format('d - m - Y') : '-',
                 'persen'         => $persen,

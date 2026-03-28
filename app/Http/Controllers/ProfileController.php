@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -71,12 +72,16 @@ class ProfileController extends Controller
                 $validated['foto'] = $path;
             }
 
+            // Find kelas_id based on nama_kelas
+            $kelas = Kelas::where('nama_kelas', $validated['kelas'])->first();
+            $kelasId = $kelas ? $kelas->id : null;
+
             // Update user profile data
             $user->update([
                 'name' => $validated['nama'],
                 'foto' => $validated['foto'] ?? $user->foto,
                 'nisn' => $validated['nisn'],
-                'kelas_id' => $validated['kelas'],
+                'kelas_id' => $kelasId,
                 'tempat_lahir' => $validated['tempat_lahir'],
                 'birth_date' => $validated['tanggal_lahir'],
                 'ttl' => $validated['tempat_lahir'] . ', ' . date('d F Y', strtotime($validated['tanggal_lahir'])),
