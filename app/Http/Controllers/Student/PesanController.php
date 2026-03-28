@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\PesanGuru;
 use App\Models\PesanGuruRead;
+use App\Models\PesanGuruSiswa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -17,17 +17,16 @@ class PesanController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil semua pesan untuk siswa ini, urutkan terbaru
-        $pesanList = PesanGuru::with(['guru', 'reads' => function ($q) use ($user) {
-                $q->where('siswa_id', $user->id);
-            }])
+        $pesanList = PesanGuruSiswa::with([
+                'guru.user',
+                'reads' => fn($q) => $q->where('siswa_id', $user->id),
+            ])
             ->where('siswa_id', $user->id)
             ->orderByDesc('created_at')
             ->paginate(20);
 
-        // Hitung pesan belum dibaca
-        $belumDibaca = PesanGuru::where('siswa_id', $user->id)
-            ->whereDoesntHave('reads', fn ($q) => $q->where('siswa_id', $user->id))
+        $belumDibaca = PesanGuruSiswa::where('siswa_id', $user->id)
+            ->whereDoesntHave('reads', fn($q) => $q->where('siswa_id', $user->id))
             ->count();
 
         return view('pesan', compact('user', 'pesanList', 'belumDibaca'));
@@ -38,11 +37,11 @@ class PesanController extends Controller
     public function baca(int $id): JsonResponse
     {
         $user  = Auth::user();
-        $pesan = PesanGuru::where('id', $id)
+        $pesan = PesanGuruSiswa::with('guru.user')
+            ->where('id', $id)
             ->where('siswa_id', $user->id)
             ->firstOrFail();
 
-        // Upsert: tandai dibaca jika belum
         PesanGuruRead::firstOrCreate(
             ['pesan_id' => $pesan->id, 'siswa_id' => $user->id],
             ['dibaca_at' => now()]
@@ -55,7 +54,7 @@ class PesanController extends Controller
                 'judul'  => $pesan->judul,
                 'isi'    => $pesan->isi,
                 'waktu'  => $pesan->waktuRelatif(),
-                'guru'   => $pesan->guru->name ?? 'Guru Wali',
+                'guru'   => $pesan->guru->user->name ?? 'Guru Wali',
                 'dibuat' => $pesan->created_at->translatedFormat('d F Y, H:i'),
             ],
         ]);
@@ -67,8 +66,8 @@ class PesanController extends Controller
     {
         $user = Auth::user();
 
-        $count = PesanGuru::where('siswa_id', $user->id)
-            ->whereDoesntHave('reads', fn ($q) => $q->where('siswa_id', $user->id))
+        $count = PesanGuruSiswa::where('siswa_id', $user->id)
+            ->whereDoesntHave('reads', fn($q) => $q->where('siswa_id', $user->id))
             ->count();
 
         return response()->json(['success' => true, 'count' => $count]);

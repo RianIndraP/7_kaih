@@ -23,7 +23,7 @@ class PesanGuruRead extends Model
 
     public function pesan(): BelongsTo
     {
-        return $this->belongsTo(PesanGuru::class, 'pesan_id');
+        return $this->belongsTo(PesanGuruSiswa::class, 'pesan_id');
     }
 
     public function siswa(): BelongsTo
