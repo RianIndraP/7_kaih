@@ -76,11 +76,11 @@
                 </div>
             </div>
             
-            <div class="flex items-center justify-between">
-                <label class="flex items-center gap-2 text-sm text-gray-600">
+            <div class="flex justify-end">
+                {{-- <label class="flex items-center gap-2 text-sm text-gray-600">
                     <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                     Ingat saya
-                </label>
+                </label> --}}
                 <a href="{{ route('forgot-password') }}" class="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors">
                     Lupa password?
                 </a>
