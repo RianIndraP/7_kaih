@@ -5,6 +5,37 @@
 
 @section('content')
 <div class="space-y-6">
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-green-800">{!! session('success') !!}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-800">{!! session('error') !!}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Header & Stats -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -416,7 +447,7 @@
                     </svg>
                 </div>
                 <p class="text-gray-600 mb-4">Drop file Excel atau klik untuk pilih file</p>
-                <input type="file" name="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden" required>
+                <input type="file" name="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt" class="hidden" required>
                 <button type="button" onclick="document.getElementById('fileInput').click()" 
                         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     Pilih File

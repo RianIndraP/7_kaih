@@ -141,11 +141,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Manajemen Siswa
     Route::get('/siswa', [AdminManajemenSiswaController::class, 'index'])->name('siswa');
+    Route::post('/siswa/import', [AdminManajemenSiswaController::class, 'import'])->name('siswa.import');
+    Route::post('/siswa/kelas', [AdminManajemenSiswaController::class, 'addKelas'])->name('siswa.kelas.store');
     Route::post('/siswa', [AdminManajemenSiswaController::class, 'store'])->name('siswa.store');
     Route::post('/siswa/{id}', [AdminManajemenSiswaController::class, 'update'])->name('siswa.update');
     Route::delete('/siswa/{id}', [AdminManajemenSiswaController::class, 'destroy'])->name('siswa.destroy');
-    Route::post('/siswa/kelas', [AdminManajemenSiswaController::class, 'addKelas'])->name('siswa.kelas.store');
-    Route::post('/siswa/import', [AdminManajemenSiswaController::class, 'import'])->name('siswa.import');
     Route::get('/siswa/{id}/data', [AdminManajemenSiswaController::class, 'getData'])->name('siswa.data');
 
     // Manajemen Guru
