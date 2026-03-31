@@ -91,6 +91,7 @@ Route::middleware(['auth'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/list-murid/get-minggu-options', [ListMuridController::class, 'getMingguOptions'])->name('list-murid.get-minggu-options');
     Route::post('/list-murid/kirim-pesan', [ListMuridController::class, 'kirimPesan'])->name('list-murid.kirim-pesan');
     Route::post('/list-murid/hapus-umpan-balik', [ListMuridController::class, 'hapusUmpanBalik'])->name('list-murid.hapus-umpan-balik');
+    Route::get('/list-murid/siswa-profile/{siswaId}', [ListMuridController::class, 'getSiswaProfile'])->name('list-murid.siswa-profile');
     // Route dengan parameter — HARUS di bawah route static
     Route::get('/list-murid/pesan-history/{siswaId}', [ListMuridController::class, 'getPesanHistory'])->name('list-murid.pesan-history');
     Route::get('/list-murid/detail/{id}', [ListMuridController::class, 'getDetailSiswa'])->name('list-murid.detail');

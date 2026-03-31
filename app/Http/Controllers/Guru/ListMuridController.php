@@ -44,22 +44,63 @@ class ListMuridController extends Controller
     public function getSiswa(Request $request): JsonResponse
     {
         $user   = Auth::user();
-        // guru_id FK → guru.id, guru_wali_id FK → guru.id
         $guruId = $this->getGuruId();
 
         $periode = $request->input('periode', '');
         $filter  = $request->input('filter', '');
 
-        if (! $periode || ! $filter) {
-            return response()->json(['success' => false, 'message' => 'Periode dan filter wajib diisi.']);
+        // Ambil semua siswa wali kelas
+        $siswaList = User::where('guru_wali_id', $guruId)
+            ->with('kelas')
+            ->orderBy('name')
+            ->get();
+
+        // Jika tidak ada periode, tampilkan semua siswa dengan penyelesaian form hari ini
+        if (empty($periode)) {
+            $data = $siswaList->map(function ($siswa) use ($guruId) {
+                // Progress kebiasaan hari ini
+                $today = now()->toDateString();
+                $kebiasaanHariIni = KebiasaanHarian::where('user_id', $siswa->id)
+                    ->whereDate('tanggal', $today)
+                    ->first();
+
+                // Hitung persentase penyelesaian form hari ini (max 7 kebiasaan)
+                $totalSelesai = $kebiasaanHariIni ? $kebiasaanHariIni->hitungSelesai() : 0;
+                $persen = (int) round(($totalSelesai / 7) * 100);
+
+                return [
+                    'id'             => $siswa->id,
+                    'nama'           => $siswa->name,
+                    'nisn'           => $siswa->nisn ?? '-',
+                    'kelas'          => $siswa->kelas?->nama_kelas ?? '-',
+                    'tanggal_lahir'  => $siswa->birth_date
+                        ? Carbon::parse($siswa->birth_date)->format('d - m - Y') : '-',
+                    'persen'         => $persen,
+                    'detail'         => null,
+                    'umpan_balik'    => null,
+                    'has_umpan_balik'=> false,
+                    'mode_no_periode'=> true, // flag untuk tampilan tanpa periode
+                ];
+            });
+
+            return response()->json([
+                'success'  => true,
+                'data'     => $data,
+                'total'    => $data->count(),
+                'no_periode' => true,
+                '_debug'   => [
+                    'guru_user_id'    => $guruId,
+                    'total_siswa'     => $siswaList->count(),
+                ],
+            ]);
+        }
+
+        // Jika ada periode tapi tidak ada filter
+        if (! $filter) {
+            return response()->json(['success' => false, 'message' => 'Filter wajib diisi untuk periode ' . $periode . '.']);
         }
 
         [$mulai, $selesai] = $this->rentangTanggal($periode, $filter);
-
-        // Ambil siswa wali kelas — tidak filter NISN agar semua siswa tampil
-        $siswaList = User::where('guru_wali_id', $guruId)
-            ->orderBy('name')
-            ->get();
 
         $data = $siswaList->map(function ($siswa) use ($guruId, $periode, $filter, $mulai, $selesai) {
 
@@ -90,7 +131,6 @@ class ListMuridController extends Controller
             }
 
             // Umpan balik: filter berdasarkan siswa_id + periode + kolom periode spesifik
-            // Tidak filter guru_id karena bisa beda nilai tergantung relasi
             $pesanQuery = PesanGuruSiswa::where('siswa_id', $siswa->id)
                 ->where('periode', $periode);
             $this->filterPesanByPeriode($pesanQuery, $periode, $filter);
@@ -108,6 +148,7 @@ class ListMuridController extends Controller
                 'umpan_balik'    => $pesan?->isi,
                 'umpan_balik_id' => $pesan?->id,
                 'has_umpan_balik'=> $pesan !== null,
+                'mode_no_periode'=> false,
             ];
         });
 
@@ -373,6 +414,49 @@ class ListMuridController extends Controller
                       ->where('tahun', (int) $tahun);
                 break;
         }
+    }
+
+    // ── AJAX: ambil detail profil siswa ───────────────────────────────────────
+
+    public function getSiswaProfile(int $siswaId): JsonResponse
+    {
+        $guruId = $this->getGuruId();
+
+        // Ambil siswa wali kelas dengan semua field yang diperlukan
+        $siswa = User::where('id', $siswaId)
+            ->where('guru_wali_id', $guruId)
+            ->with('kelas')
+            ->first();
+
+        if (!$siswa) {
+            return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan atau bukan murid bimbingan Anda.']);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'id'               => $siswa->id,
+                'nama'             => $siswa->name,
+                'nisn'             => $siswa->nisn ?? '-',
+                'gender'           => $siswa->gender ?? '-',
+                'foto'             => $siswa->foto,
+                'tempat_lahir'     => $siswa->tempat_lahir ?? '-',
+                'tanggal_lahir'    => $siswa->birth_date
+                    ? Carbon::parse($siswa->birth_date)->format('d - m - Y') : '-',
+                'angkatan'         => $siswa->angkatan ?? '-',
+                'kelas'            => $siswa->kelas?->nama_kelas ?? '-',
+                'hobi'             => $siswa->hobi ?? '-',
+                'cita_cita'        => $siswa->cita_cita ?? '-',
+                'teman_terbaik'    => $siswa->teman_terbaik ?? '-',
+                'makanan_kesukaan' => $siswa->makanan_kesukaan ?? '-',
+                'warna_kesukaan'   => $siswa->warna_kesukaan ?? '-',
+                'no_telepon'       => $siswa->no_telepon ?? '-',
+                'no_ortu'          => $siswa->no_ortu ?? '-',
+                'alamat'           => $siswa->alamat ?? '-',
+                'latitude'         => $siswa->latitude,
+                'longitude'        => $siswa->longitude,
+            ],
+        ]);
     }
 
 }

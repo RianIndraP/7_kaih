@@ -148,6 +148,114 @@
     </div>
 </div>
 
+{{-- ===== MODAL PROFIL SISWA ===== --}}
+<div id="modalProfil"
+     class="fixed inset-0 bg-black/50 z-[9999] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+         onclick="event.stopPropagation()">
+
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h3 class="text-base font-semibold text-gray-900">Profil Siswa</h3>
+            <button onclick="tutupModal('modalProfil')"
+                    class="p-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {{-- Foto Profil --}}
+                <div class="md:col-span-1">
+                    <div class="flex flex-col items-center">
+                        <div class="w-32 h-32 rounded-full bg-gray-200 overflow-hidden mb-3 flex items-center justify-center">
+                            <img id="profilFoto" src="" alt="Foto Siswa" class="w-full h-full object-cover hidden"
+                                 onerror="this.classList.add('hidden'); document.getElementById('profilFotoPlaceholder').classList.remove('hidden');">
+                            <div id="profilFotoPlaceholder" class="hidden">
+                                <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                          d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 id="profilNama" class="text-lg font-semibold text-gray-900 text-center">-</h4>
+                        <p id="profilNisn" class="text-sm text-gray-500 text-center">-</p>
+                    </div>
+                </div>
+
+                {{-- Data Siswa --}}
+                <div class="md:col-span-2 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-gray-500">Jenis Kelamin</p>
+                            <p id="profilGender" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Kelas</p>
+                            <p id="profilKelas" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Tempat, Tanggal Lahir</p>
+                            <p id="profilTtl" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Tahun Masuk</p>
+                            <p id="profilAngkatan" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Hobi</p>
+                            <p id="profilHobi" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Cita-Cita</p>
+                            <p id="profilCitaCita" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Teman Terbaik</p>
+                            <p id="profilTemanTerbaik" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Makanan Kesukaan</p>
+                            <p id="profilMakanan" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Warna Kesukaan</p>
+                            <p id="profilWarna" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">No Telepon</p>
+                            <p id="profilNoTelepon" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">No Orang Tua</p>
+                            <p id="profilNoOrtu" class="text-sm font-medium text-gray-800">-</p>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Alamat</p>
+                        <p id="profilAlamat" class="text-sm font-medium text-gray-800">-</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Maps --}}
+            <div class="mt-6">
+                <p class="text-xs text-gray-500 mb-2">Lokasi</p>
+                <div id="profilMap" class="w-full h-64 rounded-xl border border-gray-200"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-end px-6 pb-5">
+            <button onclick="tutupModal('modalProfil')"
+                    class="px-6 py-2 border border-gray-300 hover:bg-gray-50 text-sm font-medium
+                           text-gray-700 rounded-lg transition-colors">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
 {{-- ===== MODAL DETAIL MURID ===== --}}
 <div id="modalDetail"
      class="fixed inset-0 bg-black/50 z-[9999] hidden items-center justify-center p-4">
@@ -475,8 +583,6 @@ function cariData() {
     var periode = document.getElementById('selectPeriode').value;
     var filter  = '';
 
-    if (!periode) { tampilkanToast('Pilih periode terlebih dahulu', 'red'); return; }
-
     if (periode === 'harian')    filter = document.getElementById('input_tanggal').value;
     if (periode === 'mingguan')  filter = document.getElementById('select_minggu').value;
     if (periode === 'pertemuan') filter = document.getElementById('select_pertemuan').value;
@@ -488,11 +594,14 @@ function cariData() {
         }
     }
 
-    if (!filter) { tampilkanToast('Pilih ' + periodeLabel(periode) + ' terlebih dahulu', 'red'); return; }
-
     currentFilter = filter;
 
-    fetch('/guru/list-murid/get-siswa?periode=' + periode + '&filter=' + encodeURIComponent(filter), {
+    var url = '/guru/list-murid/get-siswa';
+    if (periode) {
+        url += '?periode=' + periode + '&filter=' + encodeURIComponent(filter);
+    }
+
+    fetch(url, {
         headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
     })
     .then(function (r) { return r.json(); })
@@ -504,7 +613,7 @@ function cariData() {
                     '<tr><td colspan="7" class="px-4 py-10 text-center text-gray-400 text-sm">' +
                     'Tidak ada siswa yang ditemukan untuk periode ini</td></tr>';
             } else {
-                renderTabel(res.data, periode);
+                renderTabel(res.data, periode, res.no_periode);
             }
         } else {
             tampilkanToast('Gagal: ' + (res.message || 'Terjadi kesalahan'), 'red');
@@ -521,7 +630,7 @@ function periodeLabel(p) {
 }
 
 /* ── Render tabel ─────────────────────────────────────── */
-function renderTabel(data, periode) {
+function renderTabel(data, periode, noPeriode) {
     var tbody = document.getElementById('tabelBody');
     var keyword = document.getElementById('searchInput').value.toLowerCase();
 
@@ -537,7 +646,46 @@ function renderTabel(data, periode) {
     tbody.innerHTML = filtered.map(function (s, i) {
         var persen = s.persen || 0;
         var barColor = persen >= 80 ? 'bg-green-500' : persen >= 50 ? 'bg-blue-500' : 'bg-yellow-400';
-        var umpan = s.umpan_balik ? (s.umpan_balik.substring(0, 18) + (s.umpan_balik.length > 18 ? '...' : '')) : '-';
+        
+        // Umpan balik: jika no_periode, tampilkan "Silahkan Pilih Periode"
+        var umpan = noPeriode 
+            ? 'Silahkan Pilih Periode' 
+            : (s.umpan_balik ? (s.umpan_balik.substring(0, 18) + (s.umpan_balik.length > 18 ? '...' : '')) : '-');
+        
+        // Aksi: jika no_periode, hanya tombol lihat profil
+        var aksiHtml = noPeriode
+            ? '<button onclick="bukaProfil(' + s.id + ')" title="Lihat Profil" ' +
+              'class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">' +
+              '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>' +
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>' +
+              '</svg></button>'
+            : '<div class="flex items-center justify-center gap-2">' +
+                '<button onclick="bukaProfil(' + s.id + ')" title="Lihat Profil" ' +
+                    'class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">' +
+                    '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>' +
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>' +
+                    '</svg></button>' +
+                '<button onclick="bukaDetail(' + JSON.stringify(s).replace(/"/g,'&quot;') + ',\'' + periode + '\')" title="Detail" ' +
+                    'class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">' +
+                    '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                        '<circle cx="12" cy="12" r="10" stroke-width="2"/>' +
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/>' +
+                    '</svg></button>' +
+                '<button onclick="bukaPesan(' + JSON.stringify(s).replace(/"/g,'&quot;') + ',\'' + periode + '\')" title="Kirim Pesan" ' +
+                    'class="p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition-colors">' +
+                    '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" ' +
+                            'd="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>' +
+                    '</svg></button>' +
+                '<button onclick="bukaHapus(' + s.id + ',\'' + s.nama + '\')" title="Hapus Umpan Balik" ' +
+                    'class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition-colors">' +
+                    '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" ' +
+                            'd="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>' +
+                    '</svg></button>' +
+              '</div>';
 
         return '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
             '<td class="px-4 py-3 text-gray-600">' + (i+1) + '</td>' +
@@ -550,29 +698,8 @@ function renderTabel(data, periode) {
                 '</div>' +
                 '<span class="text-xs text-gray-500 mt-0.5 block">' + persen + '%</span>' +
             '</td>' +
-            '<td class="px-4 py-3 text-xs text-gray-600 max-w-[140px] truncate">' + umpan + '</td>' +
-            '<td class="px-4 py-3">' +
-                '<div class="flex items-center justify-center gap-2">' +
-                    '<button onclick="bukaDetail(' + JSON.stringify(s).replace(/"/g,'&quot;') + ',\'' + periode + '\')" title="Detail" ' +
-                        'class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">' +
-                        '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                            '<circle cx="12" cy="12" r="10" stroke-width="2"/>' +
-                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/>' +
-                        '</svg></button>' +
-                    '<button onclick="bukaPesan(' + JSON.stringify(s).replace(/"/g,'&quot;') + ',\'' + periode + '\')" title="Kirim Pesan" ' +
-                        'class="p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition-colors">' +
-                        '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" ' +
-                                'd="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>' +
-                        '</svg></button>' +
-                    '<button onclick="bukaHapus(' + s.id + ',\'' + s.nama + '\')" title="Hapus Umpan Balik" ' +
-                        'class="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition-colors">' +
-                        '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" ' +
-                                'd="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>' +
-                        '</svg></button>' +
-                '</div>' +
-            '</td>' +
+            '<td class="px-4 py-3 text-xs ' + (noPeriode ? 'text-gray-400 italic' : 'text-gray-600') + ' max-w-[140px] truncate">' + umpan + '</td>' +
+            '<td class="px-4 py-3">' + aksiHtml + '</td>' +
         '</tr>';
     }).join('');
 }
@@ -811,12 +938,105 @@ function tutupModal(id) {
     el.classList.add('hidden');
     el.classList.remove('flex');
 }
-document.querySelectorAll('#modalDetail,#modalPesan,#modalHapus').forEach(function (m) {
+document.querySelectorAll('#modalDetail,#modalPesan,#modalHapus,#modalProfil').forEach(function (m) {
     m.addEventListener('click', function (e) { if (e.target === this) tutupModal(this.id); });
 });
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') ['modalDetail','modalPesan','modalHapus'].forEach(tutupModal);
+    if (e.key === 'Escape') ['modalDetail','modalPesan','modalHapus','modalProfil'].forEach(tutupModal);
 });
+
+/* ── Profil Siswa Popup ───────────────────────────────── */
+var mapInstance = null;
+var mapMarker = null;
+
+function bukaProfil(siswaId) {
+    // Fetch student profile data
+    fetch('/guru/list-murid/siswa-profile/' + siswaId, {
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+        if (!res.success) {
+            tampilkanToast(res.message || 'Gagal memuat profil siswa', 'red');
+            return;
+        }
+        
+        var data = res.data;
+        
+        // Fill profile data
+        document.getElementById('profilNama').textContent = data.nama;
+        document.getElementById('profilNisn').textContent = 'NISN: ' + data.nisn;
+        document.getElementById('profilGender').textContent = data.gender;
+        document.getElementById('profilKelas').textContent = data.kelas;
+        document.getElementById('profilTtl').textContent = data.tempat_lahir + ', ' + data.tanggal_lahir;
+        document.getElementById('profilAngkatan').textContent = data.angkatan;
+        document.getElementById('profilHobi').textContent = data.hobi;
+        document.getElementById('profilCitaCita').textContent = data.cita_cita;
+        document.getElementById('profilTemanTerbaik').textContent = data.teman_terbaik;
+        document.getElementById('profilMakanan').textContent = data.makanan_kesukaan;
+        document.getElementById('profilWarna').textContent = data.warna_kesukaan;
+        document.getElementById('profilNoTelepon').textContent = data.no_telepon;
+        document.getElementById('profilNoOrtu').textContent = data.no_ortu;
+        document.getElementById('profilAlamat').textContent = data.alamat;
+        
+        // Set foto
+        var fotoEl = document.getElementById('profilFoto');
+        var placeholderEl = document.getElementById('profilFotoPlaceholder');
+        if (data.foto) {
+            fotoEl.src = '/storage/' + data.foto;
+            fotoEl.classList.remove('hidden');
+            placeholderEl.classList.add('hidden');
+        } else {
+            fotoEl.classList.add('hidden');
+            placeholderEl.classList.remove('hidden');
+        }
+        
+        // Open modal
+        bukaModal('modalProfil');
+        
+        // Initialize map after modal is visible
+        setTimeout(function() {
+            initMap(data.latitude, data.longitude);
+        }, 100);
+    })
+    .catch(function (err) {
+        console.error('Error fetching profile:', err);
+        tampilkanToast('Gagal memuat profil siswa', 'red');
+    });
+}
+
+function initMap(latitude, longitude) {
+    var mapEl = document.getElementById('profilMap');
+    
+    // Clear previous map instance if exists
+    if (mapInstance) {
+        mapInstance.remove();
+        mapInstance = null;
+    }
+    
+    // Default coordinates (Indonesia center) if no location data
+    var lat = latitude ? parseFloat(latitude) : -2.5489;
+    var lng = longitude ? parseFloat(longitude) : 118.0149;
+    var hasLocation = latitude && longitude;
+    
+    // Initialize Leaflet map
+    mapInstance = L.map('profilMap').setView([lat, lng], hasLocation ? 15 : 5);
+    
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mapInstance);
+    
+    // Add marker if location exists
+    if (hasLocation) {
+        mapMarker = L.marker([lat, lng]).addTo(mapInstance);
+        mapMarker.bindPopup('Lokasi Siswa').openPopup();
+    } else {
+        // Show message if no location
+        mapEl.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400 text-sm">' +
+            '<p>Lokasi siswa belum tersedia</p></div>';
+    }
+}
 
 /* ── Toast ────────────────────────────────────────────── */
 function tampilkanToast(pesan, warna) {
@@ -831,6 +1051,12 @@ function tampilkanToast(pesan, warna) {
         toast.classList.remove('opacity-100','translate-y-0');
     }, 3000);
 }
+
+/* ── Load all students on page load ───────────────────── */
+document.addEventListener('DOMContentLoaded', function() {
+    // Load all students without period filter
+    cariData();
+});
 </script>
 
 @endsection
