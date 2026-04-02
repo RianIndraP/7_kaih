@@ -20,8 +20,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Paksa Laravel menggunakan HTTP (bukan HTTPS) untuk local
-        if (!str_contains(request()->getHost(), 'ngrok-free.dev')) {
+        // 1. Cek apakah diakses lewat Ngrok
+        if (
+            str_contains(request()->header('host'), 'ngrok-free.dev') ||
+            str_contains(request()->header('host'), 'ngrok.io')
+        ) {
+
+            // Paksa HTTPS agar asset (CSS/JS) terbaca benar di Ngrok
+            URL::forceScheme('https');
+        }
+        // 2. Jika di lokal (Laragon)
+        else if (app()->environment('local')) {
+
+            // Paksa HTTP agar tidak kena "Refused to Connect" di Laragon
             URL::forceScheme('http');
         }
     }
