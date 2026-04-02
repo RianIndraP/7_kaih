@@ -52,6 +52,7 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     // Profil
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/save', [ProfileController::class, 'save'])->name('profile.save');
+    Route::post('/profile/delete-location', [ProfileController::class, 'deleteLocation'])->name('profile.delete-location');
 
     // 7 Kebiasaan
     Route::get('/kebiasaan', [KebiasaanController::class, 'index'])->name('kebiasaan');
@@ -71,7 +72,6 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     // Kirim Pesan Bantuan (ikon ?)
     Route::get('/kirim-pesan-bantuan', [PesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
     Route::post('/kirim-pesan-bantuan', [PesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store');
-
 });
 
 // ── Guru (protected) ──────────────────────────────────────────────────────────
@@ -156,5 +156,4 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('/guru/{id}', [AdminManajemenGuruController::class, 'destroy'])->name('guru.destroy');
     Route::post('/guru/import', [AdminManajemenGuruController::class, 'import'])->name('guru.import');
     Route::get('/guru/{id}/data', [AdminManajemenGuruController::class, 'getData'])->name('guru.data');
-
 });

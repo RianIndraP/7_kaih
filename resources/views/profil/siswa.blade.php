@@ -267,11 +267,17 @@
                     <p id="coordText" class="text-xs text-gray-500">Klik pada peta untuk memilih lokasi</p>
                     <p id="coordAddr" class="text-xs text-gray-700 mt-1 leading-relaxed"></p>
                 </div>
-                <button onclick="confirmLocation()"
-                    class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium
-                           px-5 py-2.5 rounded-lg transition-colors">
-                    Konfirmasi Lokasi
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="clearLocation()"
+                        class="flex-shrink-0 bg-red-100 hover:bg-red-200 text-red-600 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
+                        Hapus Lokasi
+                    </button>
+                    <button onclick="confirmLocation()"
+                        class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium
+                    px-5 py-2.5 rounded-lg transition-colors">
+                        Konfirmasi Lokasi
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -418,6 +424,66 @@
                             5);
                     });
             }, 600);
+        }
+
+        function clearLocation() {
+            if (confirm("Apakah Anda yakin ingin menghapus lokasi dari profil Anda?")) {
+
+                // Ambil elemen toast
+                const toast = document.getElementById('toast');
+                const toastIcon = toast.querySelector('svg');
+
+                fetch('{{ route('student.profile.delete-location') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        }
+                    })
+                    .then(r => r.json())
+                    .then(result => {
+                        if (result.success) {
+                            // --- LOGIKA RESET TAMPILAN ---
+                            selLat = 5.5489;
+                            selLng = 95.3238;
+                            document.getElementById('addressDisplay').textContent = 'Klik Maps Untuk Ganti Lokasi';
+                            if (markerFull) mapFull.removeLayer(markerFull);
+                            if (markerPreview) mapPreview.removeLayer(markerPreview);
+                            markerFull = null;
+                            markerPreview = null;
+                            closeMapModal();
+
+                            // --- TAMPILKAN TOAST SUKSES (HIJAU) ---
+                            toast.classList.replace('bg-red-600', 'bg-green-600'); // Pastikan hijau
+                            toast.lastChild.textContent = ' ' + result.message;
+                            showToastNotification();
+                        } else {
+                            // --- TAMPILKAN TOAST GAGAL (MERAH) ---
+                            toast.classList.replace('bg-green-600', 'bg-red-600');
+                            toast.lastChild.textContent = ' ' + (result.message || 'Gagal menghapus');
+                            showToastNotification();
+                        }
+                    })
+                    .catch(err => {
+                        // --- TAMPILKAN TOAST ERROR KONEKSI (MERAH) ---
+                        toast.classList.replace('bg-green-600', 'bg-red-600');
+                        toast.lastChild.textContent = ' Kesalahan koneksi ke server!';
+                        showToastNotification();
+                        console.error(err);
+                    });
+            }
+        }
+
+        // Fungsi Helper untuk memunculkan animasi toast
+        function showToastNotification() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 3000);
         }
 
         function confirmLocation() {

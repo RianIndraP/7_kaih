@@ -17,7 +17,7 @@ class ProfileController extends Controller
     {
         // Get the authenticated user
         $user = Auth::user();
-        
+
         // Pass user data to the view
         return view('profil.siswa', compact('user'));
     }
@@ -77,6 +77,7 @@ class ProfileController extends Controller
             $kelasId = $kelas ? $kelas->id : null;
 
             // Update user profile data
+            /** @var \App\Models\User $user */
             $user->update([
                 'name' => $validated['nama'],
                 'foto' => $validated['foto'] ?? $user->foto,
@@ -109,6 +110,28 @@ class ProfileController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan profil: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteLocation()
+    {
+        try {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            $user->update([
+                'latitude' => null,
+                'longitude' => null,
+                'alamat' => null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lokasi berhasil dihapus dari sistem!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus lokasi: ' . $e->getMessage()
             ], 500);
         }
     }
