@@ -86,54 +86,55 @@
                 </button>
             </div>
 
-        {{-- Info rows --}}
-        <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
-            <div class="flex items-center border-b border-gray-100 py-2">
-                <span class="text-xs text-gray-500 w-28 flex-shrink-0">Nama</span>
-                <span class="text-xs text-gray-400 mx-2">:</span>
-                <input type="text" id="p_nama" value="{{ $user->name ?? '' }}"
-                       class="inline-edit flex-1" placeholder="Nama lengkap"/>
-            </div>
-            <div class="flex items-center border-b border-gray-100 py-2">
-                <span class="text-xs text-gray-500 w-28 flex-shrink-0">Tempat Lahir</span>
-                <span class="text-xs text-gray-400 mx-2">:</span>
-                <input type="text" id="p_tempat_lahir" value="{{ $user->tempat_lahir ?? '' }}"
-                       class="inline-edit flex-1" placeholder="Tempat lahir"/>
-            </div>
-            <div class="flex items-center border-b border-gray-100 py-2">
-                <span class="text-xs text-gray-500 w-28 flex-shrink-0">Tanggal Lahir</span>
-                <span class="text-xs text-gray-400 mx-2">:</span>
-                <input type="date" id="p_tanggal_lahir"
-                       value="{{ $user->birth_date?->format('Y-m-d') ?? '' }}"
-                       class="inline-edit flex-1"/>
-            </div>
-            <div class="flex items-center border-b border-gray-100 py-2">
-                <span class="text-xs text-gray-500 w-28 flex-shrink-0">Kelas</span>
-                <span class="text-xs text-gray-400 mx-2">:</span>
-                <select id="p_kelas" class="inline-edit flex-1 cursor-pointer">
-                    @foreach (['X RPL 1','X RPL 2','XI RPL 1','XI RPL 2','XII RPL 1','XII RPL 2'] as $k)
-                        <option value="{{ $k }}" {{ ($user->kelas ?? '') == $k ? 'selected' : '' }}>{{ $k }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="flex items-center border-b border-gray-100 py-2">
-                <span class="text-xs text-gray-500 w-28 flex-shrink-0">Jenis Kelamin</span>
-                <span class="text-xs text-gray-400 mx-2">:</span>
-                <select id="p_jk" class="inline-edit flex-1 cursor-pointer">
-                    <option value="Laki-laki" {{ ($user->jenis_kelamin ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                    <option value="Perempuan" {{ ($user->jenis_kelamin ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                </select>
-            </div>
-            <div class="flex items-center py-2">
-                <span class="text-xs text-gray-500 w-28 flex-shrink-0">NISN</span>
-                <span class="text-xs text-gray-400 mx-2">:</span>
-                <input type="text" id="p_nisn" value="{{ $user->nisn ?? '' }}"
-                       class="inline-edit flex-1 bg-gray-50 cursor-not-allowed"
-                       placeholder="NISN" readonly/>
+            {{-- Info rows --}}
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
+                <div class="flex items-center border-b border-gray-100 py-2">
+                    <span class="text-xs text-gray-500 w-28 flex-shrink-0">Nama</span>
+                    <span class="text-xs text-gray-400 mx-2">:</span>
+                    <input type="text" id="p_nama" value="{{ $user->name ?? '' }}" class="inline-edit flex-1"
+                        placeholder="Nama lengkap" />
+                </div>
+                <div class="flex items-center border-b border-gray-100 py-2">
+                    <span class="text-xs text-gray-500 w-28 flex-shrink-0">Tempat Lahir</span>
+                    <span class="text-xs text-gray-400 mx-2">:</span>
+                    <input type="text" id="p_tempat_lahir" value="{{ $user->tempat_lahir ?? '' }}"
+                        class="inline-edit flex-1" placeholder="Tempat lahir" />
+                </div>
+                <div class="flex items-center border-b border-gray-100 py-2">
+                    <span class="text-xs text-gray-500 w-28 flex-shrink-0">Tanggal Lahir</span>
+                    <span class="text-xs text-gray-400 mx-2">:</span>
+                    <input type="date" id="p_tanggal_lahir" value="{{ $user->birth_date?->format('Y-m-d') ?? '' }}"
+                        class="inline-edit flex-1" />
+                </div>
+                <div class="flex items-center border-b border-gray-100 py-2">
+                    <span class="text-xs text-gray-500 w-28 flex-shrink-0">Kelas</span>
+                    <span class="text-xs text-gray-400 mx-2">:</span>
+                    <select id="p_kelas" class="inline-edit flex-1 cursor-pointer">
+                        @foreach (['X RPL 1', 'X RPL 2', 'XI RPL 1', 'XI RPL 2', 'XII RPL 1', 'XII RPL 2'] as $k)
+                            <option value="{{ $k }}" {{ ($user->kelas ?? '') == $k ? 'selected' : '' }}>
+                                {{ $k }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-center border-b border-gray-100 py-2">
+                    <span class="text-xs text-gray-500 w-28 flex-shrink-0">Jenis Kelamin</span>
+                    <span class="text-xs text-gray-400 mx-2">:</span>
+                    <select id="p_jk" class="inline-edit flex-1 cursor-pointer">
+                        <option value="Laki-laki" {{ ($user->jenis_kelamin ?? '') == 'Laki-laki' ? 'selected' : '' }}>
+                            Laki-laki</option>
+                        <option value="Perempuan" {{ ($user->jenis_kelamin ?? '') == 'Perempuan' ? 'selected' : '' }}>
+                            Perempuan</option>
+                    </select>
+                </div>
+                <div class="flex items-center py-2">
+                    <span class="text-xs text-gray-500 w-28 flex-shrink-0">NISN</span>
+                    <span class="text-xs text-gray-400 mx-2">:</span>
+                    <input type="text" id="p_nisn" value="{{ $user->nisn ?? '' }}"
+                        class="inline-edit flex-1 bg-gray-50 cursor-not-allowed" placeholder="NISN" readonly />
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     {{-- ---- HOBI + KONTAK GRID ---- --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
@@ -293,8 +294,8 @@
 
     <script>
         /* ── State ────────────────────────────────────────────────── */
-        let selLat = {{ $user->latitude ?? 5.5489 }};
-        let selLng = {{ $user->longitude ?? 95.3238 }};
+        let selLat = {{ $user->latitude ?? 5.5536 }};
+        let selLng = {{ $user->longitude ?? 95.3177 }};
         let pendingLat = selLat;
         let pendingLng = selLng;
 
@@ -457,6 +458,18 @@
         function saveProfile() {
             // 1. Gunakan FormData, bukan object biasa {}
             var formData = new FormData();
+            var alamatTeks = document.getElementById('addressDisplay').innerText.trim();
+
+            if (!alamatTeks || alamatTeks === "" || alamatTeks === "Klik Maps Untuk Ganti Lokasi") {
+                var toast = document.getElementById('toast');
+                toast.classList.remove('bg-green-600');
+                toast.classList.add('bg-red-600');
+                toast.childNodes[toast.childNodes.length - 1].textContent = " Silakan pilih lokasi Anda di peta!";
+
+                toast.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+                setTimeout(() => toast.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none'), 2800);
+                return;
+            }
 
             // 2. Masukkan semua data ke FormData
             formData.append('nama', document.getElementById('p_nama').value);
@@ -498,24 +511,35 @@
                     return r.json();
                 })
                 .then(function(result) {
+                    var toast = document.getElementById('toast');
+
                     if (result.success) {
-                        var toast = document.getElementById('toast');
-                        toast.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
-                        toast.classList.add('opacity-100', 'translate-y-0');
-                        setTimeout(function() {
-                            toast.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
-                            toast.classList.remove('opacity-100', 'translate-y-0');
-                        }, 2800);
+                        // SET WARNA HIJAU (SUKSES)
+                        toast.classList.remove('bg-red-600');
+                        toast.classList.add('bg-green-600');
+                        toast.childNodes[toast.childNodes.length - 1].textContent = " Profil berhasil disimpan!";
                     } else {
-                        alert(result.message || 'Terjadi kesalahan');
+                        // SET WARNA MERAH (GAGAL)
+                        toast.classList.remove('bg-green-600');
+                        toast.classList.add('bg-red-600');
+                        toast.childNodes[toast.childNodes.length - 1].textContent = " " + (result.message ||
+                            'Terjadi kesalahan');
                     }
+
+                    // MUNCULKAN TOAST
+                    toast.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+                    toast.classList.add('opacity-100', 'translate-y-0');
+
+                    setTimeout(function() {
+                        toast.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+                        toast.classList.remove('opacity-100', 'translate-y-0');
+                    }, 2800);
                 })
                 .catch(function(err) {
                     console.error('Save error:', err);
                     alert('Terjadi kesalahan saat menyimpan profil.');
                 });
         }
-
 
         /* ── Init ────────────────────────────────────────────────── */
         document.addEventListener('DOMContentLoaded', function() {
