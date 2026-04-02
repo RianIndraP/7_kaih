@@ -83,6 +83,7 @@ Route::middleware(['auth'])->prefix('guru')->name('guru.')->group(function () {
     // Profil Guru
     Route::get('/profil', [GuruProfilController::class, 'index'])->name('profil');
     Route::post('/profil/save', [GuruProfilController::class, 'save'])->name('profil.save');
+    Route::post('/profil/delete-location', [GuruProfilController::class, 'deleteLocation'])->name('profil.delete-location');
 
     // ── List Murid ─────────────────────────────────────────────────────────
     // PENTING: semua route static harus SEBELUM route dengan parameter {id}

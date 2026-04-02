@@ -267,14 +267,18 @@
                     <p id="coordText" class="text-xs text-gray-500">Klik pada peta untuk memilih lokasi</p>
                     <p id="coordAddr" class="text-xs text-gray-700 mt-1 leading-relaxed"></p>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="clearLocation()"
-                        class="flex-shrink-0 bg-red-100 hover:bg-red-200 text-red-600 text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
+                <div class="flex items-center gap-2">
+                    {{-- Tombol Hapus Lokasi --}}
+                    <button id="btnHapusLokasi" onclick="clearLocation()"
+                        class="flex-shrink-0 bg-red-100 hover:bg-red-200 text-red-600 text-sm font-medium
+                               px-4 py-2.5 rounded-lg transition-colors {{ empty($user->latitude) ? 'hidden' : '' }}">
                         Hapus Lokasi
                     </button>
+
+                    {{-- Tombol Konfirmasi --}}
                     <button onclick="confirmLocation()"
                         class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium
-                    px-5 py-2.5 rounded-lg transition-colors">
+                               px-5 py-2.5 rounded-lg transition-colors">
                         Konfirmasi Lokasi
                     </button>
                 </div>

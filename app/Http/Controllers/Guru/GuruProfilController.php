@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class GuruProfilController extends Controller
@@ -37,11 +38,23 @@ class GuruProfilController extends Controller
         $user = Auth::user();
         $guru = $user->guru;
 
+        $pathFoto = $user->foto; // default pakai foto lama
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+            // Simpan foto baru
+            $pathFoto = $request->file('foto')->store('profile_photos', 'public');
+        }
+
         // Update data user
+        /** @var \App\Models\User $user */
         $user->update([
             'name'          => $request->nama ?? $user->name,
+            'foto'          => $pathFoto, // Tambahkan ini
             'email'         => $request->email ?? $user->email,
-            'gender' => $request->gender ?? $user->gender,
+            'gender'        => $request->gender ?? $user->gender,
             'no_telepon'    => $request->hp ?? $user->no_telepon,
             'tempat_lahir'  => $request->tempat_lahir ?? $user->tempat_lahir,
             'birth_date'    => $request->tanggal_lahir ?? $user->birth_date,
@@ -62,5 +75,28 @@ class GuruProfilController extends Controller
             'success' => true,
             'message' => 'Profil guru berhasil disimpan.',
         ]);
+    }
+    public function deleteLocation(): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+
+            /** @var \App\Models\User $user */
+            $user->update([
+                'latitude' => null,
+                'longitude' => null,
+                'alamat' => null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lokasi guru berhasil dihapus!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus lokasi.'
+            ], 500);
+        }
     }
 }
