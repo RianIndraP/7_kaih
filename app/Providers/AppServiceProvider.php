@@ -20,8 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (str_contains(request()->getHost(), 'ngrok-free.dev')) {
-            URL::forceScheme('https');
+        // Paksa Laravel menggunakan HTTP (bukan HTTPS) untuk local
+        if (!str_contains(request()->getHost(), 'ngrok-free.dev')) {
+            URL::forceScheme('http');
         }
     }
 }
