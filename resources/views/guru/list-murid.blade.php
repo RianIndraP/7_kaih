@@ -8,6 +8,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
 
+    <style>
+        #profilMap {
+            height: 256px !important;
+            /* sesuai class h-64 */
+            width: 100%;
+            display: block;
+        }
+    </style>
     <div class="p-6 bg-gray-50 min-h-screen">
 
         {{-- ===== FILTER PENCARIAN ===== --}}
@@ -354,7 +362,7 @@
                     <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
-                                 a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                     a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     <span class="text-sm font-semibold text-gray-800">Kirim Pesan</span>
                     <span class="ml-auto text-xs text-gray-400" id="pesanTanggal"></span>
@@ -446,7 +454,7 @@
                 <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5
-                                 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                     4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                 </div>
                 <div>
@@ -484,6 +492,7 @@
         <span id="toastMsg"></span>
     </div>
 
+    <script src="https://unpkg.com"></script>
     <script>
         /* ── Data dari PHP ─────────────────────────────────────── */
         var semuaSiswa = @json($siswaList);
@@ -1097,7 +1106,10 @@
                     // Initialize map after modal is visible
                     setTimeout(function() {
                         initMap(data.latitude, data.longitude);
-                    }, 100);
+                        if (typeof mapInstance !== 'undefined' && mapInstance !== null) {
+                            mapInstance.invalidateSize();
+                        }
+                    }, 400);
                 })
                 .catch(function(err) {
                     console.error('Error fetching profile:', err);
@@ -1108,16 +1120,18 @@
         function initMap(latitude, longitude) {
             var mapEl = document.getElementById('profilMap');
 
+            mapEl.innerHTML = '';
+
             // Clear previous map instance if exists
             if (mapInstance) {
                 mapInstance.remove();
                 mapInstance = null;
             }
 
+            var hasLocation = (latitude && longitude && latitude !== '0');
             // Default coordinates (Indonesia center) if no location data
-            var lat = latitude ? parseFloat(latitude) : -2.5489;
-            var lng = longitude ? parseFloat(longitude) : 118.0149;
-            var hasLocation = latitude && longitude;
+            var lat = latitude ? parseFloat(latitude) : 5.5536;
+            var lng = longitude ? parseFloat(longitude) : 95.3177;
 
             // Initialize Leaflet map
             mapInstance = L.map('profilMap').setView([lat, lng], hasLocation ? 15 : 5);
@@ -1129,13 +1143,19 @@
 
             // Add marker if location exists
             if (hasLocation) {
-                mapMarker = L.marker([lat, lng]).addTo(mapInstance);
-                mapMarker.bindPopup('Lokasi Siswa').openPopup();
+                L.marker([lat, lng]).addTo(mapInstance).bindPopup('Lokasi Rumah Siswa').openPopup();
             } else {
-                // Show message if no location
-                mapEl.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400 text-sm">' +
-                    '<p>Lokasi siswa belum tersedia</p></div>';
+                L.popup()
+                    .setLatLng([lat, lng])
+                    .setContent('<p class="text-gray-500 text-xs">Lokasi rumah belum diatur oleh siswa.</p>')
+                    .openOn(mapInstance);
             }
+            // SOLUSI UTAMA: Paksa Leaflet menghitung ulang ukuran setelah modal terbuka
+            setTimeout(function() {
+                if (mapInstance) {
+                    mapInstance.invalidateSize();
+                }
+            }, 400); // Jeda 400ms memastikan animasi modal selesai
         }
 
         /* ── Toast ────────────────────────────────────────────── */
