@@ -1,4 +1,4 @@
-g# 🚀 Monitoring Kebiasaan Harian
+# 🚀 Monitoring Kebiasaan Harian
 
 ### SMK N 5 Telkom Banda Aceh
 
