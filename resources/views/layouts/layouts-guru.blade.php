@@ -183,6 +183,8 @@
 
         </div>{{-- end main --}}
     </div>
+    
+    @stack('scripts')
 
     <script>
         const sidebar = document.getElementById('sidebar');
