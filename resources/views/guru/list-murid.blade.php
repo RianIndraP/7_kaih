@@ -257,7 +257,19 @@
                 </div>
             </div>
 
-            <div class="flex justify-end px-6 pb-5">
+            <div class="flex justify-end px-6 pb-5 gap-3">
+
+                <button id="btnDapatkanRute" onclick="bukaGoogleMapsRute()"
+                    class="hidden px-5 py-2 bg-blue-600 hover:bg-blue-700 text-sm font-medium
+               text-white rounded-lg transition-colors flex items-center gap-2 shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Dapatkan Rute
+                </button>
                 <button onclick="tutupModal('modalProfil')"
                     class="px-6 py-2 border border-gray-300 hover:bg-gray-50 text-sm font-medium
                            text-gray-700 rounded-lg transition-colors">
@@ -361,8 +373,9 @@
                 <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-4 py-3 mb-4 bg-gray-50">
                     <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
-                                                     a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
+                                                                                     a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     <span class="text-sm font-semibold text-gray-800">Kirim Pesan</span>
                     <span class="ml-auto text-xs text-gray-400" id="pesanTanggal"></span>
@@ -453,8 +466,9 @@
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5
-                                                     4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5
+                                                                                     4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                 </div>
                 <div>
@@ -492,7 +506,7 @@
         <span id="toastMsg"></span>
     </div>
 
-    <script src="https://unpkg.com"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         /* ── Data dari PHP ─────────────────────────────────────── */
         var semuaSiswa = @json($siswaList);
@@ -501,6 +515,9 @@
         var hapusSiswaId = null;
         var hapusUmpanBalikId = null;
         var pesanSiswaData = null;
+
+        var currentSiswaLat = null;
+        var currentSiswaLng = null;
 
         /* ── Konstanta nama bulan ─────────────────────────────── */
         var NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -1100,6 +1117,18 @@
                         placeholderEl.classList.remove('hidden');
                     }
 
+                    // Simpan koordinat ke variabel global
+                    currentSiswaLat = data.latitude;
+                    currentSiswaLng = data.longitude;
+
+                    // Tampilkan tombol rute jika koordinat tersedia
+                    var btnRute = document.getElementById('btnDapatkanRute');
+                    if (currentSiswaLat && currentSiswaLng && currentSiswaLat !== '0') {
+                        btnRute.classList.remove('hidden');
+                    } else {
+                        btnRute.classList.add('hidden');
+                    }
+
                     // Open modal
                     bukaModal('modalProfil');
 
@@ -1110,11 +1139,29 @@
                             mapInstance.invalidateSize();
                         }
                     }, 400);
+
+
                 })
                 .catch(function(err) {
                     console.error('Error fetching profile:', err);
                     tampilkanToast('Gagal memuat profil siswa', 'red');
                 });
+        }
+
+        function bukaGoogleMapsRute() {
+            // Pastikan variabel global sudah terisi angka koordinat
+            if (currentSiswaLat && currentSiswaLng && currentSiswaLat !== '0') {
+
+                // FORMAT URL YANG BENAR:
+                // 'dir' untuk rute (direction), 'api=1' untuk mode modern, 'destination' untuk tujuan
+                var url = "https://www.google.com/maps/search/?api=1&query=" + currentSiswaLat + "," + currentSiswaLng;
+
+                // Membuka tab baru
+                window.open(url, '_blank');
+
+            } else {
+                alert("Koordinat lokasi tidak ditemukan atau tidak valid.");
+            }
         }
 
         function initMap(latitude, longitude) {
@@ -1134,7 +1181,7 @@
             var lng = longitude ? parseFloat(longitude) : 95.3177;
 
             // Initialize Leaflet map
-            mapInstance = L.map('profilMap').setView([lat, lng], hasLocation ? 15 : 5);
+            mapInstance = L.map('profilMap').setView([lat, lng], hasLocation ? 15 : 15);
 
             // Add tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
