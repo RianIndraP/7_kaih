@@ -10,7 +10,7 @@ Aplikasi berbasis web menggunakan **Laravel 12** untuk memantau aktivitas dan ke
 
 Pastikan sudah menginstal:
 
-* PHP >= 8.3
+* PHP >= 8.4
 * Composer
 * Node.js & NPM
 * MySQL / MariaDB
