@@ -10,16 +10,16 @@ Aplikasi berbasis web menggunakan **Laravel 12** untuk memantau aktivitas dan ke
 
 Pastikan sudah menginstal:
 
-* PHP >= 8.4
-* Composer
-* Node.js & NPM
-* MySQL / MariaDB
+-   PHP >= 8.4
+-   Composer
+-   Node.js & NPM
+-   MySQL / MariaDB
 
 ---
 
 ## 📥 Instalasi (Setelah Clone Repository)
 
-> ⚠️ **Catatan:** Jika Anda mendapatkan project ini dari `git clone`, maka **tidak perlu menjalankan ****`git init`**** atau ****`git remote`**** lagi**.
+> ⚠️ **Catatan:** Jika Anda mendapatkan project ini dari `git clone`, maka **tidak perlu menjalankan \*\***`git init`\***\* atau \*\***`git remote`\***\* lagi**.
 
 ### 1. Clone Repository
 
@@ -67,6 +67,12 @@ cp .env.example .env
 Edit bagian database di `.env`:
 
 ```env
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
 DB_DATABASE=7_kaih
 DB_USERNAME=root
 DB_PASSWORD=
@@ -82,18 +88,60 @@ php artisan key:generate
 
 ---
 
+## 🔔 Setup Firebase (WAJIB)
+
+Project ini menggunakan **Firebase Cloud Messaging (FCM)** untuk notifikasi.
+
+### 1. Tambahkan di `.env`
+
+```env
+FIREBASE_API_KEY=your_api_key
+FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+FIREBASE_APP_ID=your_app_id
+```
+
+### 2. Setup Service Account (Backend)
+
+1. Buka Firebase Console
+2. Masuk ke:  
+   **Project Settings → Service Accounts**
+3. Download file JSON
+
+4. Simpan di:
+
+storage/app/firebase.json
+
+> ⚠️ Jangan upload file ini ke GitHub (sangat sensitif)
+
+---
+
+Jika tidak memiliki akses ke Firebase project, silakan hubungi [Admin Project](https://wa.me/6287817956703) untuk mendapatkan file konfigurasi.
+
 ## 🗄️ Setup Database (Manual SQL)
 
 Project ini **tidak menggunakan migration**, gunakan file SQL manual:
 
-1. Buat database baru:
+### 1. Buat database baru:
    `7_kaih`
 
-2. Import file:
+### 2. Import file:
 
 ```
 /database/sql/7_kaih.sql
 ```
+
+> 📌 Ini berisi struktur awal + data penting
+
+### 3. Jalankan Migration
+
+```bash
+php artisan migrate
+```
+
+> 📌 Digunakan untuk menambahkan/update tabel terbaru dari Laravel
 
 ---
 
@@ -211,12 +259,12 @@ git push origin main
 
 ## ⚠️ Important Notes
 
-* File `.env` **tidak boleh di-upload ke GitHub**
-* Pastikan `.env` sudah ada di `.gitignore`
-* Jangan upload:
+-   File `.env` **tidak boleh di-upload ke GitHub**
+-   Pastikan `.env` sudah ada di `.gitignore`
+-   Jangan upload:
 
-  * `/vendor`
-  * `/node_modules`
+    -   `/vendor`
+    -   `/node_modules`
 
 ---
 
