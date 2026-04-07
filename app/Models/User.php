@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
 class User extends Authenticatable
 {
@@ -49,6 +50,8 @@ class User extends Authenticatable
         'foto',
         'tempat_lahir',
         'no_hp',
+        'fcm_token',
+        'last_login_at', 
     ];
 
     /**
@@ -71,7 +74,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'birth_date' => 'date',
-            'tanggal_masuk' => 'date',
+            'tanggal_masuk' => 'datetime',
             'is_alumni' => 'boolean',
             'password' => 'hashed',
         ];
@@ -109,13 +112,13 @@ class User extends Authenticatable
         if (empty($this->tanggal_masuk)) {
             return false;
         }
-        
-        $entryDate = $this->tanggal_masuk;
-        
+
+        $entryDate = Carbon::parse($this->tanggal_masuk);
+
         // Calculate the alumni date: July year 1 to May year 3
         // Entry is July of year 1, alumni becomes May of year 3 (after ~2 years 10 months)
         $alumniDate = $entryDate->copy()->addYears(2)->setMonth(5)->setDay(31);
-        
+
         return now()->greaterThanOrEqualTo($alumniDate);
     }
 

@@ -141,8 +141,8 @@
                                     justify-center shrink-0 transition-colors">
                                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0
-                                                         00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2
-                                                         2 0 012 2m-6 9l2 2 4-4" />
+                                                                 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2
+                                                                 2 0 012 2m-6 9l2 2 4-4" />
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
@@ -167,7 +167,7 @@
                                 <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0
-                                                         012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                                                 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
@@ -202,7 +202,7 @@
                             <svg class="w-4 h-4 text-yellow-600 shrink-0" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
-                                                     001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                                                             001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                             </svg>
                             <span class="text-xs font-medium text-yellow-700">Belum Mengisi Data</span>
                         </div>
@@ -258,7 +258,7 @@
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
-                                                         m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                                 Lengkapi data kebiasaan →
                             </a>
@@ -285,7 +285,7 @@
             <div class="flex items-center gap-3 bg-white border border-yellow-200 rounded-xl px-5 py-3 shadow-sm">
                 <svg class="w-5 h-5 text-yellow-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
-                                         001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                                                 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
                 <p class="text-sm text-gray-700">Anda belum mengisi data kebiasaan hari ini</p>
                 <a href="{{ route('student.kebiasaan') }}"
@@ -304,5 +304,80 @@
         @endif
 
     </div>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+
+    <script>
+        // Konfigurasi Firebase 
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-AM4wp75BPE6qO_qpCOBJhI5Al20MAJ0",
+            authDomain: "kaih-96705.firebaseapp.com",
+            projectId: "kaih-96705",
+            storageBucket: "kaih-96705.firebasestorage.app",
+            messagingSenderId: "483886147031",
+            appId: "1:483886147031:web:50feb71270712893dc1792"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+
+        messaging.onMessage((payload) => {
+            console.log('Notif masuk:', payload);
+
+            new Notification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: '/img/logo-1.png'
+            });
+        });
+
+        function askForPermission() {
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    console.log('Izin diberikan.');
+
+                    // Ambil Token
+                    messaging.getToken({
+                        vapidKey: 'BKF8hImiWIPNnOgb-jVu9IEV9mXCUR_y0OcbAMpXbSpVK3CImtAHg-hD9RQ_tV41vPvSAHq8RWMIS4K6wj46Rck'
+                    }).then((currentToken) => {
+                        if (currentToken) {
+                            console.log('Token Berhasil Didapat:', currentToken);
+
+                            // Kirim ke Laravel
+                            fetch('/save-token', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify({
+                                        token: currentToken
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert('Notifikasi berhasil diaktifkan!');
+                                    }
+                                });
+
+                        } else {
+                            console.log('Gagal mendapatkan token. Coba lagi.');
+                        }
+                    }).catch((err) => {
+                        console.log('Error Token: ', err);
+                    });
+                } else {
+                    alert('Izin ditolak. Silakan aktifkan manual dari pengaturan browser (ikon gembok).');
+                }
+            });
+        }
+    </script>
+
+    <!-- Tombol ala Duolingo -->
+    <button onclick="askForPermission()"
+        style="padding: 10px; background: #58cc02; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Aktifkan Notifikasi Pengingat
+    </button>
 
 @endsection

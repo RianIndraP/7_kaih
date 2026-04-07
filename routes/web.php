@@ -1,29 +1,46 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ManajemenGuruController as AdminManajemenGuruController;
+use App\Http\Controllers\Admin\ManajemenSiswaController as AdminManajemenSiswaController;
+use App\Http\Controllers\Admin\PesanBantuanController as AdminPesanBantuanController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Student\KebiasaanController;
-use App\Http\Controllers\Student\DashboardController;
-use App\Http\Controllers\Student\PesanController;
-use App\Http\Controllers\Student\GantiPasswordController;
-use App\Http\Controllers\Student\PesanBantuanController;
+use App\Http\Controllers\Guru\AbsensiController as GuruAbsensiController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\GuruProfilController as GuruProfilController;
-use App\Http\Controllers\Guru\AbsensiController as GuruAbsensiController;
-use App\Http\Controllers\Guru\PelaporanController as GuruPelaporanController;
-use App\Http\Controllers\Guru\KirimPesanController as GuruKirimPesanController;
-use App\Http\Controllers\Guru\PesanBantuanController as GuruPesanBantuanController;
-use App\Http\Controllers\Guru\GantiPasswordController as GuruGantiPasswordController;
 use App\Http\Controllers\Guru\ListMuridController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\PesanBantuanController as AdminPesanBantuanController;
-use App\Http\Controllers\Admin\ManajemenSiswaController as AdminManajemenSiswaController;
-use App\Http\Controllers\Admin\ManajemenGuruController as AdminManajemenGuruController;
+use App\Http\Controllers\Guru\PelaporanController as GuruPelaporanController;
+use App\Http\Controllers\NotifController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Student\DashboardController;
+use App\Http\Controllers\Student\GantiPasswordController;
+use App\Http\Controllers\Student\KebiasaanController;
+use App\Http\Controllers\Student\PesanBantuanController;
+use App\Http\Controllers\Student\PesanController;
+use App\Models\FcmToken;
+use Illuminate\Support\Facades\Route;
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 Route::get('/', function () {
     return redirect()->route('login');
+});
+
+Route::post('/save-token', [NotifController::class, 'saveToken']);
+
+Route::get('/test-notif', function () {
+
+    $tokens = FcmToken::pluck('token');
+
+    foreach ($tokens as $token) {
+        app(App\Http\Controllers\NotifController::class)
+            ->sendNotif(
+                $token,
+                'Test Laravel 🔥',
+                'Notifikasi dari backend berhasil!'
+            );
+    }
+
+    return 'Notif dikirim ke semua device';
 });
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
