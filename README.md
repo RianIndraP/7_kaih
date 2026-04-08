@@ -161,6 +161,22 @@ http://localhost:8000
 
 ---
 
+## ⏰ Menjalankan Scheduler (WAJIB untuk Notifikasi)
+
+Scheduler digunakan untuk menjalankan tugas otomatis seperti **notifikasi harian**.
+
+```bash
+php artisan schedule:work
+```
+
+> 📌 Biarkan terminal ini tetap berjalan selama development.
+
+| ⚠️ PENTING |
+| :--- |
+| **Jika scheduler tidak dijalankan:** <br> ❌ Notifikasi tidak akan pernah terkirim |
+
+---
+
 ## 🌐 Mode Publik (Ngrok)
 
 Jika ingin diakses dari HP / perangkat lain:
@@ -205,6 +221,12 @@ Terminal 2:
 
 ```bash
 npm run dev
+```
+
+Terminal 3:
+
+```bash
+php artisan schedule:work
 ```
 
 ---
