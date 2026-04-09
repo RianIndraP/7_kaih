@@ -31,7 +31,48 @@ class SendDailyNotification extends Command
     {
         Log::info('Scheduler notif jalan');
 
-        $tokens = DB::table('fcm_tokens')->pluck('token');
+        $now = now()->format('H:i');
+
+        $field = null;
+        $namaSholat = null;
+
+        if ($now >= '05:30' && $now < '06:30') {
+            $field = 'sholat_subuh';
+            $namaSholat = 'Subuh';
+        } elseif ($now >= '13:00' && $now < '14:00') {
+            $field = 'sholat_dzuhur';
+            $namaSholat = 'Dzuhur';
+        } elseif ($now >= '16:00' && $now < '17:00') {
+            $field = 'sholat_ashar';
+            $namaSholat = 'Ashar';
+        } elseif ($now >= '19:00' && $now < '20:00') {
+            $field = 'sholat_maghrib';
+            $namaSholat = 'Maghrib';
+        } elseif ($now >= '20:00' && $now < '21:00') {
+            $field = 'sholat_isya';
+            $namaSholat = 'Isya';
+        }
+
+        // kalau bukan jam notif → stop
+        if (!$field) {
+            Log::info('Bukan waktu notifikasi');
+            return;
+        }
+
+        $tokens = DB::table('users')
+            ->join('fcm_tokens', 'users.id', '=', 'fcm_tokens.user_id')
+            ->leftJoin('kebiasaan_harian', function ($join) {
+                $join->on('users.id', '=', 'kebiasaan_harian.user_id')
+                    ->whereDate('kebiasaan_harian.tanggal', now()->toDateString());
+            })
+            ->whereNotNull('users.nisn') // hanya murid
+            ->where('users.is_alumni', 0)
+            ->where(function ($query) use ($field) {
+                $query->whereNull('kebiasaan_harian.id')
+                    ->orWhere("kebiasaan_harian.$field", 0);
+            })
+            ->distinct()
+            ->pluck('fcm_tokens.token');
 
         if ($tokens->isEmpty()) {
             Log::warning('Tidak ada token FCM');
@@ -43,8 +84,8 @@ class SendDailyNotification extends Command
                 $messaging->send([
                     'token' => $token,
                     'data' => [
-                        'title' => 'Reminder Harian 📅',
-                        'body'  => 'Jangan lupa isi kebiasaan harian kamu!',
+                        'title' => '⏰ Waktu ' . $namaSholat,
+                        'body'  => 'Jangan lupa isi sholat ' . $namaSholat,
                         'url'   => '/student/dashboard'
                     ],
                 ]);
@@ -53,6 +94,6 @@ class SendDailyNotification extends Command
             }
         }
 
-        $this->info('Notifikasi berhasil dikirim!');
+        Log::info("Notif $namaSholat dikirim");
     }
 }
