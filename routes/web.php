@@ -25,7 +25,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::post('/save-token', [NotifController::class, 'saveToken']);
+Route::post('/save-token', [NotifController::class, 'saveToken'])->middleware('auth');
 
 Route::get('/test-notif', function () {
 
@@ -61,7 +61,7 @@ Route::post('/create-new-password', [AuthController::class, 'createNewPassword']
 Route::get('/password-success', [AuthController::class, 'showPasswordSuccess'])->name('password-success');
 
 // ── Student (protected) ───────────────────────────────────────────────────────
-Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'siswa'])->prefix('student')->name('student.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -92,7 +92,7 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
 });
 
 // ── Guru (protected) ──────────────────────────────────────────────────────────
-Route::middleware(['auth'])->prefix('guru')->name('guru.')->group(function () {
+Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
