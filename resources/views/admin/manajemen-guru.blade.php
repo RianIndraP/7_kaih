@@ -234,7 +234,7 @@
 
                 <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label><input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
 
-                <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Email <span class="text-red-500">*</span></label><input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Email <span class="text-gray-400">(opsional)</span></label><input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
 
                 <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label><select name="gender" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"><option value="">Pilih</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
 
@@ -354,7 +354,21 @@
 
             </div>
 
-            <p class="text-xs text-gray-500 mt-4">Format: .xlsx, .xls, .csv</p>
+            <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p class="text-xs font-medium text-amber-800 mb-2">Format Excel yang dibutuhkan (baris 1-2 dilewati, baris 3 header):</p>
+                <div class="grid grid-cols-2 gap-2 text-xs text-amber-700">
+                    <span>Kolom A: NIP</span>
+                    <span>Kolom B: NIK</span>
+                    <span>Kolom C: Nama Lengkap *</span>
+                    <span>Kolom D: Jenis Kelamin (Laki-laki/Perempuan)</span>
+                    <span>Kolom E: Tanggal Lahir (dd/mm/yyyy)</span>
+                    <span>Kolom F: Status Pegawai</span>
+                    <span>Kolom G: Unit Kerja</span>
+                </div>
+                <p class="text-xs text-amber-600 mt-2">* Kolom wajib diisi</p>
+            </div>
+
+            <p class="text-xs text-gray-500 mt-3">Format file: .xlsx, .xls, .csv</p>
 
             <div class="flex justify-end gap-3 mt-6">
 

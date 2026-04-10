@@ -170,8 +170,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Manajemen Guru
     Route::get('/guru', [AdminManajemenGuruController::class, 'index'])->name('guru');
     Route::post('/guru', [AdminManajemenGuruController::class, 'store'])->name('guru.store');
+    Route::post('/guru/import', [AdminManajemenGuruController::class, 'import'])->name('guru.import');
     Route::post('/guru/{id}', [AdminManajemenGuruController::class, 'update'])->name('guru.update');
     Route::delete('/guru/{id}', [AdminManajemenGuruController::class, 'destroy'])->name('guru.destroy');
-    Route::post('/guru/import', [AdminManajemenGuruController::class, 'import'])->name('guru.import');
     Route::get('/guru/{id}/data', [AdminManajemenGuruController::class, 'getData'])->name('guru.data');
 });

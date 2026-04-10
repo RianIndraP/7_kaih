@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="p-6 bg-gray-50 min-h-screen">
+<div class="bg-gray-50 min-h-screen">
 
     {{-- ===== HEADER ===== --}}
     <div class="flex items-center justify-between mb-6">

@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ManajemenGuruController extends Controller
 {
@@ -40,11 +43,20 @@ class ManajemenGuruController extends Controller
             'gender' => 'required|in:Laki-laki,Perempuan',
             'birth_date' => 'nullable|date',
             'no_telepon' => 'nullable|string',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'nullable|email|unique:users,email',
             // Guru specific fields
             'status_pegawai' => 'nullable|string',
             'unit_kerja' => 'nullable|string',
         ]);
+
+        // Check if email already exists (only if email is provided)
+        $email = $validated['email'] ?? null;
+        if (!empty($email)) {
+            $emailExists = User::where('email', $email)->first();
+            if ($emailExists) {
+                return redirect()->route('admin.guru')->with('error', 'Email ' . $email . ' sudah digunakan');
+            }
+        }
 
         // Create user account for guru
         $user = User::create([
@@ -54,7 +66,7 @@ class ManajemenGuruController extends Controller
             'gender' => $validated['gender'],
             'birth_date' => $validated['birth_date'] ?? null,
             'no_telepon' => $validated['no_telepon'] ?? null,
-            'email' => $validated['email'],
+            'email' => $email,
             'password' => Hash::make('guru'),
         ]);
 
@@ -123,11 +135,218 @@ class ManajemenGuruController extends Controller
     public function import(Request $request): RedirectResponse
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv',
+            'file' => 'required|file|mimes:xlsx,xls,csv,txt',
         ]);
 
-        // TODO: Implement Excel import logic
-        return redirect()->route('admin.guru')->with('success', 'Import data guru berhasil!');
+        try {
+            $file = $request->file('file');
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            $rows = [];
+
+            if ($extension === 'csv' || $extension === 'txt') {
+                // CSV import
+                $handle = fopen($file->getPathname(), 'r');
+                if (!$handle) {
+                    return redirect()->route('admin.guru')->with('error', 'Gagal membaca file');
+                }
+                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                    $rows[] = $data;
+                }
+                fclose($handle);
+            } else {
+                // Excel import (XLSX, XLS)
+                $spreadsheet = IOFactory::load($file->getPathname());
+                $worksheet = $spreadsheet->getActiveSheet();
+                $rows = $worksheet->toArray();
+            }
+
+            $imported = 0;
+            $errors = [];
+
+            // Skip first 2 rows (kop surat), row 3 is header
+            array_shift($rows); // Skip row 1
+            array_shift($rows); // Skip row 2
+            $header = array_shift($rows); // Row 3 is header
+
+            foreach ($rows as $index => $row) {
+                // Skip empty rows
+                if (empty($row[0]) && empty($row[1]) && empty($row[2])) {
+                    continue;
+                }
+
+                // Map Excel columns
+                $nip = trim((string)($row[0] ?? ''));
+                $nik = trim((string)($row[1] ?? ''));
+                $name = trim($row[2] ?? '');
+                $gender = trim($row[3] ?? '');
+                $birthDate = trim($row[4] ?? '');
+                $statusPegawai = trim($row[5] ?? '');
+                $unitKerja = trim($row[6] ?? '');
+
+                // Row errors for this guru
+                $rowErrors = [];
+
+                // Skip if required field (Nama) is empty
+                if (empty($name)) {
+                    $errors[] = 'Baris ' . ($index + 4) . ': Nama wajib diisi - Data diabaikan';
+                    continue;
+                }
+
+                // Check if NIP already exists
+                if (!empty($nip)) {
+                    $existingNip = User::where('nip', $nip)->first();
+                    if ($existingNip) {
+                        $errors[] = $name . ' (NIP: ' . $nip . ') - NIP sudah ada di database - Data diabaikan';
+                        continue;
+                    }
+                }
+
+                // Check if NIK already exists
+                if (!empty($nik)) {
+                    $existingNik = User::where('nik', $nik)->first();
+                    if ($existingNik) {
+                        $errors[] = $name . ' (NIK: ' . $nik . ') - NIK sudah ada di database - Data diabaikan';
+                        continue;
+                    }
+                }
+
+                // Parse birth_date
+                $parsedBirthDate = null;
+                if (!empty($birthDate)) {
+                    // Debug: log raw value from Excel
+                    Log::debug('Guru import date debug', [
+                        'name' => $name,
+                        'raw_value' => $birthDate,
+                        'raw_type' => gettype($birthDate),
+                        'is_numeric' => is_numeric($birthDate)
+                    ]);
+
+                    $dateParsed = false;
+
+                    // Try multiple formats
+                    $formats = ['d/m/Y', 'd-m-Y', 'Y-m-d', 'm/d/Y', 'd.m.Y'];
+
+                    foreach ($formats as $format) {
+                        try {
+                            $parsedBirthDate = \Carbon\Carbon::createFromFormat($format, $birthDate)->format('Y-m-d');
+                            Log::debug('Date parsed successfully', [
+                                'name' => $name,
+                                'format' => $format,
+                                'raw' => $birthDate,
+                                'result' => $parsedBirthDate
+                            ]);
+                            $dateParsed = true;
+                            break;
+                        } catch (\Exception $e) {
+                            continue;
+                        }
+                    }
+
+                    // If string parsing fails, check if it's Excel serial number
+                    if (!$dateParsed && is_numeric($birthDate)) {
+                        try {
+                            $excelDate = Date::excelToDateTimeObject($birthDate);
+                            $parsedBirthDate = $excelDate->format('Y-m-d');
+                            Log::debug('Excel serial date converted', [
+                                'name' => $name,
+                                'serial' => $birthDate,
+                                'result' => $parsedBirthDate
+                            ]);
+                            $dateParsed = true;
+                        } catch (\Exception $e) {
+                            Log::debug('Excel date conversion failed', ['name' => $name, 'serial' => $birthDate]);
+                        }
+                    }
+
+                    // Last fallback to standard parse
+                    if (!$dateParsed) {
+                        try {
+                            $parsedBirthDate = \Carbon\Carbon::parse($birthDate)->format('Y-m-d');
+                            Log::debug('Date parsed with fallback', [
+                                'name' => $name,
+                                'raw' => $birthDate,
+                                'result' => $parsedBirthDate
+                            ]);
+                        } catch (\Exception $e) {
+                            $rowErrors[] = 'Tanggal Lahir tidak valid: ' . $birthDate;
+                            Log::debug('Date parsing failed completely', ['name' => $name, 'raw' => $birthDate]);
+                        }
+                    }
+                }
+
+                // Normalize gender
+                $normalizedGender = null;
+                if (!empty($gender)) {
+                    $genderLower = strtolower(str_replace(' ', '-', $gender));
+                    if (in_array($genderLower, ['laki-laki', 'l', 'male', 'laki'])) {
+                        $normalizedGender = 'Laki-laki';
+                    } elseif (in_array($genderLower, ['perempuan', 'p', 'female', 'perempuan'])) {
+                        $normalizedGender = 'Perempuan';
+                    } else {
+                        $rowErrors[] = 'Jenis Kelamin (format tidak valid: ' . $gender . ', dikosongkan)';
+                    }
+                }
+
+                // Generate email from NIP or NIK or random
+                $email = null;
+                if (!empty($nip)) {
+                    $email = $nip . '@guru.7kaih.sch.id';
+                } elseif (!empty($nik)) {
+                    $email = $nik . '@guru.7kaih.sch.id';
+                } else {
+                    // Generate random email based on name
+                    $emailSlug = strtolower(str_replace(' ', '.', preg_replace('/[^a-zA-Z0-9\s]/', '', $name)));
+                    $email = $emailSlug . rand(100, 999) . '@guru.7kaih.sch.id';
+                }
+
+                // Check if email already exists
+                $emailExists = User::where('email', $email)->first();
+                if ($emailExists) {
+                    $email = 'guru.' . time() . rand(1000, 9999) . '@guru.7kaih.sch.id';
+                }
+
+                // Create user and guru
+                try {
+                    // Create user account
+                    $user = User::create([
+                        'name' => $name,
+                        'nip' => !empty($nip) ? $nip : null,
+                        'nik' => !empty($nik) ? $nik : null,
+                        'gender' => $normalizedGender,
+                        'birth_date' => $parsedBirthDate,
+                        'email' => $email,
+                        'password' => Hash::make('guru'),
+                    ]);
+
+                    // Create guru record
+                    Guru::create([
+                        'user_id' => $user->id,
+                        'status_pegawai' => !empty($statusPegawai) ? $statusPegawai : null,
+                        'unit_kerja' => !empty($unitKerja) ? $unitKerja : null,
+                    ]);
+
+                    $imported++;
+
+                    // Add error info for this guru if any fields failed
+                    if (!empty($rowErrors)) {
+                        $errors[] = $name . ' - ' . implode(', ', $rowErrors);
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = $name . ' - Gagal simpan: ' . $e->getMessage() . ' - Data diabaikan';
+                }
+            }
+
+            // Build summary message
+            $message = 'Import berhasil! ' . $imported . ' guru ditambahkan.';
+            if (!empty($errors)) {
+                $message .= '<br><br><strong>Rincian data yang bermasalah:</strong><br>' . implode('<br>', $errors);
+            }
+
+            return redirect()->route('admin.guru')->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.guru')->with('error', 'Import gagal: ' . $e->getMessage() . ' | Line: ' . $e->getLine());
+        }
     }
 
     public function getData($id)

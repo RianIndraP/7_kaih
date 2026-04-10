@@ -10,7 +10,7 @@
     .tab-btn { white-space: nowrap; }
 </style>
 
-<div class="p-6 bg-gray-50 min-h-screen">
+<div class="bg-gray-50 min-h-screen">
 
     {{-- Tanggal --}}
     <div class="mb-6">

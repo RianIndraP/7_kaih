@@ -111,7 +111,7 @@
                     <span class="text-xs text-gray-400 mx-2">:</span>
                     <select id="p_kelas" class="inline-edit flex-1 cursor-pointer">
                         @foreach (['X RPL 1', 'X RPL 2', 'XI RPL 1', 'XI RPL 2', 'XII RPL 1', 'XII RPL 2'] as $k)
-                            <option value="{{ $k }}" {{ ($user->kelas ?? '') == $k ? 'selected' : '' }}>
+                            <option value="{{ $k }}" {{ ($user->kelas?->nama_kelas ?? '') == $k ? 'selected' : '' }}>
                                 {{ $k }}</option>
                         @endforeach
                     </select>

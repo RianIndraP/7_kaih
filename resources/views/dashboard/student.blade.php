@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="bg-gray-50 min-h-screen">
 
         {{-- ===== GREETING ===== --}}
         <p class="text-base font-medium text-gray-800 mb-5">
@@ -303,6 +303,62 @@
             </div>
         @endif
 
+        {{-- Notifikasi Section --}}
+        <div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-100">
+            <div class="flex items-start gap-4">
+                {{-- Icon --}}
+                <div class="shrink-0 w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                </div>
+
+                {{-- Content --}}
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-base font-semibold text-gray-900 mb-1">Notifikasi Pengingat</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-3">
+                        Aktifkan notifikasi untuk mendapatkan pengingat mengisi kebiasaan harian. 
+                        Tidak akan ada spam, hanya pengingat penting saja.
+                    </p>
+
+                    {{-- Benefits --}}
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-gray-600 shadow-sm border border-gray-200">
+                            <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Pengingat Harian
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-gray-600 shadow-sm border border-gray-200">
+                            <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Tanpa Spam
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-gray-600 shadow-sm border border-gray-200">
+                            <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Bisa Dimenonaktifkan
+                        </span>
+                    </div>
+
+                    {{-- Button --}}
+                    <button onclick="askForPermission()"
+                        class="group inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 
+                               text-white text-sm font-semibold rounded-lg transition-all duration-200
+                               shadow-md shadow-blue-200 hover:shadow-lg hover:shadow-blue-300
+                               hover:-translate-y-0.5 active:translate-y-0">
+                        <svg class="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Aktifkan Notifikasi
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -373,11 +429,5 @@
             });
         }
     </script>
-
-    <!-- Tombol ala Duolingo -->
-    <button onclick="askForPermission()"
-        style="padding: 10px; background: #58cc02; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Aktifkan Notifikasi Pengingat
-    </button>
 
 @endsection
