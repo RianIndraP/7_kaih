@@ -59,20 +59,25 @@ class Guru extends Model
     public function getNamaLengkapAttribute(): string
     {
         $nama = $this->user->name;
-        
+
         if ($this->gelar_depan) {
             $nama = $this->gelar_depan . ' ' . $nama;
         }
-        
+
         if ($this->gelar_belakang) {
             $nama = $nama . ', ' . $this->gelar_belakang;
         }
-        
+
         return $nama;
     }
 
     public function scopeWaliKelas($query)
     {
         return $query->where('is_wali_kelas', true);
+    }
+
+    public function lampiranA()
+    {
+        return $this->hasMany(LampiranA::class);
     }
 }

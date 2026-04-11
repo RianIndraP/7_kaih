@@ -122,6 +122,8 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
 
     // Pelaporan
     Route::get('/pelaporan', [GuruPelaporanController::class, 'index'])->name('pelaporan');
+    Route::post('/pelaporan/lampiran-a', [GuruPelaporanController::class, 'storeLampiranA'])->name('lampiran-a.store');  // Lampiran A
+
 
     // Kirim Pesan ke Siswa
     // Route::get('/kirim-pesan', [GuruKirimPesanController::class, 'index'])->name('kirim-pesan');

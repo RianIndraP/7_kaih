@@ -3,56 +3,8 @@
 @section('title', 'SMK N 5 Telkom Banda Aceh | Pelaporan')
 
 @php
-    if (!isset($muridList)) {
-        $muridList = collect([
-            (object) ['name' => 'Ahmad Fauzi', 'kelas' => 'XII RPL 1', 'gender' => 'L', 'no_ortu' => '0812-3456-7890'],
-            (object) ['name' => 'Budi Santoso', 'kelas' => 'XII RPL 1', 'gender' => 'L', 'no_ortu' => '0813-2345-6789'],
-            (object) [
-                'name' => 'Citra Wulandari',
-                'kelas' => 'XII RPL 1',
-                'gender' => 'P',
-                'no_ortu' => '0821-9876-5432',
-            ],
-            (object) [
-                'name' => 'Dewi Anggraini',
-                'kelas' => 'XII RPL 1',
-                'gender' => 'P',
-                'no_ortu' => '0852-1122-3344',
-            ],
-            (object) ['name' => 'Eko Prasetyo', 'kelas' => 'XII RPL 1', 'gender' => 'L', 'no_ortu' => '0811-5566-7788'],
-            (object) [
-                'name' => 'Fitri Handayani',
-                'kelas' => 'XII RPL 1',
-                'gender' => 'P',
-                'no_ortu' => '0898-4455-6677',
-            ],
-            (object) [
-                'name' => 'Gilang Ramadhan',
-                'kelas' => 'XII RPL 1',
-                'gender' => 'L',
-                'no_ortu' => '0877-3344-5566',
-            ],
-            (object) ['name' => 'Hana Safitri', 'kelas' => 'XII RPL 1', 'gender' => 'P', 'no_ortu' => '0856-6677-8899'],
-        ]);
-    }
-
-    if (!isset($guru)) {
-        $guru = (object) [
-            'unit_kerja' => 'XII RPL 1',
-            'nip' => '19850312 201001 2 004',
-            'user' => (object) ['name' => 'Farida Rahmawati, S.Pd.'],
-        ];
-    }
-
-    if (!isset($tahunAjaran)) {
-        $tahunAjaran = '2025/2026';
-    }
-    if (!isset($pertemuanList)) {
-        $pertemuanList = ['Pertemuan 1', 'Pertemuan 2', 'Pertemuan 3'];
-    }
-
-    $logoLeft = asset('images/logo-pancacita.png');
-    $logoRight = asset('images/logo-smkn5.png');
+    $logoLeft = asset('img/logo-2.png');
+    $logoRight = asset('img/logo-1.png');
 
     $kopSurat =
         '
@@ -86,6 +38,7 @@
             <select
                 class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
                 id="lampiranSelect" onchange="handleLampiran(this.value)">
+                <option value="">Pilih Lampiran</option>
                 <option value="A">Lampiran A</option>
                 <option value="B">Lampiran B</option>
                 <option value="C">Lampiran C</option>
@@ -171,57 +124,14 @@
             {{-- ══ LAMPIRAN A ══ --}}
             <div class="lampiran-panel bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-A">
                 {!! $kopSurat !!}
-                <div class="text-center mb-4">
-                    <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN A
-                    </div>
-                    <div class="text-base font-semibold text-gray-800">Daftar Identitas Siswa Binaan Guru Wali</div>
-                    <div class="text-xs text-gray-500 mt-1">
-                        Kelas: {{ $guru->unit_kerja }} &nbsp;|&nbsp;
-                        Tahun Ajaran: {{ $tahunAjaran }} &nbsp;|&nbsp;
-                        Guru Wali: {{ $guru->user->name }}
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="bg-blue-50 text-gray-700">
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">NO</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Nama Siswa</th>
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Kelas</th>
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Jenis Kelamin</th>
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Kontak Orang Tua</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Catatan Khusus</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($muridList as $i => $m)
-                                <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="border border-gray-300 px-3 py-2 text-center text-gray-600">
-                                        {{ $i + 1 }}</td>
-                                    <td class="border border-gray-300 px-3 py-2 font-semibold text-gray-800">
-                                        {{ $m->name }}</td>
-                                    <td class="border border-gray-300 px-3 py-2 text-center text-gray-600">
-                                        {{ $m->kelas ?? '-' }}</td>
-                                    <td class="border border-gray-300 px-3 py-2 text-center text-gray-600">
-                                        {{ $m->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
-                                    <td class="border border-gray-300 px-3 py-2 text-center text-gray-600">
-                                        {{ $m->no_ortu ?? '-' }}</td>
-                                    <td class="border border-gray-300 px-2 py-1">
-                                        <textarea name="catatan_a{{ $i + 1 }}" placeholder="Tulis catatan..."
-                                            class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px]"></textarea>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                @include('guru.laporan.lampiran-a')
                 <div class="mt-8 flex justify-end">
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                         <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
                         <div class="mt-14 border-t border-gray-700 pt-1 font-bold">
-                            {{ $guru->user->name ?? '____________________' }}</div>
-                        <div class="text-xs text-gray-500">NIP. {{ $guru->nip ?? '____________________' }}</div>
+                            {{ $user->name ?? '____________________' }}</div>
+                        <div class="text-xs text-gray-500">NIP. {{ $user->nip ?? '____________________' }}</div>
                     </div>
                 </div>
             </div>
@@ -229,76 +139,7 @@
             {{-- ══ LAMPIRAN B ══ --}}
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-B">
                 {!! $kopSurat !!}
-                <div class="text-center mb-4">
-                    <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN B
-                    </div>
-                    <div class="text-base font-semibold text-gray-800">Catatan Perkembangan Siswa Binaan</div>
-                </div>
-                <div class="flex flex-wrap gap-2 mb-4">
-                    @foreach ($muridList as $i => $m)
-                        <button
-                            class="student-tab px-3 py-1.5 text-xs font-medium rounded-full border border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors {{ $loop->first ? '!bg-blue-600 !text-white !border-blue-600' : '' }}"
-                            onclick="switchStudent({{ $i }}, this)">{{ Str::words($m->name, 2, '') }}</button>
-                    @endforeach
-                </div>
-                @foreach ($muridList as $i => $m)
-                    <div class="student-pane {{ $loop->first ? '' : 'hidden' }}" id="sp-{{ $i }}">
-                        <div
-                            class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-3 text-sm text-gray-700 grid grid-cols-1 sm:grid-cols-2 gap-1">
-                            <div><span class="font-semibold">Nama Murid :</span> {{ $m->name }}</div>
-                            <div><span class="font-semibold">Kelas :</span> {{ $m->kelas ?? '-' }}</div>
-                            <div><span class="font-semibold">Periode Pemantauan :</span>
-                                {{ request('bulan', 'Januari 2026') }}</div>
-                            <div><span class="font-semibold">Guru Wali :</span> {{ $guru->user->name }}</div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm border-collapse">
-                                <thead>
-                                    <tr class="bg-blue-50 text-gray-700">
-                                        <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Aspek
-                                            Pemantauan</th>
-                                        <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Deskripsi
-                                            Perkembangan</th>
-                                        <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Tindak Lanjut
-                                            Yang Dilakukan</th>
-                                        <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Keterangan
-                                            Tambahan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (['Akademik', 'Karakter', 'Sosial Emosional', 'Kedisiplinan', 'Potensi & Minat'] as $aspek)
-                                        <tr class="hover:bg-blue-50 transition-colors">
-                                            <td class="border border-gray-300 px-3 py-2 text-gray-700">{{ $aspek }}
-                                            </td>
-                                            <td class="border border-gray-300 px-2 py-1">
-                                                <select name="b{{ $i }}_{{ Str::slug($aspek) }}_deskripsi"
-                                                    class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                                    <option>Sangat Berkembang</option>
-                                                    <option>Berkembang</option>
-                                                    <option selected>Mulai Berkembang</option>
-                                                    <option>Belum Berkembang</option>
-                                                </select>
-                                            </td>
-                                            <td class="border border-gray-300 px-2 py-1">
-                                                <select name="b{{ $i }}_{{ Str::slug($aspek) }}_tindak"
-                                                    class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                                    <option>Pertahankan</option>
-                                                    <option selected>Perlu Ditingkatkan</option>
-                                                    <option>Butuh Motivasi</option>
-                                                    <option>Perlu Perhatian Khusus</option>
-                                                </select>
-                                            </td>
-                                            <td class="border border-gray-300 px-2 py-1">
-                                                <textarea name="b{{ $i }}_{{ Str::slug($aspek) }}_ket" placeholder="Keterangan..."
-                                                    class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px]"></textarea>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                @endforeach
+                @include('guru.laporan.lampiran-b')
                 <div class="mt-8 flex justify-end">
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>

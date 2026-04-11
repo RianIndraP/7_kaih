@@ -9,29 +9,35 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('kelas', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_kelas')->unique();
-            $table->timestamps();
-        });
+        // ✅ CEK dulu sebelum create
+        if (!Schema::hasTable('kelas')) {
+            Schema::create('kelas', function (Blueprint $table) {
+                $table->id();
+                $table->string('nama_kelas')->unique();
+                $table->timestamps();
+            });
 
-        // Insert default kelas (10 kelas)
-        DB::table('kelas')->insert([
-            ['nama_kelas' => 'X RPL 1'],
-            ['nama_kelas' => 'X RPL 2'],
-            ['nama_kelas' => 'X TKJ 1'],
-            ['nama_kelas' => 'X TKJ 2'],
-            ['nama_kelas' => 'X TJA 1'],
-            ['nama_kelas' => 'X TJA 2'],
-            ['nama_kelas' => 'XI RPL 1'],
-            ['nama_kelas' => 'XI RPL 2'],
-            ['nama_kelas' => 'XII RPL 1'],
-            ['nama_kelas' => 'XII RPL 2'],
-        ]);
+            // insert default hanya kalau tabel baru dibuat
+            DB::table('kelas')->insert([
+                ['nama_kelas' => 'X RPL 1'],
+                ['nama_kelas' => 'X RPL 2'],
+                ['nama_kelas' => 'X TKJ 1'],
+                ['nama_kelas' => 'X TKJ 2'],
+                ['nama_kelas' => 'X TJA 1'],
+                ['nama_kelas' => 'X TJA 2'],
+                ['nama_kelas' => 'XI RPL 1'],
+                ['nama_kelas' => 'XI RPL 2'],
+                ['nama_kelas' => 'XII RPL 1'],
+                ['nama_kelas' => 'XII RPL 2'],
+            ]);
+        }
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->year('angkatan')->nullable()->after('kelas');
-        });
+        // ✅ CEK kolom juga
+        if (!Schema::hasColumn('users', 'angkatan')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->year('angkatan')->nullable(); // jangan pakai after
+            });
+        }
     }
 
     public function down(): void

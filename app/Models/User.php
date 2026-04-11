@@ -51,7 +51,7 @@ class User extends Authenticatable
         'tempat_lahir',
         'no_hp',
         'fcm_token',
-        'last_login_at', 
+        'last_login_at',
     ];
 
     /**
@@ -165,5 +165,10 @@ class User extends Authenticatable
             return 'siswa';
         }
         return 'admin';
+    }
+
+    public function lampiranA()
+    {
+        return $this->hasMany(LampiranA::class, 'murid_id');
     }
 }
