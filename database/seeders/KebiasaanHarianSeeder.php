@@ -23,7 +23,7 @@ class KebiasaanHarianSeeder extends Seeder
 
                 // random: tidak semua hari diisi
                 if (rand(1, 100) <= 40) continue; // 40% kosong
-                $tanggal = Carbon::now()->subDays($i);
+                $tanggal = Carbon::now()->subDays($i)->format('Y-m-d');
 
                 KebiasaanHarian::updateOrCreate(
                     [
