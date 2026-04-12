@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 // ── Root ──────────────────────────────────────────────────────────────────────
 Route::get('/', function () {
     if (Auth::check()) {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         if ($user->isSiswa()) {
             return redirect()->route('student.dashboard');
