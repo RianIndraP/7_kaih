@@ -11,7 +11,23 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
+        // If already logged in, redirect to appropriate dashboard
+        if (Auth::check()) {
+            return $this->redirectToDashboard(Auth::user());
+        }
         return view('auth.login');
+    }
+
+    private function redirectToDashboard($user)
+    {
+        if ($user->isSiswa()) {
+            return redirect()->route('student.dashboard');
+        } else if ($user->isGuru()) {
+            return redirect()->route('guru.dashboard');
+        } else if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect('/');
     }
 
     public function login(Request $request)

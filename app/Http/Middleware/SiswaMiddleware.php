@@ -19,7 +19,7 @@ class SiswaMiddleware
         $user = Auth::user();
 
         if (!$user || !$user->isSiswa()) {
-            return redirect()->route('login')->with('error', 'Akses ditolak. Hanya siswa yang dapat mengakses halaman ini.');
+            abort(404);
         }
 
         return $next($request);

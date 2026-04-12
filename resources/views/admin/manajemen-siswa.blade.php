@@ -511,7 +511,7 @@ function openEditModal(id) {
             document.getElementById('editName').value = data.name;
             document.getElementById('editKelasSelect').value = data.kelas_id;
             document.getElementById('editAngkatan').value = data.angkatan;
-            document.getElementById('editBirthDate').value = data.birth_date ? data.birth_date.split('T')[0] : '';
+            document.getElementById('editBirthDate').value = data.birth_date ?? '';
             document.getElementById('editGuruWali').value = data.guru_wali_id;
             document.getElementById('editGender').value = data.gender;
             document.getElementById('editPassword').value = '';
