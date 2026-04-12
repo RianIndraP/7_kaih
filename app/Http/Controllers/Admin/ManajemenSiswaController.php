@@ -155,6 +155,13 @@ class ManajemenSiswaController extends Controller
                 fclose($handle);
             } else {
                 // Excel import (XLSX, XLS)
+                // Check if ZipArchive is available (required for XLSX)
+                if (!class_exists('ZipArchive')) {
+                    $errorMsg = 'Extension PHP "zip" belum diaktifkan untuk import XLSX/XLS. ' .
+                        'Solusi: 1) Aktifkan extension zip di php.ini (cari ;extension=zip ubah jadi extension=zip) lalu restart Apache. ' .
+                        '2) Atau simpan file sebagai CSV (File → Save As → CSV) dan upload CSV.';
+                    return redirect()->route('admin.siswa')->with('error', $errorMsg);
+                }
                 $spreadsheet = IOFactory::load($file->getPathname());
                 $worksheet = $spreadsheet->getActiveSheet();
                 $rows = $worksheet->toArray();
@@ -227,21 +234,80 @@ class ManajemenSiswaController extends Controller
                 // Parse birth_date
                 $parsedBirthDate = null;
                 if (!empty($birthDate)) {
-                    try {
-                        // Check if it's an Excel date number
-                        if (is_numeric($birthDate)) {
-                            $parsedBirthDate = Date::excelToDateTimeObject($birthDate)->format('Y-m-d');
+                    // Excel toArray() returns date as DateTime object or string
+                    if ($birthDate instanceof \DateTime) {
+                        // Already converted by PhpSpreadsheet
+                        $parsedBirthDate = $birthDate->format('Y-m-d');
+                    }
+                    // Excel serial number (integer or float)
+                    elseif (is_numeric($birthDate)) {
+                        $parsedBirthDate = Date::excelToDateTimeObject($birthDate)->format('Y-m-d');
+                    }
+                    // Already Y-m-d format
+                    elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $birthDate)) {
+                        $parsedBirthDate = $birthDate;
+                    }
+                    // String format m/d/Y (US format) - Excel often returns this
+                    elseif (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $birthDate)) {
+                        // Try US format first (m/d/Y) - day > 12 indicates US format
+                        $parts = explode('/', $birthDate);
+                        if ((int)$parts[1] > 12) {
+                            // Day > 12, must be US format (month/day/year)
+                            try {
+                                $parsedBirthDate = \Carbon\Carbon::createFromFormat('m/d/Y', $birthDate)->format('Y-m-d');
+                            } catch (\Exception $e) {
+                                $parsedBirthDate = null;
+                            }
                         } else {
-                            // Try Indonesian format first (d/m/Y), then standard format
-                            $parsedBirthDate = \Carbon\Carbon::createFromFormat('d/m/Y', $birthDate)->format('Y-m-d');
+                            // Could be either, try US first then Indonesian
+                            try {
+                                $parsedBirthDate = \Carbon\Carbon::createFromFormat('m/d/Y', $birthDate)->format('Y-m-d');
+                            } catch (\Exception $e) {
+                                try {
+                                    $parsedBirthDate = \Carbon\Carbon::createFromFormat('d/m/Y', $birthDate)->format('Y-m-d');
+                                } catch (\Exception $e2) {
+                                    $parsedBirthDate = null;
+                                }
+                            }
                         }
-                    } catch (\Exception $e) {
-                        try {
-                            // Fallback to standard parse
-                            $parsedBirthDate = \Carbon\Carbon::parse($birthDate)->format('Y-m-d');
-                        } catch (\Exception $e2) {
-                            $rowErrors[] = 'Tanggal Lahir (format tidak valid: ' . $birthDate . ', dikosongkan)';
+                    }
+                    // String format d-m-Y or m-d-Y (dash separator)
+                    elseif (preg_match('/^\d{1,2}-\d{1,2}-\d{4}$/', $birthDate)) {
+                        $parts = explode('-', $birthDate);
+                        if ((int)$parts[1] > 12) {
+                            // Day > 12, must be m-d-Y
+                            try {
+                                $parsedBirthDate = \Carbon\Carbon::createFromFormat('m-d-Y', $birthDate)->format('Y-m-d');
+                            } catch (\Exception $e) {
+                                $parsedBirthDate = null;
+                            }
+                        } else {
+                            try {
+                                $parsedBirthDate = \Carbon\Carbon::createFromFormat('d-m-Y', $birthDate)->format('Y-m-d');
+                            } catch (\Exception $e) {
+                                try {
+                                    $parsedBirthDate = \Carbon\Carbon::createFromFormat('m-d-Y', $birthDate)->format('Y-m-d');
+                                } catch (\Exception $e2) {
+                                    $parsedBirthDate = null;
+                                }
+                            }
                         }
+                    }
+                    // Try other formats
+                    else {
+                        $formats = ['d.m.Y', 'Y/m/d'];
+                        foreach ($formats as $format) {
+                            try {
+                                $parsedBirthDate = \Carbon\Carbon::createFromFormat($format, $birthDate)->format('Y-m-d');
+                                break;
+                            } catch (\Exception $e) {
+                                continue;
+                            }
+                        }
+                    }
+
+                    if (empty($parsedBirthDate)) {
+                        $rowErrors[] = 'Tanggal Lahir tidak valid: ' . (is_string($birthDate) ? $birthDate : gettype($birthDate));
                     }
                 }
 
@@ -307,6 +373,15 @@ class ManajemenSiswaController extends Controller
     public function getData($id)
     {
         $user = User::findOrFail($id);
-        return response()->json($user);
+        return response()->json([
+            'id' => $user->id,
+            'nisn' => $user->nisn,
+            'name' => $user->name,
+            'kelas_id' => $user->kelas_id,
+            'gender' => $user->gender,
+            'birth_date' => $user->birth_date ? $user->birth_date->format('Y-m-d') : null,
+            'no_telepon' => $user->no_telepon,
+            'email' => $user->email,
+        ]);
     }
 }

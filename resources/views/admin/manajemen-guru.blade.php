@@ -12,6 +12,33 @@
 
 <div class="space-y-6">
 
+    <!-- Session Messages -->
+    @if(session('success'))
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-green-800">{!! session('success') !!}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-red-800">{!! session('error') !!}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Header -->
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -369,6 +396,7 @@
             </div>
 
             <p class="text-xs text-gray-500 mt-3">Format file: .xlsx, .xls, .csv</p>
+            <p class="text-xs text-amber-600 mt-1">Note: Jika error "ZipArchive not found", aktifkan extension=zip di php.ini atau gunakan format CSV</p>
 
             <div class="flex justify-end gap-3 mt-6">
 
@@ -422,7 +450,7 @@ function openEditModal(id) {
 
         document.getElementById('editGender').value = data.gender;
 
-        document.getElementById('editBirthDate').value = data.birth_date ? data.birth_date.split('T')[0] : '';
+        document.getElementById('editBirthDate').value = data.birth_date ?? '';
 
         document.getElementById('editNoTelepon').value = data.no_telepon ?? '';
 

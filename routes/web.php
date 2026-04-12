@@ -18,10 +18,21 @@ use App\Http\Controllers\Student\KebiasaanController;
 use App\Http\Controllers\Student\PesanBantuanController;
 use App\Http\Controllers\Student\PesanController;
 use App\Models\FcmToken;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 Route::get('/', function () {
+    if (Auth::check()) {
+        $user = Auth::user();
+        if ($user->isSiswa()) {
+            return redirect()->route('student.dashboard');
+        } else if ($user->isGuru()) {
+            return redirect()->route('guru.dashboard');
+        } else if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+    }
     return redirect()->route('login');
 });
 
