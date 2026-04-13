@@ -39,21 +39,21 @@ Route::get('/', function () {
 
 Route::post('/save-token', [NotifController::class, 'saveToken'])->middleware('auth');
 
-Route::get('/test-notif', function () {
+// Route::get('/test-notif', function () {
 
-    $tokens = FcmToken::pluck('token');
+//     $tokens = FcmToken::pluck('token');
 
-    foreach ($tokens as $token) {
-        app(App\Http\Controllers\NotifController::class)
-            ->sendNotif(
-                $token,
-                'Test Laravel 🔥',
-                'Notifikasi dari backend berhasil!'
-            );
-    }
+//     foreach ($tokens as $token) {
+//         app(App\Http\Controllers\NotifController::class)
+//             ->sendNotif(
+//                 $token,
+//                 'Test Laravel 🔥',
+//                 'Notifikasi dari backend berhasil!'
+//             );
+//     }
 
-    return 'Notif dikirim ke semua device';
-});
+//     return 'Notif dikirim ke semua device';
+// });
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -136,6 +136,8 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     Route::get('/pelaporan', [GuruPelaporanController::class, 'index'])->name('pelaporan');
     Route::post('/pelaporan/lampiran-a', [GuruPelaporanController::class, 'storeLampiranA'])->name('lampiran-a.store');  // Lampiran A
     Route::post('/pelaporan/lampiran-b', [GuruPelaporanController::class, 'storeLampiranB'])->name('lampiran-b.store');  // Lampiran B
+    Route::post('/pelaporan/lampiran-c', [GuruPelaporanController::class, 'storeLampiranC'])->name('lampiran-c.store');  // Lampiran C
+    Route::post('/pelaporan/lampiran-d', [GuruPelaporanController::class, 'storeLampiranD'])->name('lampiran-d.store');  // Lampiran D
 
 
     // Kirim Pesan ke Siswa

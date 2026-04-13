@@ -154,56 +154,7 @@
             {{-- ══ LAMPIRAN C ══ --}}
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-C">
                 {!! $kopSurat !!}
-                <div class="text-center mb-4">
-                    <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN C
-                    </div>
-                    <div class="text-base font-semibold text-gray-800">Catatan Pertemuan Guru Wali dengan Siswa</div>
-                    <div class="text-xs text-gray-500 mt-1">
-                        Pertemuan: {{ request('pertemuan', 'Pertemuan 1') }} &nbsp;|&nbsp;
-                        Guru Wali: {{ $guru->user->name }}
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="bg-blue-50 text-gray-700">
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">NO</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Tanggal Pertemuan</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Nama Murid</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Topik / Masalah Yang
-                                    Dibahas</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Tindak Lanjut</th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($muridList as $i => $m)
-                                <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="border border-gray-300 px-3 py-2 text-center text-gray-600">
-                                        {{ $i + 1 }}</td>
-                                    <td class="border border-gray-300 px-2 py-1">
-                                        <input type="date" name="c{{ $i }}_tanggal"
-                                            class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full">
-                                    </td>
-                                    <td class="border border-gray-300 px-3 py-2 font-semibold text-gray-800">
-                                        {{ $m->name }}</td>
-                                    <td class="border border-gray-300 px-2 py-1">
-                                        <textarea name="c{{ $i }}_topik" placeholder="Topik/masalah..."
-                                            class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px]"></textarea>
-                                    </td>
-                                    <td class="border border-gray-300 px-2 py-1">
-                                        <textarea name="c{{ $i }}_tindak" placeholder="Tindak lanjut..."
-                                            class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px]"></textarea>
-                                    </td>
-                                    <td class="border border-gray-300 px-2 py-1">
-                                        <textarea name="c{{ $i }}_ket" placeholder="Keterangan..."
-                                            class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px]"></textarea>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                @include('guru.laporan.lampiran-c')
                 <div class="mt-8 flex justify-end">
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
@@ -218,71 +169,7 @@
             {{-- ══ LAMPIRAN D ══ --}}
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-D">
                 {!! $kopSurat !!}
-                <div class="text-center mb-4">
-                    <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN D
-                    </div>
-                    <div class="text-base font-semibold text-gray-800">Rekap Pertemuan Guru Wali Bulanan</div>
-                </div>
-                <div
-                    class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-700">
-                    <div><span class="font-semibold">Nama Guru Wali :</span> {{ $guru->user->name }}</div>
-                    <div><span class="font-semibold">Kelas/Murid Dampingan :</span> {{ $guru->unit_kerja }}</div>
-                    <div><span class="font-semibold">Semester :</span> {{ request('semester', 'Genap/Ganjil') }}</div>
-                    <div><span class="font-semibold">Tahun Ajaran :</span> {{ $tahunAjaran }}</div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="bg-blue-50 text-gray-700">
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Bulan</th>
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Jumlah Pertemuan
-                                </th>
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Format
-                                    (Individu/Kelompok)</th>
-                                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Presentase Kehadiran
-                                </th>
-                                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $bulan)
-                                <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="border border-gray-300 px-3 py-2 text-gray-700">{{ $bulan }}</td>
-                                    <td class="border border-gray-300 px-2 py-1 text-center">
-                                        <input type="number" name="d_{{ Str::slug($bulan) }}_jml" min="0"
-                                            value="0"
-                                            class="w-16 text-center text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                    </td>
-                                    <td class="border border-gray-300 px-2 py-1 text-center">
-                                        <select name="d_{{ Str::slug($bulan) }}_format"
-                                            class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                            <option>Individu</option>
-                                            <option>Kelompok</option>
-                                        </select>
-                                    </td>
-                                    <td class="border border-gray-300 px-3 py-2">
-                                        <div class="flex items-center gap-2">
-                                            <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                <div
-                                                    class="d-bar h-full w-0 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full transition-all duration-300">
-                                                </div>
-                                            </div>
-                                            <input type="number" name="d_{{ Str::slug($bulan) }}_pct" min="0"
-                                                max="100" value="0"
-                                                class="d-pct w-12 text-center text-xs border border-gray-200 rounded-md px-1.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                                oninput="updateBar(this)">
-                                            <span class="text-xs text-gray-400">%</span>
-                                        </div>
-                                    </td>
-                                    <td class="border border-gray-300 px-2 py-1">
-                                        <textarea name="d_{{ Str::slug($bulan) }}_ket" placeholder="Keterangan..."
-                                            class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px]"></textarea>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                @include('guru.laporan.lampiran-d')
                 <div class="mt-8 flex justify-end">
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>

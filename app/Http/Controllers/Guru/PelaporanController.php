@@ -8,6 +8,7 @@ use App\Models\Guru;
 use App\Models\KebiasaanHarian;
 use App\Models\LampiranA;
 use App\Models\LampiranB;
+use App\Models\LampiranC;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -76,7 +77,48 @@ class PelaporanController extends Controller
             }
         }
 
-        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB'));
+        $pertemuan = AbsensiSiswa::where('guru_id', $guru->id)
+            ->where('pertemuan_ke', request('pertemuan', 1))
+            ->select('tanggal_mulai', 'tanggal_selesai')
+            ->first();
+
+        $absensi = AbsensiSiswa::where('guru_id', $guru->id)
+            ->where('pertemuan_ke', request('pertemuan', 1))
+            ->get()
+            ->keyBy('siswa_id');
+
+        $rekapD = [];
+
+        for ($bulan = 1; $bulan <= 12; $bulan++) {
+
+            $pertemuan = AbsensiSiswa::where('guru_id', $guru->id)
+                ->whereMonth('tanggal_mulai', $bulan)
+                ->whereYear('tanggal_mulai', request('tahun', now()->year))
+                ->distinct('pertemuan_ke')
+                ->count('pertemuan_ke');
+
+            $hadir = AbsensiSiswa::where('guru_id', $guru->id)
+                ->whereMonth('tanggal_mulai', $bulan)
+                ->whereYear('tanggal_mulai', request('tahun', now()->year))
+                ->where('status', 'hadir')
+                ->count();
+
+            $totalAbsensi = AbsensiSiswa::where('guru_id', $guru->id)
+                ->whereMonth('tanggal_mulai', $bulan)
+                ->whereYear('tanggal_mulai', request('tahun', now()->year))
+                ->count();
+
+            $persentase = $totalAbsensi > 0
+                ? round(($hadir / $totalAbsensi) * 100)
+                : 0;
+
+            $rekapD[$bulan] = [
+                'jumlah' => $pertemuan,
+                'persentase' => $persentase
+            ];
+        }
+
+        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'pertemuan', 'absensi', 'rekapD'));
     }
 
     public function storeLampiranA(Request $request)
@@ -141,6 +183,28 @@ class PelaporanController extends Controller
             }
         }
         return back()->with('success', 'Lampiran B berhasil disimpan');
+    }
+
+    public function storeLampiranC(Request $request)
+    {
+        $guru = Guru::where('user_id', Auth::id())->first();
+
+        foreach ($request->data as $murid_id => $value) {
+
+            LampiranC::updateOrCreate(
+                [
+                    'guru_id' => $guru->id,
+                    'murid_id' => $murid_id,
+                    'pertemuan_ke' => $request->pertemuan
+                ],
+                [
+                    'topik' => $value['topik'] ?? null,
+                    'tindak_lanjut' => $value['tindak'] ?? null
+                ]
+            );
+        }
+
+        return back()->with('success', 'Lampiran C berhasil disimpan');
     }
 
     private function getPredikat($nilai)
@@ -220,14 +284,6 @@ class PelaporanController extends Controller
         $rata = $totalSkor / $jumlahParameter;
 
         return $this->konversiNilaiRata($rata);
-    }
-
-    private function hitungSkor($jumlahHari)
-    {
-        if ($jumlahHari >= 25) return 4;
-        if ($jumlahHari >= 20) return 3;
-        if ($jumlahHari >= 15) return 2;
-        return 1;
     }
 
     private function skorIbadahHarian($d)
