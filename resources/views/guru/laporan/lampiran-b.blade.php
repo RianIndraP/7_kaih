@@ -9,7 +9,7 @@
         </div>
         <div class="text-base font-semibold text-gray-800">Catatan Perkembangan Siswa Binaan</div>
     </div>
-    <div class="flex flex-wrap gap-2 mb-4">
+    <div class="flex flex-wrap gap-2 mb-4 print:hidden">
         @foreach ($muridList as $i => $m)
             <button type="button"
                 class="student-tab px-3 py-1.5 text-xs font-medium rounded-full border border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors {{ $loop->first ? '!bg-blue-600 !text-white !border-blue-600' : '' }}"
@@ -76,7 +76,9 @@
     @endforeach
 
     <div class="mt-4 text-right">
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+        <button type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded print:hidden {{ $muridList->isEmpty() ? 'opacity-50 cursor-not-allowed' : '' }}"
+            {{ $muridList->isEmpty() ? 'disabled' : '' }}>
             Simpan Lampiran B
         </button>
     </div>

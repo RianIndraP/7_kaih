@@ -8,23 +8,23 @@
 
     $kopSurat =
         '
-    <div class="flex items-start gap-4 pb-3 mb-4 border-b-2 border-gray-800">
+    <div class="flex items-center gap-2 md:gap-4 pb-3 mb-4 border-b-2 border-gray-800">
         <div class="shrink-0">
             <img src="' .
         $logoLeft .
-        '" alt="Logo Pancacita" class="h-16 w-16 object-contain">
+        '" alt="Logo Pancacita" class="h-10 w-10 md:h-16 md:w-16 object-contain">
         </div>
-        <div class="flex-1 text-center">
-            <div class="text-sm font-semibold tracking-wide text-gray-700">PEMERINTAH ACEH</div>
-            <div class="text-sm font-semibold tracking-wide text-gray-700">DINAS PENDIDIKAN</div>
-            <div class="text-base font-bold tracking-wider text-gray-900 uppercase">SMK NEGERI 5 TELKOM BANDA ACEH</div>
-            <div class="text-xs text-gray-600 mt-0.5">JL. Stadion H. Dimurtala No.5 Lampineung kota Banda Aceh Kode Pos 23125</div>
-            <div class="text-xs text-gray-600">Telp/Fax. (0651) 7552314 Email: smkn5telkombandaaceh@gmail.com, Website: smkn5telkombandaaceh.sch.id</div>
+        <div class="flex-1 text-center px-1">
+            <div class="text-xs md:text-sm font-semibold tracking-wide text-gray-700">PEMERINTAH ACEH</div>
+            <div class="text-xs md:text-sm font-semibold tracking-wide text-gray-700">DINAS PENDIDIKAN</div>
+            <div class="text-sm md:text-base font-bold tracking-wider text-gray-900 uppercase leading-tight">SMK NEGERI 5 TELKOM BANDA ACEH</div>
+            <div class="text-[10px] md:text-xs text-gray-600 mt-0.5 leading-tight">JL. Stadion H. Dimurtala No.5, Banda Aceh 23125</div>
+            <div class="text-[10px] md:text-xs text-gray-600 leading-tight">Telp: (0651) 7552314 | Email: smkn5@sch.id</div>
         </div>
         <div class="shrink-0">
             <img src="' .
         $logoRight .
-        '" alt="Logo SMKN 5" class="h-16 w-16 object-contain">
+        '" alt="Logo SMKN 5" class="h-10 w-10 md:h-16 md:w-16 object-contain">
         </div>
     </div>';
 @endphp
@@ -34,11 +34,11 @@
     <div class="p-6 bg-gray-50 min-h-screen">
 
         {{-- ══ FILTER BAR ══ --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex flex-wrap items-center gap-2">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex flex-wrap items-center gap-2 print:hidden">
             <select
                 class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
                 id="lampiranSelect" onchange="handleLampiran(this.value)">
-                <option value="">Pilih Lampiran</option>
+                <option value="" selected>Pilih Lampiran</option>
                 <option value="A">Lampiran A</option>
                 <option value="B">Lampiran B</option>
                 <option value="C">Lampiran C</option>
@@ -121,8 +121,17 @@
         {{-- ══ DOC WRAP ══ --}}
         <div class="space-y-4">
 
+            {{-- ══ PILIH LAMPIRAN MESSAGE ══ --}}
+            <div id="lampiran-message" class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center print:hidden">
+                <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Silahkan Pilih Lampiran</h3>
+                <p class="text-sm text-gray-600">Pilih lampiran dari dropdown di atas untuk melihat atau mengisi laporan.</p>
+            </div>
+
             {{-- ══ LAMPIRAN A ══ --}}
-            <div class="lampiran-panel bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-A">
+            <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-A">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-a')
                 <div class="mt-8 flex justify-end">
@@ -295,8 +304,12 @@
         };
 
         function handleLampiran(val) {
+            // Hide message
+            const msg = document.getElementById('lampiran-message');
+            if (msg) msg.classList.add('hidden');
+
             ['sf-bulan', 'sf-pertemuan', 'sf-tahun', 'sf-semester', 'sf-semester-e']
-            .forEach(id => document.getElementById(id).classList.add('hidden'));
+                .forEach(id => document.getElementById(id).classList.add('hidden'));
             (subMap[val] || []).forEach(id => document.getElementById(id).classList.remove('hidden'));
             document.querySelectorAll('.lampiran-panel').forEach(p => p.classList.add('hidden'));
             const panel = document.getElementById('lp-' + val);
@@ -336,8 +349,6 @@
             if (bar) bar.style.width = pct + '%';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            handleLampiran('A');
-        });
+        // No lampiran selected by default - user must select from dropdown
     </script>
 @endpush

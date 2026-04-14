@@ -37,7 +37,7 @@
         {{-- ========== SIDEBAR GURU ========== --}}
         <div id="sidebar"
             class="sidebar-transition fixed lg:static lg:translate-x-0 -translate-x-full
-                w-64 bg-white min-h-screen border-r border-gray-200 shadow-md z-50 flex-shrink-0">
+                w-64 bg-white min-h-screen border-r border-gray-200 shadow-md z-50 flex-shrink-0 print:hidden">
             <div class="p-6 flex flex-col h-full">
 
                 {{-- Mobile close --}}
@@ -140,7 +140,7 @@
         <div class="flex-1 min-w-0 flex flex-col">
 
             {{-- ========== HEADER GURU ========== --}}
-            <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <header class="bg-white border-b border-gray-200 sticky top-0 z-30 print:hidden">
                 <div class="px-6 py-3 flex items-center justify-between">
 
                     {{-- Kiri: hamburger + judul --}}

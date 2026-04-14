@@ -19,7 +19,7 @@
     </div>
     <div class="overflow-x-auto">
         @if (!$pertemuan)
-            <div class="bg-yellow-100 text-yellow-700 p-3 rounded mb-4 text-sm">
+            <div class="bg-yellow-100 text-yellow-700 p-3 rounded mb-4 text-sm print:hidden">
                 ⚠️ Data pertemuan belum tersedia.<br>
                 Laporan hanya bisa diisi setelah pertemuan berlangsung.
             </div>
@@ -89,7 +89,7 @@
         </table>
     </div>
     <button type="submit"
-        class="bg-blue-600 text-white px-4 py-2 rounded {{ !$pertemuan ? 'opacity-50 cursor-not-allowed' : '' }}"
+        class="bg-blue-600 text-white px-4 py-2 rounded print:hidden {{ !$pertemuan ? 'opacity-50 cursor-not-allowed' : '' }}"
         {{ !$pertemuan ? 'disabled' : '' }}>
         Simpan Lampiran C
     </button>
