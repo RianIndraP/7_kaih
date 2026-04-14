@@ -96,6 +96,23 @@ class AbsensiController extends Controller
         $guruId    = $this->getGuruId();
         $siswaList = $this->getSiswaWaliKelas();
 
+        // 1. HAPUS FOTO DOKUMENTASI
+        $foto = AbsensiPertemuan::where([
+            'guru_id' => $guruId,
+            'pertemuan_ke' => $request->pertemuan_ke,
+            'tanggal_mulai' => $request->tanggal_mulai,
+        ])->first();
+
+        if ($foto) {
+            // hapus file di storage
+            if ($foto->foto_dokumentasi) {
+                Storage::disk('public')->delete($foto->foto_dokumentasi);
+            }
+
+            // hapus dari database
+            $foto->delete();
+        }
+        //  2. SET SEMUA ABSENSI JADI LIBUR
         foreach ($siswaList as $siswa) {
             AbsensiSiswa::updateOrCreate(
                 [
@@ -112,7 +129,7 @@ class AbsensiController extends Controller
             );
         }
 
-        return response()->json(['success' => true, 'message' => 'Pertemuan ditandai libur.']);
+        return response()->json(['success' => true, 'message' => 'Pertemuan ditandai libur & dokumentasi dihapus.']);
     }
 
     // ── AJAX: ambil data absensi pertemuan tertentu ─────────────────────────

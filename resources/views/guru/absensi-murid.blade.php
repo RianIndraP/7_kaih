@@ -40,7 +40,7 @@
 
                     <input type="file" id="fotoInput" accept="image/*" class="hidden">
 
-                    <button onclick="uploadFoto()"
+                    <button id="btnUploadFoto" onclick="uploadFoto()"
                         class="px-4 py-2 bg-green-600 hover:bg-green-700 text-sm font-medium 
                        text-white rounded-lg shadow-sm w-full">
                         Upload Dokumentasi
@@ -72,7 +72,7 @@
                 <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71
-                                                                                 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                                                                                                 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
                 <span class="text-xs font-semibold text-yellow-700">Libur</span>
             </div>
@@ -94,8 +94,9 @@
                 class="{{ $tidakAdaPertemuan ? 'flex' : 'hidden' }}
                     items-center gap-3 bg-yellow-50 border-b border-yellow-200 px-5 py-3">
                 <svg class="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
-                                                                                 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
+                                                                                                 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
                 <span class="text-sm font-medium text-yellow-700">
                     Pertemuan ini ditandai <strong>Libur / Tidak Ada Pertemuan</strong>
@@ -332,6 +333,10 @@
                         tampilkanToast('Pertemuan ditandai libur', 'green');
                         setLiburUI(true);
                         updateButton();
+
+                        // 🔥 hapus preview foto di UI
+                        var foto = document.querySelector('img[src*="storage"]');
+                        if (foto) foto.remove();
                     } else {
                         tampilkanToast('Gagal: ' + (res.message || ''), 'red');
                     }
@@ -343,16 +348,36 @@
 
         function updateButton() {
             var btn = document.getElementById('btnTidakAdaPertemuan');
+            var btnUpload = document.getElementById('btnUploadFoto');
 
             if (isLibur) {
                 btn.textContent = 'Batalkan Libur';
                 btn.classList.remove('bg-white');
                 btn.classList.add('bg-red-600', 'text-white');
+
+                // Disable upload
+                btnUpload.disabled = true;
+                btnUpload.classList.remove('bg-green-600', 'hover:bg-green-700');
+                btnUpload.classList.add('bg-gray-300', 'cursor-not-allowed');
             } else {
                 btn.textContent = 'Tidak ada pertemuan';
                 btn.classList.remove('bg-red-600', 'text-white');
                 btn.classList.add('bg-white');
+
+                // Enable upload
+                btnUpload.disabled = false;
+                btnUpload.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                btnUpload.classList.add('bg-green-600', 'hover:bg-green-700');
             }
+        }
+
+        function uploadFoto() {
+            if (isLibur) {
+                tampilkanToast('Tidak bisa upload saat libur', 'red');
+                return;
+            }
+
+            document.getElementById('fotoInput').click();
         }
 
         function formatTanggal(str) {
