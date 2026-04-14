@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Models\AbsensiPertemuan;
 use App\Models\AbsensiSiswa;
 use App\Models\Guru;
 use App\Models\KebiasaanHarian;
@@ -118,7 +119,14 @@ class PelaporanController extends Controller
             ];
         }
 
-        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'pertemuan', 'absensi', 'rekapD'));
+        $fotoPertemuan = AbsensiPertemuan::where('guru_id', $guru->id)
+            ->orderBy('tanggal_mulai')
+            ->get()
+            ->groupBy(function ($item) {
+                return \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('F Y');
+            });
+
+        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'pertemuan', 'absensi', 'rekapD', 'fotoPertemuan'));
     }
 
     public function storeLampiranA(Request $request)

@@ -39,6 +39,9 @@ class SendDailyNotification extends Command
         if ($now >= '05:30' && $now < '06:30') {
             $field = 'sholat_subuh';
             $namaSholat = 'Subuh';
+        } elseif (date('l', strtotime($now)) === 'Friday' && $now >= '13:00' && $now < '15:00') {
+            $field = 'sholat_jumat';
+            $namaSholat = 'Jumat';
         } elseif ($now >= '13:00' && $now < '14:00') {
             $field = 'sholat_dzuhur';
             $namaSholat = 'Dzuhur';
