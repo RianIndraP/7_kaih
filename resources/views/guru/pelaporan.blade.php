@@ -34,7 +34,8 @@
     <div class="p-6 bg-gray-50 min-h-screen">
 
         {{-- ══ FILTER BAR ══ --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex flex-wrap items-center gap-2 print:hidden">
+        <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex flex-wrap items-center gap-2 print:hidden">
             <select
                 class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
                 id="lampiranSelect" onchange="handleLampiran(this.value)">
@@ -122,25 +123,48 @@
         <div class="space-y-4">
 
             {{-- ══ PILIH LAMPIRAN MESSAGE ══ --}}
-            <div id="lampiran-message" class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center print:hidden">
+            <div id="lampiran-message"
+                class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center print:hidden">
                 <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
                 </svg>
                 <h3 class="text-lg font-semibold text-gray-800 mb-2">Silahkan Pilih Lampiran</h3>
-                <p class="text-sm text-gray-600">Pilih lampiran dari dropdown di atas untuk melihat atau mengisi laporan.</p>
+                <p class="text-sm text-gray-600">Pilih lampiran dari dropdown di atas untuk melihat atau mengisi laporan.
+                </p>
             </div>
 
             {{-- ══ LAMPIRAN A ══ --}}
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-A">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-a')
-                <div class="mt-8 flex justify-end">
+                <div class="mt-8 flex justify-between items-start px-10">
+                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
+                    <div class="text-center text-sm text-gray-700">
+                        <div>Mengetahui,</div>
+                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
+                        {{-- Area Tanda Tangan & Stempel --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tanda Tangan Guru (Kanan) --}}
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                         <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        <div class="mt-14 border-t border-gray-700 pt-1 font-bold">
-                            {{ $user->name ?? '____________________' }}</div>
-                        <div class="text-xs text-gray-500">NIP. {{ $user->nip ?? '____________________' }}</div>
+                        {{-- Area Tanda Tangan --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $user->name ?? '____________________' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -226,7 +250,7 @@
             if (msg) msg.classList.add('hidden');
 
             ['sf-bulan', 'sf-pertemuan', 'sf-tahun', 'sf-semester', 'sf-semester-e']
-                .forEach(id => document.getElementById(id).classList.add('hidden'));
+            .forEach(id => document.getElementById(id).classList.add('hidden'));
             (subMap[val] || []).forEach(id => document.getElementById(id).classList.remove('hidden'));
             document.querySelectorAll('.lampiran-panel').forEach(p => p.classList.add('hidden'));
             const panel = document.getElementById('lp-' + val);
