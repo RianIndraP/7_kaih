@@ -17,15 +17,17 @@ class AbsensiSiswa extends Model
         'tanggal_selesai',
         'tanggal_absen',
         'status',
-        'tidak_ada_pertemuan',
-        'keterangan',
+        'keterangan'
     ];
 
     protected $casts = [
         'tanggal_mulai'       => 'date',
         'tanggal_selesai'     => 'date',
         'tanggal_absen'       => 'date',
-        'tidak_ada_pertemuan' => 'boolean',
+    ];
+
+    protected $attributes = [
+        'status' => 'tidak_hadir',
     ];
 
     public function guru(): BelongsTo

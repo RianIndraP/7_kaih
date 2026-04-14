@@ -131,13 +131,14 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     Route::post('/absensi-murid/store', [GuruAbsensiController::class, 'store'])->name('absensi-murid.store');
     Route::get('/absensi-murid/by-pertemuan', [GuruAbsensiController::class, 'getByPertemuan'])->name('absensi-murid.by-pertemuan');
     Route::post('/absensi-murid/tidak-ada-pertemuan', [GuruAbsensiController::class, 'tidakAdaPertemuan'])->name('absensi-murid.tidak-ada-pertemuan');
+    Route::post('/absensi-murid/upload-foto', [GuruAbsensiController::class, 'uploadFoto'])->name('absensi-murid.upload-foto');
+    Route::post('/absensi-murid/batalkan-libur', [GuruAbsensiController::class, 'batalkanLibur'])->name('absensi-murid.batalkan-libur');
 
     // Pelaporan
     Route::get('/pelaporan', [GuruPelaporanController::class, 'index'])->name('pelaporan');
     Route::post('/pelaporan/lampiran-a', [GuruPelaporanController::class, 'storeLampiranA'])->name('lampiran-a.store');  // Lampiran A
     Route::post('/pelaporan/lampiran-b', [GuruPelaporanController::class, 'storeLampiranB'])->name('lampiran-b.store');  // Lampiran B
     Route::post('/pelaporan/lampiran-c', [GuruPelaporanController::class, 'storeLampiranC'])->name('lampiran-c.store');  // Lampiran C
-    Route::post('/pelaporan/lampiran-d', [GuruPelaporanController::class, 'storeLampiranD'])->name('lampiran-d.store');  // Lampiran D
 
 
     // Kirim Pesan ke Siswa

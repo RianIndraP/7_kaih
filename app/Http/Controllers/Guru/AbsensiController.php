@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Models\AbsensiPertemuan;
 use App\Models\AbsensiSiswa;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AbsensiController extends Controller
@@ -31,10 +32,20 @@ class AbsensiController extends Controller
             ->get()
             ->keyBy('siswa_id');
 
-        $tidakAdaPertemuan = $absensiList->where('tidak_ada_pertemuan', true)->isNotEmpty();
+        $tidakAdaPertemuan = $absensiList->where('status', 'libur')->isNotEmpty();
+
+        $fotoPertemuan = AbsensiPertemuan::where('guru_id', $guruId)
+            ->where('pertemuan_ke', $pertemuanInfo['ke'])
+            ->where('tanggal_mulai', $pertemuanInfo['tanggal_mulai'])
+            ->first();
 
         return view('guru.absensi-murid', compact(
-            'user', 'siswaList', 'absensiList', 'pertemuanInfo', 'tidakAdaPertemuan'
+            'user',
+            'siswaList',
+            'absensiList',
+            'pertemuanInfo',
+            'tidakAdaPertemuan',
+            'fotoPertemuan'
         ));
     }
 
@@ -64,8 +75,7 @@ class AbsensiController extends Controller
                     'guru_id'             => $guruId,
                     'tanggal_selesai'     => $request->tanggal_selesai,
                     'tanggal_absen'       => now()->toDateString(),
-                    'status'              => $item['status'],
-                    'tidak_ada_pertemuan' => false,
+                    'status'              => $item['status']
                 ]
             );
         }
@@ -85,7 +95,6 @@ class AbsensiController extends Controller
 
         $guruId    = $this->getGuruId();
         $siswaList = $this->getSiswaWaliKelas();
-        $guruId    = $this->getGuruId();
 
         foreach ($siswaList as $siswa) {
             AbsensiSiswa::updateOrCreate(
@@ -98,8 +107,7 @@ class AbsensiController extends Controller
                     'guru_id'             => $guruId,
                     'tanggal_selesai'     => $request->tanggal_selesai,
                     'tanggal_absen'       => null,
-                    'status'              => 'libur',
-                    'tidak_ada_pertemuan' => true,
+                    'status'              => 'libur'
                 ]
             );
         }
@@ -111,30 +119,16 @@ class AbsensiController extends Controller
 
     public function getByPertemuan(Request $request): JsonResponse
     {
-        $guruId      = $this->getGuruId();
         $pertemuanKe = (int) $request->query('pertemuan_ke');
         $tahun       = (int) $request->query('tahun', now()->year);
-
-        // Debug: log request parameters
-        Log::info('getByPertemuan request:', [
-            'pertemuan_ke' => $pertemuanKe,
-            'tahun' => $tahun,
-            'guru_id' => $guruId
-        ]);
 
         if (! $pertemuanKe) {
             return response()->json(['success' => false, 'message' => 'pertemuan_ke wajib diisi.']);
         }
 
         $pertemuanInfo = $this->hitungPertemuanByKe($pertemuanKe, $tahun);
-        
-        // Debug: log pertemuan info
-        Log::info('pertemuanInfo:', $pertemuanInfo);
 
         $siswaList = $this->getSiswaWaliKelas();
-        
-        // Debug: log siswa count
-        Log::info('siswaList count:', ['count' => $siswaList->count()]);
 
         $absensiList = AbsensiSiswa::where('pertemuan_ke', $pertemuanKe)
             ->where('tanggal_mulai', $pertemuanInfo['tanggal_mulai'])
@@ -142,9 +136,7 @@ class AbsensiController extends Controller
             ->get()
             ->keyBy('siswa_id');
 
-        $tidakAdaPertemuan = $absensiList->where('tidak_ada_pertemuan', true)->isNotEmpty();
-
-        $data = $siswaList->map(fn ($s) => [
+        $data = $siswaList->map(fn($s) => [
             'siswa_id' => $s->id,
             'nama'     => $s->name,
             'nisn'     => $s->nisn ?? '-',
@@ -152,22 +144,74 @@ class AbsensiController extends Controller
             'status'   => $absensiList[$s->id]->status ?? 'tidak_hadir',
         ]);
 
-        // Debug: log response data
-        Log::info('response data:', [
-            'success' => true,
-            'data_count' => $data->count(),
-            'pertemuan' => $pertemuanInfo,
-            'tidak_ada_pertemuan' => $tidakAdaPertemuan
-        ]);
-
         return response()->json([
             'success'             => true,
             'data'                => $data,
             'pertemuan'           => $pertemuanInfo,
-            'tidak_ada_pertemuan' => $tidakAdaPertemuan,
         ]);
     }
 
+    public function uploadFoto(Request $request)
+    {
+        $request->validate([
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'pertemuan_ke' => 'required|integer',
+            'tanggal_mulai' => 'required|date',
+        ]);
+
+        $guruId = $this->getGuruId();
+
+        $path = $request->file('foto')->store('dokumentasi', 'public');
+
+        $old = AbsensiPertemuan::where([
+            'guru_id' => $guruId,
+            'pertemuan_ke' => $request->pertemuan_ke,
+            'tanggal_mulai' => $request->tanggal_mulai,
+        ])->first();
+
+        if ($old && $old->foto_dokumentasi) {
+            Storage::disk('public')->delete($old->foto_dokumentasi);
+        }
+
+        AbsensiPertemuan::updateOrCreate(
+            [
+                'guru_id' => $guruId,
+                'pertemuan_ke' => $request->pertemuan_ke,
+                'tanggal_mulai' => $request->tanggal_mulai,
+            ],
+            [
+                'tanggal_selesai' => $request->tanggal_selesai ?? now(),
+                'foto_dokumentasi' => $path,
+            ]
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    public function batalkanLibur(Request $request): JsonResponse
+    {
+        $request->validate([
+            'pertemuan_ke'    => ['required', 'integer'],
+            'tanggal_mulai'   => ['required', 'date'],
+        ]);
+
+        $guruId    = $this->getGuruId();
+        $siswaList = $this->getSiswaWaliKelas();
+
+        foreach ($siswaList as $siswa) {
+            AbsensiSiswa::where([
+                'siswa_id'      => $siswa->id,
+                'pertemuan_ke'  => $request->pertemuan_ke,
+                'tanggal_mulai' => $request->tanggal_mulai,
+                'guru_id'       => $guruId,
+            ])->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Libur dibatalkan'
+        ]);
+    }
     // ────────────────────────────────────────────────────────────────────────
     // PRIVATE HELPERS
     // ────────────────────────────────────────────────────────────────────────
@@ -212,41 +256,51 @@ class AbsensiController extends Controller
     private function hitungPertemuan(Carbon $tanggal): array
     {
         $tahun = $tanggal->year;
-        
+
         // Cari Sabtu pertama di tahun ini
-        $sabtuPertama = Carbon::create($tahun, 1, 1)->next(Carbon::SATURDAY);
-        
+        $sabtuPertama = Carbon::create($tahun, 1, 1)->next(\Carbon\CarbonInterface::SATURDAY);
         // Hitung jumlah minggu dari Sabtu pertama ke tanggal yang diberikan
         $mingguKe = $sabtuPertama->diffInWeeks($tanggal) + 1;
-        
+
         // Setiap pertemuan = 2 minggu (2 Sabtu)
         $pertemuanKe = (int) ceil($mingguKe / 2);
-        
+
         return $this->hitungPertemuanByKe($pertemuanKe, $tahun);
     }
 
     private function hitungPertemuanByKe(int $ke, int $tahun): array
     {
-        $bulanId = ['Januari','Februari','Maret','April','Mei','Juni',
-                    'Juli','Agustus','September','Oktober','November','Desember'];
+        $bulanId = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
 
         // Cari Sabtu pertama di tahun ini
-        $sabtuPertama = Carbon::create($tahun, 1, 1)->next(Carbon::SATURDAY);
-        
+        $sabtuPertama = Carbon::create($tahun, 1, 1)->next(\Carbon\CarbonInterface::SATURDAY);
         // Hitung Sabtu pertama untuk pertemuan ini
         $sabtuPertamaPertemuan = (clone $sabtuPertama)->addWeeks(($ke - 1) * 2);
-        
+
         // Sabtu kedua untuk pertemuan ini
         $sabtuKeduaPertemuan = (clone $sabtuPertamaPertemuan)->addWeek();
-        
+
         return [
             'ke'              => $ke,
             'tahun'           => $tahun,
             'tanggal_mulai'   => $sabtuPertamaPertemuan->toDateString(),
             'tanggal_selesai' => $sabtuKeduaPertemuan->toDateString(),
             'label'           => 'Pertemuan ' . $ke . ' - ' .
-                                 $sabtuPertamaPertemuan->day . ' & ' . $sabtuKeduaPertemuan->day . ' ' .
-                                 $bulanId[$sabtuPertamaPertemuan->month - 1] . ' ' . $tahun,
+                $sabtuPertamaPertemuan->day . ' & ' . $sabtuKeduaPertemuan->day . ' ' .
+                $bulanId[$sabtuPertamaPertemuan->month - 1] . ' ' . $tahun,
         ];
     }
 }
