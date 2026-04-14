@@ -12,7 +12,7 @@
         @csrf
         <input type="hidden" name="tahun_ajaran" value="{{ $tahunAjaran }}">
 
-        <table class="w-full text-sm border-collapse">
+        <table class="w-full min-w-[800px] text-sm border-collapse">
             <thead>
                 <tr class="bg-blue-50 text-gray-700">
                     <th class="border border-gray-300 px-3 py-2 text-center font-semibold">NO</th>
@@ -47,7 +47,7 @@
                 @endforeach
             </tbody>
         </table>
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded mt-6">
             Simpan
         </button>
     </form>

@@ -7,9 +7,11 @@ use App\Http\Controllers\Admin\PesanBantuanController as AdminPesanBantuanContro
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Guru\AbsensiController as GuruAbsensiController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
+use App\Http\Controllers\Guru\GantiPasswordController as GuruGantiPasswordController;
 use App\Http\Controllers\Guru\GuruProfilController as GuruProfilController;
 use App\Http\Controllers\Guru\ListMuridController;
 use App\Http\Controllers\Guru\PelaporanController as GuruPelaporanController;
+use App\Http\Controllers\Guru\PesanBantuanController as GuruPesanBantuanController;
 use App\Http\Controllers\NotifController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\DashboardController;
@@ -151,9 +153,12 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     // Route::patch('/pesan-bantuan/{id}/status', [GuruPesanBantuanController::class, 'updateStatus'])->name('pesan-bantuan.status');
 
     // Ganti Password
-    // Route::get('/ganti-password', [GuruGantiPasswordController::class, 'index'])->name('ganti-password');
-    // Route::post('/ganti-password', [GuruGantiPasswordController::class, 'update'])->name('ganti-password.update');
+    Route::get('/ganti-password', [GuruGantiPasswordController::class, 'index'])->name('ganti-password');
+    Route::post('/ganti-password', [GuruGantiPasswordController::class, 'update'])->name('ganti-password.update');
 
+    // Kirim Pesan Bantuan
+    Route::get('/kirim-pesan-bantuan', [GuruPesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
+    Route::post('/kirim-pesan-bantuan', [GuruPesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store');
 });
 
 // ── Admin (protected) ─────────────────────────────────────────────────────────
