@@ -51,8 +51,8 @@
                 class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-bulan">
                 <option value="" disabled selected>-- Bulan --</option>
-                @foreach (['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $b)
-                    <option>{{ $b }}</option>
+                @foreach ([1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'] as $num => $b)
+                    <option value="{{ $num }}">{{ $b }}</option>
                 @endforeach
             </select>
 
@@ -60,8 +60,11 @@
                 class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-pertemuan">
                 <option value="" disabled selected>-- Pertemuan --</option>
-                @foreach ($pertemuanList as $pt)
-                    <option>{{ $pt }}</option>
+                @foreach ($pertemuanData as $pt)
+                    <option value="{{ $pt->pertemuan_ke }}">
+                        Pertemuan {{ $pt->pertemuan_ke }} -
+                        {{ \Carbon\Carbon::parse($pt->tanggal_mulai)->format('d-m-Y') }}
+                    </option>
                 @endforeach
             </select>
 
@@ -85,9 +88,8 @@
             <select
                 class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-semester-e">
-                <option value="" disabled selected>Semester</option>
-                <option>Semester Ganjil</option>
-                <option>Semester Genap</option>
+                <option value="Semester Ganjil">Semester Ganjil</option>
+                <option value="Semester Genap">Semester Genap</option>
             </select>
 
             <span class="flex items-center gap-1 text-xs text-gray-400 italic">
@@ -104,7 +106,7 @@
 
             <button
                 class="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
-                type="button" onclick="handleLampiran(document.getElementById('lampiranSelect').value)">Cari</button>
+                type="button" onclick="applyFilter()">Cari</button>
 
             <button
                 class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -173,13 +175,32 @@
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-B">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-b')
-                <div class="mt-8 flex justify-end">
+                <div class="mt-8 flex justify-between items-start px-10">
+                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
+                    <div class="text-center text-sm text-gray-700">
+                        <div>Mengetahui,</div>
+                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
+                        {{-- Area Tanda Tangan & Stempel --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tanda Tangan Guru (Kanan) --}}
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                         <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        <div class="mt-14 border-t border-gray-700 pt-1 font-bold">
-                            {{ $guru->user->name ?? '____________________' }}</div>
-                        <div class="text-xs text-gray-500">NIP. {{ $guru->nip ?? '____________________' }}</div>
+                        {{-- Area Tanda Tangan --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $user->name ?? '____________________' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -188,13 +209,32 @@
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-C">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-c')
-                <div class="mt-8 flex justify-end">
+                <div class="mt-8 flex justify-between items-start px-10">
+                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
+                    <div class="text-center text-sm text-gray-700">
+                        <div>Mengetahui,</div>
+                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
+                        {{-- Area Tanda Tangan & Stempel --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tanda Tangan Guru (Kanan) --}}
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                         <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        <div class="mt-14 border-t border-gray-700 pt-1 font-bold">
-                            {{ $guru->user->name ?? '____________________' }}</div>
-                        <div class="text-xs text-gray-500">NIP. {{ $guru->nip ?? '____________________' }}</div>
+                        {{-- Area Tanda Tangan --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $user->name ?? '____________________' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -203,13 +243,32 @@
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-D">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-d')
-                <div class="mt-8 flex justify-end">
+                <div class="mt-8 flex justify-between items-start px-10">
+                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
+                    <div class="text-center text-sm text-gray-700">
+                        <div>Mengetahui,</div>
+                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
+                        {{-- Area Tanda Tangan & Stempel --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tanda Tangan Guru (Kanan) --}}
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                         <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        <div class="mt-14 border-t border-gray-700 pt-1 font-bold">
-                            {{ $guru->user->name ?? '____________________' }}</div>
-                        <div class="text-xs text-gray-500">NIP. {{ $guru->nip ?? '____________________' }}</div>
+                        {{-- Area Tanda Tangan --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $user->name ?? '____________________' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -218,13 +277,32 @@
             <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-E">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-e')
-                <div class="mt-8 flex justify-end">
+                <div class="mt-8 flex justify-between items-start px-10">
+                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
+                    <div class="text-center text-sm text-gray-700">
+                        <div>Mengetahui,</div>
+                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
+                        {{-- Area Tanda Tangan & Stempel --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tanda Tangan Guru (Kanan) --}}
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                         <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        <div class="mt-14 border-t border-gray-700 pt-1 font-bold">
-                            {{ $guru->user->name ?? '____________________' }}</div>
-                        <div class="text-xs text-gray-500">NIP. {{ $guru->nip ?? '____________________' }}</div>
+                        {{-- Area Tanda Tangan --}}
+                        <div class="mt-20">
+                            <div class="font-bold border-b border-gray-700 inline-block px-1">
+                                {{ $user->name ?? '____________________' }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -245,14 +323,46 @@
         };
 
         function handleLampiran(val) {
-            // Hide message
             const msg = document.getElementById('lampiran-message');
+
+            // kalau belum pilih apa-apa
+            if (!val) {
+                if (msg) msg.classList.remove('hidden');
+
+                document.querySelectorAll('.lampiran-panel')
+                    .forEach(p => p.classList.add('hidden'));
+
+                return;
+            }
+
+            if (val === 'E') {
+                const bulan = new Date().getMonth() + 1; // bulan sekarang
+                let semester = (bulan >= 7) ? 'Semester Ganjil' : 'Semester Genap';
+                const el = document.getElementById('sf-semester-e');
+                if (el) el.value = semester;
+            }
+            // kalau sudah pilih
             if (msg) msg.classList.add('hidden');
 
-            ['sf-bulan', 'sf-pertemuan', 'sf-tahun', 'sf-semester', 'sf-semester-e']
-            .forEach(id => document.getElementById(id).classList.add('hidden'));
-            (subMap[val] || []).forEach(id => document.getElementById(id).classList.remove('hidden'));
-            document.querySelectorAll('.lampiran-panel').forEach(p => p.classList.add('hidden'));
+            [
+                'sf-bulan',
+                'sf-pertemuan',
+                'sf-tahun',
+                'sf-semester',
+                'sf-semester-e'
+            ].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            (subMap[val] || []).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('hidden');
+            });
+
+            document.querySelectorAll('.lampiran-panel')
+                .forEach(p => p.classList.add('hidden'));
+
             const panel = document.getElementById('lp-' + val);
             if (panel) panel.classList.remove('hidden');
         }
@@ -290,6 +400,56 @@
             if (bar) bar.style.width = pct + '%';
         }
 
-        // No lampiran selected by default - user must select from dropdown
+        function applyFilter() {
+            const lampiran = document.getElementById('lampiranSelect').value;
+            const bulan = document.getElementById('sf-bulan').value;
+            const pertemuan = document.getElementById('sf-pertemuan').value;
+            const tahun = document.getElementById('sf-tahun').value;
+            let semester = '';
+
+            // 🔥 ambil semester sesuai lampiran
+            if (lampiran === 'E') {
+                semester = document.getElementById('sf-semester-e').value;
+            } else {
+                semester = document.getElementById('sf-semester').value;
+            }
+            let url = new URL(window.location.href);
+
+            if (bulan) url.searchParams.set('bulan', bulan);
+            if (tahun) url.searchParams.set('tahun', tahun);
+            if (lampiran) url.searchParams.set('lampiran', lampiran);
+            if (pertemuan) url.searchParams.set('pertemuan', pertemuan);
+            if (semester) url.searchParams.set('semester', semester);
+
+            window.location.href = url.toString();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const url = new URLSearchParams(window.location.search);
+            const lampiran = url.get('lampiran');
+
+            ['bulan', 'pertemuan', 'tahun', 'semester'].forEach(key => {
+                const val = url.get(key);
+                if (val) {
+                    if (key === 'semester') {
+                        const lampiran = url.get('lampiran');
+                        const el = (lampiran === 'E') ?
+                            document.getElementById('sf-semester-e') :
+                            document.getElementById('sf-semester');
+                        if (el) el.value = val;
+                    } else {
+                        const el = document.getElementById('sf-' + key);
+                        if (el) el.value = val;
+                    }
+                }
+            });
+
+            if (lampiran) {
+                document.getElementById('lampiranSelect').value = lampiran;
+                handleLampiran(lampiran);
+            } else {
+                handleLampiran('')
+            }
+        });
     </script>
 @endpush

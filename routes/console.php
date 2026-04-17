@@ -10,6 +10,7 @@ Artisan::command('inspire', function () {
 
 // Schedule::command('app:send-daily-notification')->everyMinute();  // Dev mode only
 Schedule::command('app:send-daily-notification')->dailyAt('05:30');
+// Schedule::command('app:send-daily-notification')->everyMinute();  // sementara
 Schedule::command('app:send-daily-notification')->dailyAt('13:00');
 Schedule::command('app:send-daily-notification')->dailyAt('16:00');
 Schedule::command('app:send-daily-notification')->dailyAt('19:00');

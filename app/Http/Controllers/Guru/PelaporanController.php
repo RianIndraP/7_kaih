@@ -23,6 +23,10 @@ class PelaporanController extends Controller
         $user = Auth::user();
         $guru = Guru::where('user_id', Auth::id())->first();
 
+        $bulan = request()->filled('bulan') ? (int) request('bulan') : now()->month;
+        $tahun = request()->filled('tahun') ? (int) request('tahun') : now()->year;
+        $pertemuanReq = request()->filled('pertemuan') ? (int) request('pertemuan') : 1;
+
         $muridList = User::with('kelas')
             ->where('guru_wali_id', $guru->id)
             ->where('is_alumni', 0)
@@ -36,16 +40,19 @@ class PelaporanController extends Controller
             ->where('tahun_ajaran', $tahunAjaran)
             ->pluck('catatan', 'murid_id');
         $catatanB = LampiranB::where('guru_id', $guru->id)
-            ->where('bulan', request('bulan', now()->month))
-            ->where('tahun', request('tahun', now()->year))
+            ->where('bulan', $bulan)
+            ->where('tahun', $tahun)
             ->get()
             ->groupBy(['murid_id', 'aspek']);
 
         $pertemuanData = AbsensiSiswa::where('guru_id', $guru->id)
+            ->when(request()->filled('tahun'), fn($q) => $q->whereYear('tanggal_mulai', $tahun))
+            ->when(request()->filled('bulan'), fn($q) => $q->whereMonth('tanggal_mulai', $bulan))
             ->select('pertemuan_ke', 'tanggal_mulai')
             ->distinct()
-            ->orderBy('pertemuan_ke', 'asc')
+            ->orderBy('pertemuan_ke')
             ->get();
+
         $pertemuanList = $pertemuanData->map(function ($item) {
             return 'Pertemuan ' . $item->pertemuan_ke . ' - ' . Carbon::parse($item->tanggal_mulai)->format('d-m-Y');
         })->toArray();
@@ -79,12 +86,12 @@ class PelaporanController extends Controller
         }
 
         $pertemuan = AbsensiSiswa::where('guru_id', $guru->id)
-            ->where('pertemuan_ke', request('pertemuan', 1))
+            ->where('pertemuan_ke', $pertemuanReq)
             ->select('tanggal_mulai', 'tanggal_selesai')
             ->first();
 
         $absensi = AbsensiSiswa::where('guru_id', $guru->id)
-            ->where('pertemuan_ke', request('pertemuan', 1))
+            ->where('pertemuan_ke', $pertemuanReq)
             ->get()
             ->keyBy('siswa_id');
 
@@ -126,7 +133,7 @@ class PelaporanController extends Controller
                 return \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('F Y');
             });
 
-        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'pertemuan', 'absensi', 'rekapD', 'fotoPertemuan'));
+        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'pertemuan', 'absensi', 'rekapD', 'fotoPertemuan', 'pertemuanData'));
     }
 
     public function storeLampiranA(Request $request)
@@ -233,9 +240,12 @@ class PelaporanController extends Controller
 
     private function hitungNilaiDariKebiasaan($murid_id, $aspek)
     {
+        $bulan = request()->filled('bulan') ? (int) request('bulan') : now()->month;
+        $tahun = request()->filled('tahun') ? (int) request('tahun') : now()->year;
+
         $data = KebiasaanHarian::where('user_id', $murid_id)
-            ->whereMonth('tanggal', request('bulan'))
-            ->whereYear('tanggal', request('tahun'))
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
             ->get();
 
         if ($data->isEmpty()) return 1;

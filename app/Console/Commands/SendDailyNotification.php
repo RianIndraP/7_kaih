@@ -56,6 +56,11 @@ class SendDailyNotification extends Command
             $namaSholat = 'Isya';
         }
 
+        if ($now >= '07:50' && $now < '08:10') {
+            $field = 'sholat_subuh'; // pinjam field subuh untuk tes
+            $namaSholat = 'Testing';
+        }
+
         // kalau bukan jam notif → stop
         if (!$field) {
             Log::info('Bukan waktu notifikasi');

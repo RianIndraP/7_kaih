@@ -23,7 +23,7 @@
                 <div><span class="font-semibold">Nama Murid :</span> {{ $m->name }}</div>
                 <div><span class="font-semibold">Kelas :</span> {{ $m->kelas->nama_kelas ?? '-' }}</div>
                 <div><span class="font-semibold">Periode Pemantauan :</span>
-                    {{ \Carbon\Carbon::create()->month(request('bulan', now()->month))->translatedFormat('F') }}
+                    {{ \Carbon\Carbon::create()->month((int) request('bulan', now()->month))->translatedFormat('F') }}
                     {{ request('tahun', now()->year) }}</div>
                 <div><span class="font-semibold">Guru Wali :</span> {{ $guru->user->name }}</div>
             </div>
