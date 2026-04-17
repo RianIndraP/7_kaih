@@ -31,7 +31,7 @@
 
 @section('content')
 
-    <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 bg-gray-50 min-h-screen" id="pelaporan-container">
 
         {{-- ══ FILTER BAR ══ --}}
         <div
@@ -122,7 +122,7 @@
         </div>
 
         {{-- ══ DOC WRAP ══ --}}
-        <div class="space-y-4">
+        <div class="space-y-4" id="doc-wrap">
 
             {{-- ══ PILIH LAMPIRAN MESSAGE ══ --}}
             <div id="lampiran-message"
@@ -138,29 +138,23 @@
             </div>
 
             {{-- ══ LAMPIRAN A ══ --}}
-            <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-A">
+            <div class="lampiran-panel hidden" id="lp-A">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-a')
                 <div class="mt-8 flex justify-between items-start px-10">
-                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
                     <div class="text-center text-sm text-gray-700">
                         <div>Mengetahui,</div>
                         <div class="font-semibold mt-0.5">Kepala Sekolah</div>
-                        {{-- Area Tanda Tangan & Stempel --}}
                         <div class="mt-20">
                             <div class="font-bold border-b border-gray-700 inline-block px-1">
                                 {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
                             </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
-                            </div>
+                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}</div>
                         </div>
                     </div>
-
-                    {{-- Tanda Tangan Guru (Kanan) --}}
                     <div class="text-center text-sm text-gray-700">
                         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                         <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        {{-- Area Tanda Tangan --}}
                         <div class="mt-20">
                             <div class="font-bold border-b border-gray-700 inline-block px-1">
                                 {{ $user->name ?? '____________________' }}
@@ -172,7 +166,7 @@
             </div>
 
             {{-- ══ LAMPIRAN B ══ --}}
-            <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-B">
+            <div class="lampiran-panel hidden" id="lp-B">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-b')
                 <div class="mt-8 flex justify-between items-start px-10">
@@ -206,7 +200,7 @@
             </div>
 
             {{-- ══ LAMPIRAN C ══ --}}
-            <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-C">
+            <div class="lampiran-panel hidden" id="lp-C">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-c')
                 <div class="mt-8 flex justify-between items-start px-10">
@@ -240,7 +234,7 @@
             </div>
 
             {{-- ══ LAMPIRAN D ══ --}}
-            <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-D">
+            <div class="lampiran-panel hidden" id="lp-D">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-d')
                 <div class="mt-8 flex justify-between items-start px-10">
@@ -274,7 +268,7 @@
             </div>
 
             {{-- ══ LAMPIRAN E ══ --}}
-            <div class="lampiran-panel hidden bg-white rounded-xl border border-gray-200 shadow-sm p-6" id="lp-E">
+            <div class="lampiran-panel hidden" id="lp-E">
                 {!! $kopSurat !!}
                 @include('guru.laporan.lampiran-e')
                 <div class="mt-8 flex justify-between items-start px-10">
@@ -311,6 +305,81 @@
     </div>
 
 @endsection
+
+@push('styles')
+    <style>
+        .lampiran-panel.hidden {
+            display: none;
+        }
+
+        /* Tampilan normal di layar - card style */
+        .lampiran-panel {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+            padding: 1.5rem;
+        }
+
+        @media print {
+            /* ── Sembunyikan semua elemen dulu ── */
+            body * {
+                visibility: hidden;
+            }
+
+            /* ── Tampilkan hanya panel lampiran aktif ── */
+            .lampiran-panel:not(.hidden),
+            .lampiran-panel:not(.hidden) * {
+                visibility: visible;
+            }
+
+            /* ── Posisikan panel ke sudut kiri atas kertas ── */
+            .lampiran-panel:not(.hidden) {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 15mm !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                background: white !important;
+            }
+
+            /* ── Ukuran kertas & margin ── */
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+
+            /* ── Reset border-radius & shadow semua elemen ── */
+            * {
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                background: transparent !important;
+            }
+
+            /* ── Pertahankan border tabel ── */
+            table, th, td {
+                border: 1px solid #000 !important;
+                background: white !important;
+            }
+
+            /* ── Sembunyikan elemen print:hidden ── */
+            .print\:hidden {
+                display: none !important;
+            }
+        }
+    </style>
+@endpush
 
 @push('scripts')
     <script>
@@ -363,6 +432,11 @@
             document.querySelectorAll('.lampiran-panel')
                 .forEach(p => p.classList.add('hidden'));
 
+            ['sf-bulan', 'sf-pertemuan', 'sf-tahun', 'sf-semester', 'sf-semester-e']
+                .forEach(id => document.getElementById(id).classList.add('hidden'));
+            (subMap[val] || []).forEach(id => document.getElementById(id).classList.remove('hidden'));
+
+            document.querySelectorAll('.lampiran-panel').forEach(p => p.classList.add('hidden'));
             const panel = document.getElementById('lp-' + val);
             if (panel) panel.classList.remove('hidden');
         }

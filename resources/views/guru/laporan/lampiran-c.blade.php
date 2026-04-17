@@ -24,7 +24,12 @@
                 Laporan hanya bisa diisi setelah pertemuan berlangsung.
             </div>
         @endif
-        <table class="w-full text-sm border-collapse">
+        {{-- Mobile Scroll Hint --}}
+        <p class="md:hidden text-xs text-gray-500 mb-2 text-center">
+            &larr; Geser ke kanan untuk melihat semua data &rarr;
+        </p>
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[900px] text-sm border-collapse">
             <thead>
                 <tr class="bg-blue-50 text-gray-700">
                     <th class="border border-gray-300 px-3 py-2 text-center font-semibold">NO</th>
@@ -87,6 +92,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
     <button type="submit"
         class="bg-blue-600 text-white px-4 py-2 rounded print:hidden {{ !$pertemuan ? 'opacity-50 cursor-not-allowed' : '' }}"

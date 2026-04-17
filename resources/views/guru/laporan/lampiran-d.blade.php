@@ -10,16 +10,20 @@
     <div><span class="font-semibold">Semester :</span> {{ request('semester', 'Genap/Ganjil') }}</div>
     <div><span class="font-semibold">Tahun Ajaran :</span> {{ $tahunAjaran }}</div>
 </div>
+{{-- Mobile Scroll Hint --}}
+<p class="md:hidden text-xs text-gray-500 mb-2 text-center">
+    &larr; Geser ke kanan untuk melihat semua data &rarr;
+</p>
 <div class="overflow-x-auto">
-    <table class="w-full text-sm border-collapse">
+    <table class="w-full min-w-[700px] text-sm border-collapse">
         <thead>
             <tr class="bg-blue-50 text-gray-700">
-                <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Bulan</th>
-                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Jumlah Pertemuan
+                <th class="border border-gray-300 px-3 py-2 text-left font-semibold w-[20%]">Bulan</th>
+                <th class="border border-gray-300 px-3 py-2 text-center font-semibold w-[20%]">Jumlah Pertemuan
                 </th>
-                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Format
+                <th class="border border-gray-300 px-3 py-2 text-center font-semibold w-[30%]">Format
                     (Individu/Kelompok)</th>
-                <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Presentase Kehadiran
+                <th class="border border-gray-300 px-3 py-2 text-center font-semibold w-[30%]">Presentase Kehadiran
                 </th>
             </tr>
         </thead>
