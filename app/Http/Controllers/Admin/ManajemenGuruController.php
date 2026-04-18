@@ -438,4 +438,38 @@ class ManajemenGuruController extends Controller
             'unit_kerja' => $guru->unit_kerja,
         ]);
     }
+
+    public function downloadTemplate()
+    {
+        $filePath = public_path('templates/template_guru.xlsx');
+        
+        // Jika file template tidak ada, generate otomatis
+        if (!file_exists($filePath)) {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $headers = ['No', 'Nama Guru', 'NIP', 'NIK', 'Jenis Kelamin (L/P)', 'Tanggal Lahir (YYYY-MM-DD)', 'No Telepon', 'Email', 'Status Pegawai', 'Unit Kerja'];
+            $sheet->fromArray($headers, null, 'A1');
+
+            $sampleData = ['1', 'Contoh Nama Guru', '198012122008121002', '3204123456789012', 'L', '1980-12-12', '08123456789', 'guru@email.com', 'PNS', 'SMK Negeri 5 Telkom Banda Aceh'];
+            $sheet->fromArray($sampleData, null, 'A2');
+
+            $headerStyle = [
+                'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '4472C4']],
+                'alignment' => ['horizontal' => 'center'],
+                'borders' => ['allBorders' => ['borderStyle' => 'thin']]
+            ];
+            $sheet->getStyle('A1:J1')->applyFromArray($headerStyle);
+
+            foreach (range('A', 'J') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save($filePath);
+        }
+
+        return response()->download($filePath, 'Template_Import_Guru.xlsx');
+    }
 }

@@ -43,6 +43,13 @@
             <p class="text-sm text-gray-500 mt-1">Kelola data siswa sekolah</p>
         </div>
         <div class="flex flex-wrap gap-2">
+            <a href="{{ route('admin.siswa.template') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-300 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:border-green-400 transition-all shadow-sm">
+                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Download Template
+            </a>
             <button onclick="openImportModal()" 
                     class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -455,6 +462,21 @@
                 <p id="fileName" class="mt-3 text-sm text-gray-600 font-medium"></p>
             </div>
             <p class="text-xs text-gray-500 mt-4">Format yang didukung: .xlsx, .xls, .csv</p>
+
+            <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p class="text-xs font-medium text-amber-800 mb-2">Format Excel yang dibutuhkan (baris 1-2 dilewati, baris 3 header):</p>
+                <div class="grid grid-cols-2 gap-2 text-xs text-amber-700">
+                    <span>Kolom A: NISN</span>
+                    <span>Kolom B: Nama Siswa</span>
+                    <span>Kolom C: Kelas</span>
+                    <span>Kolom D: Tahun Masuk</span>
+                    <span>Kolom E: Tanggal Lahir (dd/mm/yyyy)</span>
+                    <span>Kolom F: Jenis Kelam  (Laki laki/Perempuan)</span>
+                    <span>Kolom G: Guru Wali</span>
+                </div>
+
+                <p class="text-xs text-amber-600 mt-2">* Kolom wajib diisi</p>
+            </div>
             <div class="flex justify-end gap-3 mt-6">
                 <button type="button" onclick="closeImportModal()" 
                         class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
