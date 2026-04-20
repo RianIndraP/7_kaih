@@ -23,18 +23,26 @@ class PelaporanController extends Controller
         $user = Auth::user();
         $guru = Guru::where('user_id', Auth::id())->first();
 
-        $bulan = request()->filled('bulan') ? (int) request('bulan') : now()->month;
+        // Parameter utama
         $tahun = request()->filled('tahun') ? (int) request('tahun') : now()->year;
-        $pertemuanReq = request()->filled('pertemuan') ? (int) request('pertemuan') : 1;
+        $bulan = request()->filled('bulan') ? (int) request('bulan') : now()->month;
+        $semester = request('semester') ?: ((now()->month >= 7) ? 'Semester Ganjil' : 'Semester Genap');
 
+        // Logika tahun ajaran
+        $tahunAjaran = $tahun . '/' . ($tahun + 1);
+
+        $pertemuanReq = request()->filled('pertemuan')
+            ? (int) request('pertemuan')
+            : AbsensiSiswa::where('guru_id', $guru->id)
+            ->orderBy('pertemuan_ke')
+            ->value('pertemuan_ke'); // ambil pertama yg ada
+
+        $tahunFilter = request()->filled('tahun') ? (int) request('tahun') : now()->year;
         $muridList = User::with('kelas')
             ->where('guru_wali_id', $guru->id)
-            ->where('is_alumni', 0)
+            ->where('angkatan', '<=', $tahunFilter)
+            ->where('angkatan', '>=', $tahunFilter - 2)
             ->get();
-
-        $now = now();
-        $tahunAwal = ($now->month >= 7) ? $now->year : $now->year - 1;
-        $tahunAjaran = $tahunAwal . '/' . ($tahunAwal + 1);
 
         $catatanA = LampiranA::where('guru_id', $guru->id)
             ->where('tahun_ajaran', $tahunAjaran)
@@ -44,6 +52,10 @@ class PelaporanController extends Controller
             ->where('tahun', $tahun)
             ->get()
             ->groupBy(['murid_id', 'aspek']);
+        $catatanC = LampiranC::where('guru_id', $guru->id)
+            ->where('pertemuan', $pertemuanReq)
+            ->get()
+            ->keyBy('murid_id');
 
         $pertemuanData = AbsensiSiswa::where('guru_id', $guru->id)
             ->when(request()->filled('tahun'), fn($q) => $q->whereYear('tanggal_mulai', $tahun))
@@ -97,43 +109,64 @@ class PelaporanController extends Controller
 
         $rekapD = [];
 
-        for ($bulan = 1; $bulan <= 12; $bulan++) {
-
-            $pertemuan = AbsensiSiswa::where('guru_id', $guru->id)
-                ->whereMonth('tanggal_mulai', $bulan)
-                ->whereYear('tanggal_mulai', request('tahun', now()->year))
+        $filterSemester = function ($query) use ($semester) {
+            if ($semester === 'Semester Ganjil') {
+                $query->whereMonth('tanggal_mulai', '>=', 7)
+                    ->whereMonth('tanggal_mulai', '<=', 12);
+            } elseif ($semester === 'Semester Genap') {
+                $query->whereMonth('tanggal_mulai', '>=', 1)
+                    ->whereMonth('tanggal_mulai', '<=', 6);
+            }
+        };
+        for ($bln = 1; $bln <= 12; $bln++) {
+            $jmlPertemuan = AbsensiSiswa::where('guru_id', $guru->id)
+                ->whereYear('tanggal_mulai', $tahun)
+                ->when($semester, $filterSemester)
+                ->whereMonth('tanggal_mulai', $bln)
                 ->distinct('pertemuan_ke')
                 ->count('pertemuan_ke');
 
             $hadir = AbsensiSiswa::where('guru_id', $guru->id)
-                ->whereMonth('tanggal_mulai', $bulan)
-                ->whereYear('tanggal_mulai', request('tahun', now()->year))
+                ->whereYear('tanggal_mulai', $tahun)
+                ->when($semester, $filterSemester)
+                ->whereMonth('tanggal_mulai', $bln)
                 ->where('status', 'hadir')
                 ->count();
 
             $totalAbsensi = AbsensiSiswa::where('guru_id', $guru->id)
-                ->whereMonth('tanggal_mulai', $bulan)
-                ->whereYear('tanggal_mulai', request('tahun', now()->year))
+                ->whereYear('tanggal_mulai', $tahun)
+                ->when($semester, $filterSemester)
+                ->whereMonth('tanggal_mulai', $bln)
                 ->count();
 
             $persentase = $totalAbsensi > 0
                 ? round(($hadir / $totalAbsensi) * 100)
                 : 0;
 
-            $rekapD[$bulan] = [
-                'jumlah' => $pertemuan,
+            $rekapD[$bln] = [
+                'jumlah' => $jmlPertemuan,
                 'persentase' => $persentase
             ];
         }
 
         $fotoPertemuan = AbsensiPertemuan::where('guru_id', $guru->id)
+            ->whereYear('tanggal_mulai', $tahun)
+            ->when($semester, $filterSemester)
             ->orderBy('tanggal_mulai')
             ->get()
             ->groupBy(function ($item) {
                 return \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('F Y');
             });
 
-        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'pertemuan', 'absensi', 'rekapD', 'fotoPertemuan', 'pertemuanData'));
+        $hasData = [
+            'A' => $muridList->isNotEmpty(),
+            'B' => $catatanB->isNotEmpty(), // sesuaikan dengan cara Anda cek data B
+            'C' => $absensi->isNotEmpty(),  // Cek apakah ada absensi di pertemuan tersebut
+            'D' => collect($rekapD)->max('jumlah') > 0, // Cek jika ada pertemuan di tahun/semester itu
+            'E' => $fotoPertemuan->isNotEmpty(),
+        ];
+
+        return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'catatanC', 'pertemuan', 'absensi', 'rekapD', 'fotoPertemuan', 'pertemuanData', 'hasData', 'semester'));
     }
 
     public function storeLampiranA(Request $request)
@@ -210,7 +243,7 @@ class PelaporanController extends Controller
                 [
                     'guru_id' => $guru->id,
                     'murid_id' => $murid_id,
-                    'pertemuan_ke' => $request->pertemuan
+                    'pertemuan' => $request->pertemuan
                 ],
                 [
                     'topik' => $value['topik'] ?? null,

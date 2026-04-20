@@ -11,5 +11,10 @@ class Kelas extends Model
 
     protected $table = 'kelas';
 
-    protected $fillable = ['nama_kelas'];
+    protected $fillable = ['nama_kelas', 'color_index'];
+
+    public function siswa()
+    {
+        return $this->hasMany(User::class, 'kelas_id');
+    }
 }

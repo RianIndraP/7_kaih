@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ManajemenGuruController as AdminManajemenGuruController;
+use App\Http\Controllers\Admin\ManajemenKelasController;
 use App\Http\Controllers\Admin\ManajemenSiswaController as AdminManajemenSiswaController;
 use App\Http\Controllers\Admin\PesanBantuanController as AdminPesanBantuanController;
 use App\Http\Controllers\AuthController;
@@ -197,4 +198,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/guru/{id}', [AdminManajemenGuruController::class, 'update'])->name('guru.update');
     Route::delete('/guru/{id}', [AdminManajemenGuruController::class, 'destroy'])->name('guru.destroy');
     Route::get('/guru/{id}/data', [AdminManajemenGuruController::class, 'getData'])->name('guru.data');
+
+    // Manajemen Kelas
+    Route::get('/kelas', [ManajemenKelasController::class, 'index'])->name('kelas');
+    Route::post('/kelas', [ManajemenKelasController::class, 'store'])->name('kelas.store');
+    Route::put('/kelas/{id}', [ManajemenKelasController::class, 'update'])->name('kelas.update');
+    Route::delete('/kelas/{id}', [ManajemenKelasController::class, 'destroy'])->name('kelas.destroy');
 });

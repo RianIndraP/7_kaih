@@ -71,23 +71,15 @@
             <select
                 class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-tahun">
-                <option value="" disabled selected>Tahun</option>
                 @foreach ([2024, 2025, 2026] as $y)
-                    <option>{{ $y }}</option>
+                    <option value="{{ $y }}">{{ $y }}</option>
                 @endforeach
             </select>
 
+            {{-- Filter Semester untuk Lampiran D --}}
             <select
                 class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-semester">
-                <option value="" disabled selected>Semester</option>
-                <option>Semester Ganjil</option>
-                <option>Semester Genap</option>
-            </select>
-
-            <select
-                class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                id="sf-semester-e">
                 <option value="Semester Ganjil">Semester Ganjil</option>
                 <option value="Semester Genap">Semester Genap</option>
             </select>
@@ -139,166 +131,128 @@
 
             {{-- ══ LAMPIRAN A ══ --}}
             <div class="lampiran-panel hidden" id="lp-A">
-                {!! $kopSurat !!}
-                @include('guru.laporan.lampiran-a')
-                <div class="mt-8 flex justify-between items-start px-10">
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Mengetahui,</div>
-                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}</div>
-                        </div>
+                @if (!request('tahun'))
+                    {{-- Tampilan instruksi: Disamakan style-nya dengan pesan data kosong --}}
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-8 text-center my-4">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Tentukan Tahun Ajaran</h3>
+                        <p class="text-sm text-blue-700">Silakan pilih tahun pada filter di atas untuk melihat daftar siswa
+                            binaan.</p>
                     </div>
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
-                        <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $user->name ?? '____________________' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
-                        </div>
+                @elseif (!$hasData['A'])
+                    {{-- Jika data KOSONG --}}
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-8 text-center my-4">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-yellow-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <h3 class="text-lg font-semibold text-yellow-800 mb-2">Data siswa belum ada</h3>
+                        <p class="text-sm text-yellow-700">Data siswa tidak ditemukan untuk tahun ajaran
+                            {{ $tahunAjaran }}</p>
                     </div>
-                </div>
+                @else
+                    {{-- Jika data ADA --}}
+                    {!! $kopSurat !!}
+                    @include('guru.laporan.lampiran-a')
+                    @include('guru.laporan.ttd')
+                @endif
+
             </div>
 
             {{-- ══ LAMPIRAN B ══ --}}
             <div class="lampiran-panel hidden" id="lp-B">
-                {!! $kopSurat !!}
-                @include('guru.laporan.lampiran-b')
-                <div class="mt-8 flex justify-between items-start px-10">
-                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Mengetahui,</div>
-                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
-                        {{-- Area Tanda Tangan & Stempel --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
-                            </div>
-                        </div>
+                @if ($hasData['B'])
+                    {!! $kopSurat !!}
+                    @include('guru.laporan.lampiran-b')
+                    @include('guru.laporan.ttd')
+                @else
+                    {{-- Jika data KOSONG, tampilkan pesan peringatan mirip lampiran-message --}}
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-8 text-center my-4">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-yellow-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <h3 class="text-lg font-semibold text-yellow-800 mb-2">Data Pertemuan Belum Ada</h3>
+                        <p class="text-sm text-yellow-700">Tidak ada jadwal pertemuan yang ditemukan untuk filter ini.</p>
                     </div>
-
-                    {{-- Tanda Tangan Guru (Kanan) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
-                        <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        {{-- Area Tanda Tangan --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $user->name ?? '____________________' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
 
             {{-- ══ LAMPIRAN C ══ --}}
             <div class="lampiran-panel hidden" id="lp-C">
-                {!! $kopSurat !!}
-                @include('guru.laporan.lampiran-c')
-                <div class="mt-8 flex justify-between items-start px-10">
-                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Mengetahui,</div>
-                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
-                        {{-- Area Tanda Tangan & Stempel --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
-                            </div>
+                @if ($pertemuan)
+                    {{-- Hanya muncul jika ada data --}}
+                    {!! $kopSurat !!}
+                    @include('guru.laporan.lampiran-c')
+                    @include('guru.laporan.ttd')
+                @else
+                    {{-- Pesan Error yang menggantikan seluruh isi panel --}}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center my-4">
+                        <div
+                            class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 text-red-500 mb-4">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Laporan Belum Tersedia</h3>
+                        <p class="text-gray-500 mt-2 max-w-sm mx-auto">
+                            Data untuk **Pertemuan {{ request('pertemuan') }}** tidak ditemukan.
+                            Silakan lakukan absensi terlebih dahulu atau pilih pertemuan lain.
+                        </p>
+                        <div class="mt-6">
+                            <button onclick="location.reload()" class="text-sm font-medium text-blue-600 hover:underline">
+                                Refresh Halaman
+                            </button>
                         </div>
                     </div>
-
-                    {{-- Tanda Tangan Guru (Kanan) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
-                        <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        {{-- Area Tanda Tangan --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $user->name ?? '____________________' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
 
             {{-- ══ LAMPIRAN D ══ --}}
             <div class="lampiran-panel hidden" id="lp-D">
-                {!! $kopSurat !!}
-                @include('guru.laporan.lampiran-d')
-                <div class="mt-8 flex justify-between items-start px-10">
-                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Mengetahui,</div>
-                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
-                        {{-- Area Tanda Tangan & Stempel --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
-                            </div>
-                        </div>
+                @if ($hasData['D'])
+                    {!! $kopSurat !!}
+                    @include('guru.laporan.lampiran-d')
+                    @include('guru.laporan.ttd')
+                @else
+                    {{-- Jika data KOSONG, tampilkan pesan peringatan mirip lampiran-message --}}
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-8 text-center my-4">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-yellow-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <h3 class="text-lg font-semibold text-yellow-800 mb-2">Data Pertemuan Belum Ada</h3>
+                        <p class="text-sm text-yellow-700">Tidak ada jadwal pertemuan yang ditemukan untuk filter ini.</p>
                     </div>
-
-                    {{-- Tanda Tangan Guru (Kanan) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
-                        <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        {{-- Area Tanda Tangan --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $user->name ?? '____________________' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
 
             {{-- ══ LAMPIRAN E ══ --}}
             <div class="lampiran-panel hidden" id="lp-E">
-                {!! $kopSurat !!}
-                @include('guru.laporan.lampiran-e')
-                <div class="mt-8 flex justify-between items-start px-10">
-                    {{-- Tanda Tangan Kepala Sekolah (Kiri) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Mengetahui,</div>
-                        <div class="font-semibold mt-0.5">Kepala Sekolah</div>
-                        {{-- Area Tanda Tangan & Stempel --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $kepalaSekolah->name ?? 'NAMA KEPALA SEKOLAH, M.Pd' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $kepalaSekolah->nip ?? '19XXXXXXXXXXXXX' }}
-                            </div>
-                        </div>
+                @if ($hasData['E'])
+                    {!! $kopSurat !!}
+                    @include('guru.laporan.lampiran-e')
+                    @include('guru.laporan.ttd')
+                @else
+                    {{-- Jika data KOSONG, tampilkan pesan peringatan mirip lampiran-message --}}
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-8 text-center my-4">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-yellow-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <h3 class="text-lg font-semibold text-yellow-800 mb-2">Data Pertemuan Belum Ada</h3>
+                        <p class="text-sm text-yellow-700">Tidak ada jadwal pertemuan yang ditemukan untuk filter ini.</p>
                     </div>
-
-                    {{-- Tanda Tangan Guru (Kanan) --}}
-                    <div class="text-center text-sm text-gray-700">
-                        <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
-                        <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
-                        {{-- Area Tanda Tangan --}}
-                        <div class="mt-20">
-                            <div class="font-bold border-b border-gray-700 inline-block px-1">
-                                {{ $user->name ?? '____________________' }}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-1">NIP. {{ $user->nip ?? '____________________' }}</div>
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
 
         </div>{{-- end space-y-4 --}}
@@ -317,11 +271,12 @@
             background: white;
             border-radius: 0.75rem;
             border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
             padding: 1.5rem;
         }
 
         @media print {
+
             /* ── Sembunyikan semua elemen dulu ── */
             body * {
                 visibility: hidden;
@@ -354,7 +309,8 @@
                 margin: 0;
             }
 
-            html, body {
+            html,
+            body {
                 margin: 0 !important;
                 padding: 0 !important;
                 background: white !important;
@@ -368,7 +324,9 @@
             }
 
             /* ── Pertahankan border tabel ── */
-            table, th, td {
+            table,
+            th,
+            td {
                 border: 1px solid #000 !important;
                 background: white !important;
             }
@@ -384,59 +342,63 @@
 @push('scripts')
     <script>
         const subMap = {
-            A: [],
-            B: ['sf-bulan'],
+            A: ['sf-tahun'],
+            B: ['sf-bulan', 'sf-tahun'],
             C: ['sf-pertemuan'],
             D: ['sf-tahun', 'sf-semester'],
-            E: ['sf-semester-e']
+            E: ['sf-tahun', 'sf-semester']
         };
 
         function handleLampiran(val) {
             const msg = document.getElementById('lampiran-message');
+            const allFilters = ['sf-bulan', 'sf-pertemuan', 'sf-tahun', 'sf-semester'];
 
-            // kalau belum pilih apa-apa
-            if (!val) {
-                if (msg) msg.classList.remove('hidden');
-
-                document.querySelectorAll('.lampiran-panel')
-                    .forEach(p => p.classList.add('hidden'));
-
-                return;
-            }
-
-            if (val === 'E') {
-                const bulan = new Date().getMonth() + 1; // bulan sekarang
-                let semester = (bulan >= 7) ? 'Semester Ganjil' : 'Semester Genap';
-                const el = document.getElementById('sf-semester-e');
-                if (el) el.value = semester;
-            }
-            // kalau sudah pilih
-            if (msg) msg.classList.add('hidden');
-
-            [
-                'sf-bulan',
-                'sf-pertemuan',
-                'sf-tahun',
-                'sf-semester',
-                'sf-semester-e'
-            ].forEach(id => {
+            // 1. Reset Awal
+            allFilters.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
+            document.querySelectorAll('.lampiran-panel').forEach(p => p.classList.add('hidden'));
 
+            if (!val) {
+                if (msg) msg.classList.remove('hidden');
+                return;
+            }
+            if (msg) msg.classList.add('hidden');
+
+            // 2. Logika Otomatisasi untuk B, D, dan E
+            if (val === 'B' || val === 'D' || val === 'E') {
+                const urlParams = new URLSearchParams(window.location.search);
+
+                // 🔥 Perbaikan: Cek URL ATAU jika value masih di tahun pertama (2024) secara default
+                if (!urlParams.get('tahun')) {
+                    const elTahun = document.getElementById('sf-tahun');
+                    const tahunSekarang = new Date().getFullYear().toString();
+                    if (elTahun) elTahun.value = tahunSekarang;
+                }
+
+                // 🔥 Perbaikan: Cek URL untuk Semester
+                if (!urlParams.get('semester')) {
+                    const bulan = new Date().getMonth() + 1;
+                    const semesterDefault = (bulan >= 7) ? 'Semester Ganjil' : 'Semester Genap';
+                    const elSem = document.getElementById('sf-semester');
+                    if (elSem) elSem.value = semesterDefault;
+                }
+
+                if (!urlParams.get('bulan')) {
+                    const elBulan = document.getElementById('sf-bulan');
+                    if (elBulan) elBulan.value = new Date().getMonth() + 1;
+                }
+
+            }
+
+            // 3. Tampilkan sub-filter sesuai map
             (subMap[val] || []).forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('hidden');
             });
 
-            document.querySelectorAll('.lampiran-panel')
-                .forEach(p => p.classList.add('hidden'));
-
-            ['sf-bulan', 'sf-pertemuan', 'sf-tahun', 'sf-semester', 'sf-semester-e']
-                .forEach(id => document.getElementById(id).classList.add('hidden'));
-            (subMap[val] || []).forEach(id => document.getElementById(id).classList.remove('hidden'));
-
-            document.querySelectorAll('.lampiran-panel').forEach(p => p.classList.add('hidden'));
+            // 4. Tampilkan panel
             const panel = document.getElementById('lp-' + val);
             if (panel) panel.classList.remove('hidden');
         }
@@ -476,23 +438,19 @@
 
         function applyFilter() {
             const lampiran = document.getElementById('lampiranSelect').value;
+            if (!lampiran) return alert('Pilih lampiran dulu!');
+
+            let url = new URL(window.location.origin + window.location.pathname);
+            url.searchParams.set('lampiran', lampiran);
+
             const bulan = document.getElementById('sf-bulan').value;
             const pertemuan = document.getElementById('sf-pertemuan').value;
             const tahun = document.getElementById('sf-tahun').value;
-            let semester = '';
-
-            // 🔥 ambil semester sesuai lampiran
-            if (lampiran === 'E') {
-                semester = document.getElementById('sf-semester-e').value;
-            } else {
-                semester = document.getElementById('sf-semester').value;
-            }
-            let url = new URL(window.location.href);
+            const semester = document.getElementById('sf-semester').value;
 
             if (bulan) url.searchParams.set('bulan', bulan);
-            if (tahun) url.searchParams.set('tahun', tahun);
-            if (lampiran) url.searchParams.set('lampiran', lampiran);
             if (pertemuan) url.searchParams.set('pertemuan', pertemuan);
+            if (tahun) url.searchParams.set('tahun', tahun);
             if (semester) url.searchParams.set('semester', semester);
 
             window.location.href = url.toString();
@@ -505,16 +463,8 @@
             ['bulan', 'pertemuan', 'tahun', 'semester'].forEach(key => {
                 const val = url.get(key);
                 if (val) {
-                    if (key === 'semester') {
-                        const lampiran = url.get('lampiran');
-                        const el = (lampiran === 'E') ?
-                            document.getElementById('sf-semester-e') :
-                            document.getElementById('sf-semester');
-                        if (el) el.value = val;
-                    } else {
-                        const el = document.getElementById('sf-' + key);
-                        if (el) el.value = val;
-                    }
+                    const el = document.getElementById('sf-' + key);
+                    if (el) el.value = val;
                 }
             });
 

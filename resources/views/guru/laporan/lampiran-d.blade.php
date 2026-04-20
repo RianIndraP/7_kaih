@@ -7,7 +7,7 @@
     class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-700">
     <div><span class="font-semibold">Nama Guru Wali :</span> {{ $guru->user->name }}</div>
     <div><span class="font-semibold">Kelas/Murid Dampingan :</span> {{ $guru->unit_kerja }}</div>
-    <div><span class="font-semibold">Semester :</span> {{ request('semester', 'Genap/Ganjil') }}</div>
+    <div><span class="font-semibold">Semester :</span> {{ $semester }}</div>
     <div><span class="font-semibold">Tahun Ajaran :</span> {{ $tahunAjaran }}</div>
 </div>
 {{-- Mobile Scroll Hint --}}
@@ -45,31 +45,38 @@
                 ];
             @endphp
             @foreach ($bulanList as $num => $nama)
-                <tr class="hover:bg-blue-50 transition-colors">
-                    <td class="border border-gray-300 px-3 py-2 text-gray-700">{{ $nama }}</td>
-                    <td class="border border-gray-300 px-2 py-1 text-center">
-                        {{ $rekapD[$num]['jumlah'] ?? 0 }}
-                    </td>
+                {{-- 🔥 TAMBAHKAN LOGIKA FILTER DI SINI --}}
+                @php
+                    $isGanjil = $semester === 'Semester Ganjil' && $num >= 7;
+                    $isGenap = $semester === 'Semester Genap' && $num <= 6;
+                @endphp
 
-                    <td class="border border-gray-300 px-2 py-1 text-center">
-                        <select name="data[{{ $num }}][format]"
-                            class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                            <option value="individu">Individu</option>
-                            <option value="kelompok" selected>Kelompok</option>
-                        </select>
-                    </td>
-                    <td class="border border-gray-300 px-3 py-2">
-                        <div class="flex items-center gap-2">
-                            <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div
-                                    class="d-bar h-full w-0 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full transition-all duration-300">
+                @if ($isGanjil || $isGenap)
+                    <tr class="hover:bg-blue-50 transition-colors">
+                        <td class="border border-gray-300 px-3 py-2 text-gray-700">{{ $nama }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-center">
+                            {{ $rekapD[$num]['jumlah'] ?? 0 }}
+                        </td>
+
+                        <td class="border border-gray-300 px-2 py-1 text-center">
+                            <select name="data[{{ $num }}][format]"
+                                class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                <option value="individu">Individu</option>
+                                <option value="kelompok" selected>Kelompok</option>
+                            </select>
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2">
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="d-bar h-full bg-gradient-to-r from-blue-500 to-blue-300 rounded-full transition-all duration-300"
+                                        style="width: {{ $rekapD[$num]['persentase'] ?? 0 }}%">
+                                    </div>
                                 </div>
+                                <span class="font-medium">{{ $rekapD[$num]['persentase'] ?? 0 }}%</span>
                             </div>
-                            {{ $rekapD[$num]['persentase'] ?? 0 }}%
-                            <span class="text-xs text-gray-400">%</span>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                @endif
             @endforeach
         </tbody>
     </table>
