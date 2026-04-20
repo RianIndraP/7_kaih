@@ -384,4 +384,38 @@ class ManajemenSiswaController extends Controller
             'email' => $user->email,
         ]);
     }
+
+    public function downloadTemplate()
+    {
+        $filePath = public_path('templates/template_siswa.xlsx');
+        
+        // Jika file template tidak ada, generate otomatis
+        if (!file_exists($filePath)) {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $headers = ['No', 'Nama Siswa', 'NISN', 'Kelas', 'Jenis Kelamin (L/P)', 'Tanggal Lahir (YYYY-MM-DD)', 'No Telepon', 'Email'];
+            $sheet->fromArray($headers, null, 'A1');
+
+            $sampleData = ['1', 'Contoh Nama Siswa', '1234567890', 'X RPL 1', 'L', '2008-05-15', '08123456789', 'siswa@email.com'];
+            $sheet->fromArray($sampleData, null, 'A2');
+
+            $headerStyle = [
+                'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '4472C4']],
+                'alignment' => ['horizontal' => 'center'],
+                'borders' => ['allBorders' => ['borderStyle' => 'thin']]
+            ];
+            $sheet->getStyle('A1:H1')->applyFromArray($headerStyle);
+
+            foreach (range('A', 'H') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save($filePath);
+        }
+
+        return response()->download($filePath, 'Template_Import_Siswa.xlsx');
+    }
 }

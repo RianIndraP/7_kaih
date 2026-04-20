@@ -184,6 +184,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Manajemen Siswa
     Route::get('/siswa', [AdminManajemenSiswaController::class, 'index'])->name('siswa');
+    Route::get('/siswa/template', [AdminManajemenSiswaController::class, 'downloadTemplate'])->name('siswa.template');
     Route::post('/siswa/import', [AdminManajemenSiswaController::class, 'import'])->name('siswa.import');
     Route::post('/siswa/kelas', [AdminManajemenSiswaController::class, 'addKelas'])->name('siswa.kelas.store');
     Route::post('/siswa', [AdminManajemenSiswaController::class, 'store'])->name('siswa.store');
@@ -194,6 +195,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Manajemen Guru
     Route::get('/guru', [AdminManajemenGuruController::class, 'index'])->name('guru');
     Route::post('/guru', [AdminManajemenGuruController::class, 'store'])->name('guru.store');
+    Route::get('/guru/template', [AdminManajemenGuruController::class, 'downloadTemplate'])->name('guru.template');
     Route::post('/guru/import', [AdminManajemenGuruController::class, 'import'])->name('guru.import');
     Route::post('/guru/{id}', [AdminManajemenGuruController::class, 'update'])->name('guru.update');
     Route::delete('/guru/{id}', [AdminManajemenGuruController::class, 'destroy'])->name('guru.destroy');
