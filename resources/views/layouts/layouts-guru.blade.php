@@ -24,10 +24,15 @@
         .sidebar-logo {
             background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
         }
+
+        /* App background */
+        .app-bg {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #f0f9ff 100%);
+        }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body class="app-bg min-h-screen">
 
     <div class="flex relative min-h-screen">
 

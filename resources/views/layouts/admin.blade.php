@@ -45,10 +45,15 @@
             padding: 2px 4px;
             box-shadow: 0 0 0 1px #3b82f6;
         }
+
+        /* App background */
+        .app-bg {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #f0f9ff 100%);
+        }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body class="app-bg min-h-screen">
     <div class="flex relative min-h-screen">
 
         {{-- ========== MOBILE OVERLAY ========== --}}
@@ -211,7 +216,7 @@
             </header>
 
             {{-- Page Content --}}
-            <main class="flex-1 p-6 bg-gray-50 min-h-screen">
+            <main class="flex-1 p-6 app-bg min-h-screen">
                 @yield('content')
             </main>
         </div>

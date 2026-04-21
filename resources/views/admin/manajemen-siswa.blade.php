@@ -123,10 +123,25 @@
 
     <!-- Table Card -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <!-- Bulk Delete Bar -->
+        <div id="bulkDeleteBar" class="hidden bg-red-50 border-b border-red-200 px-4 py-3 flex items-center justify-between">
+            <span class="text-sm text-red-700"><span id="selectedCount">0</span> siswa dipilih</span>
+            <button type="button" onclick="bulkDeleteStudents()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Hapus Terpilih
+            </button>
+            <input type="hidden" name="selected_ids" id="selectedIdsInput">
+        </div>
+
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
+                        <th class="px-4 py-3 text-center font-medium text-gray-700 w-12">
+                            <input type="checkbox" id="selectAll" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer">
+                        </th>
                         <th class="px-4 py-3 text-left font-medium text-gray-700">NISN</th>
                         <th class="px-4 py-3 text-left font-medium text-gray-700">Nama Lengkap</th>
                         <th class="px-4 py-3 text-center font-medium text-gray-700">JK</th>
@@ -140,6 +155,9 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($siswa as $s)
                     <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 text-center">
+                            <input type="checkbox" class="student-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer" value="{{ $s->id }}">
+                        </td>
                         <td class="px-4 py-3 font-medium text-gray-900">{{ $s->nisn }}</td>
                         <td class="px-4 py-3 text-gray-700">{{ $s->name }}</td>
                         <td class="px-4 py-3 text-center">
@@ -183,7 +201,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="8" class="px-4 py-8 text-center text-gray-500">
                             <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                             </svg>
@@ -576,6 +594,106 @@ document.getElementById('fileInput')?.addEventListener('change', function() {
         document.getElementById('fileName').textContent = this.files[0].name;
     }
 });
+
+// Checkbox interactions
+let selectAllCheckbox = document.getElementById('selectAll');
+let studentCheckboxes = document.querySelectorAll('.student-checkbox');
+let bulkDeleteBar = document.getElementById('bulkDeleteBar');
+let selectedCount = document.getElementById('selectedCount');
+let selectedIdsInput = document.getElementById('selectedIdsInput');
+
+// Select all functionality
+if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', function() {
+        studentCheckboxes = document.querySelectorAll('.student-checkbox');
+        studentCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        updateBulkDeleteBar();
+    });
+}
+
+// Individual checkbox functionality
+function attachCheckboxListeners() {
+    studentCheckboxes = document.querySelectorAll('.student-checkbox');
+    studentCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            // Update select all checkbox state
+            const allChecked = Array.from(studentCheckboxes).every(cb => cb.checked);
+            const someChecked = Array.from(studentCheckboxes).some(cb => cb.checked);
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = allChecked;
+                selectAllCheckbox.indeterminate = someChecked && !allChecked;
+            }
+
+            updateBulkDeleteBar();
+        });
+    });
+}
+attachCheckboxListeners();
+
+function updateBulkDeleteBar() {
+    const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
+    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+    selectedCount.textContent = selectedIds.length;
+    selectedIdsInput.value = selectedIds.join(',');
+
+    if (selectedIds.length > 0) {
+        bulkDeleteBar.classList.remove('hidden');
+        bulkDeleteBar.classList.add('flex');
+    } else {
+        bulkDeleteBar.classList.add('hidden');
+        bulkDeleteBar.classList.remove('flex');
+    }
+}
+
+function updateSelectedIds() {
+    const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
+    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+    selectedIdsInput.value = selectedIds.join(',');
+}
+
+async function bulkDeleteStudents() {
+    const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
+    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+    if (selectedIds.length === 0) {
+        alert('Pilih minimal satu siswa untuk dihapus');
+        return;
+    }
+
+    if (!confirm('Yakin ingin menghapus ' + selectedIds.length + ' siswa yang dipilih?')) {
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    let successCount = 0;
+
+    for (const id of selectedIds) {
+        try {
+            const formData = new FormData();
+            formData.append('_method', 'DELETE');
+            formData.append('_token', csrfToken);
+
+            const response = await fetch('/admin/siswa/' + id, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                successCount++;
+            }
+        } catch (error) {
+            console.error('Error deleting student ' + id + ':', error);
+        }
+    }
+
+    window.location.reload();
+}
 
 // Close modal on outside click
 window.onclick = function(event) {

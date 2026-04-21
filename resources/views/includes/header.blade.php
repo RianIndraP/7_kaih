@@ -1,18 +1,18 @@
 <!-- Header -->
-<header class="bg-white shadow-sm border-b border-gray-200">
+<header class="header-gradient shadow-sm">
     <div class="px-6 py-4 flex items-center justify-between">
 
         {{-- Kiri: hamburger + judul halaman --}}
         <div class="flex items-center gap-3 flex-1 min-w-0">
             <button id="mobileMenuBtn"
-                    class="lg:hidden p-2 text-gray-600 hover:text-gray-800 transition-colors flex-shrink-0">
+                    class="lg:hidden p-2 text-white/80 hover:text-white transition-colors flex-shrink-0">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
             </button>
 
-            <h1 class="text-base font-semibold text-gray-900 truncate">
+            <h1 class="text-base font-semibold text-white truncate">
                 @if(request()->routeIs('student.dashboard'))
                     Dashboard
                 @elseif(request()->routeIs('student.profile'))
@@ -46,63 +46,108 @@
 
             @if(auth()->user()->isSiswa())
                 {{-- 🔔 Lonceng → Pesan Dari Guru Wali (Siswa) --}}
-                <a href="{{ route('student.pesan') }}"
-                   title="Pesan dari Guru Wali"
-                   class="relative p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
-                                 a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
-                                 C7.67 6.165 6 8.388 6 11v3.159
-                                 c0 .538-.214 1.055-.595 1.436L4 17h5
-                                 m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                    </svg>
-                    {{-- Badge jumlah pesan belum dibaca --}}
-                    @php
-                        $unreadPesan = \App\Models\PesanGuru::where('siswa_id', auth()->id())
-                            ->whereDoesntHave('reads', fn($q) => $q->where('siswa_id', auth()->id()))
-                            ->count();
-                    @endphp
-                    @if ($unreadPesan > 0)
-                        <span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white
-                                     text-[10px] font-bold rounded-full flex items-center justify-center
-                                     leading-none">
-                            {{ $unreadPesan > 9 ? '9+' : $unreadPesan }}
-                        </span>
-                    @endif
-                </a>
+                @if (auth()->user()->isProfileComplete())
+                    <a href="{{ route('student.pesan') }}"
+                       title="Pesan dari Guru Wali"
+                       class="relative p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
+                                     a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
+                                     C7.67 6.165 6 8.388 6 11v3.159
+                                     c0 .538-.214 1.055-.595 1.436L4 17h5
+                                     m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        {{-- Badge jumlah pesan belum dibaca --}}
+                        @php
+                            $unreadPesan = \App\Models\PesanGuru::where('siswa_id', auth()->id())
+                                ->whereDoesntHave('reads', fn($q) => $q->where('siswa_id', auth()->id()))
+                                ->count();
+                        @endphp
+                        @if ($unreadPesan > 0)
+                            <span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white
+                                         text-[10px] font-bold rounded-full flex items-center justify-center
+                                         leading-none">
+                                {{ $unreadPesan > 9 ? '9+' : $unreadPesan }}
+                            </span>
+                        @endif
+                    </a>
+                @else
+                    <div class="relative p-2 text-white/50 bg-white/10 rounded-lg cursor-not-allowed opacity-60" title="Profil belum lengkap">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
+                                     a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
+                                     C7.67 6.165 6 8.388 6 11v3.159
+                                     c0 .538-.214 1.055-.595 1.436L4 17h5
+                                     m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <svg class="absolute top-1 right-1 w-3 h-3 text-white/50" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                @endif
 
                 {{-- ⚙️ Gear → Ganti Password (Siswa) --}}
-                <a href="{{ route('student.ganti-password') }}"
-                   title="Ganti Password"
-                   class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0
-                                 a1.724 1.724 0 002.573 1.066
-                                 c1.543-.94 3.31.826 2.37 2.37
-                                 a1.724 1.724 0 001.065 2.572
-                                 c1.756.426 1.756 2.924 0 3.35
-                                 a1.724 1.724 0 00-1.066 2.573
-                                 c.94 1.543-.826 3.31-2.37 2.37
-                                 a1.724 1.724 0 00-2.572 1.065
-                                 c-.426 1.756-2.924 1.756-3.35 0
-                                 a1.724 1.724 0 00-2.573-1.066
-                                 c-1.543.94-3.31-.826-2.37-2.37
-                                 a1.724 1.724 0 00-1.065-2.572
-                                 c-1.756-.426-1.756-2.924 0-3.35
-                                 a1.724 1.724 0 001.066-2.573
-                                 c-.94-1.543.826-3.31 2.37-2.37
-                                 .996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                </a>
+                @if (auth()->user()->isProfileComplete())
+                    <a href="{{ route('student.ganti-password') }}"
+                       title="Ganti Password"
+                       class="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0
+                                     a1.724 1.724 0 002.573 1.066
+                                     c1.543-.94 3.31.826 2.37 2.37
+                                     a1.724 1.724 0 001.065 2.572
+                                     c1.756.426 1.756 2.924 0 3.35
+                                     a1.724 1.724 0 00-1.066 2.573
+                                     c.94 1.543-.826 3.31-2.37 2.37
+                                     a1.724 1.724 0 00-2.572 1.065
+                                     c-.426 1.756-2.924 1.756-3.35 0
+                                     a1.724 1.724 0 00-2.573-1.066
+                                     c-1.543.94-3.31-.826-2.37-2.37
+                                     a1.724 1.724 0 00-1.065-2.572
+                                     c-1.756-.426-1.756-2.924 0-3.35
+                                     a1.724 1.724 0 001.066-2.573
+                                     c-.94-1.543.826-3.31 2.37-2.37
+                                     .996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </a>
+                @else
+                    <div class="relative p-2 text-white/50 bg-white/10 rounded-lg cursor-not-allowed opacity-60" title="Profil belum lengkap">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0
+                                     a1.724 1.724 0 002.573 1.066
+                                     c1.543-.94 3.31.826 2.37 2.37
+                                     a1.724 1.724 0 001.065 2.572
+                                     c1.756.426 1.756 2.924 0 3.35
+                                     a1.724 1.724 0 00-1.066 2.573
+                                     c.94 1.543-.826 3.31-2.37 2.37
+                                     a1.724 1.724 0 00-2.572 1.065
+                                     c-.426 1.756-2.924 1.756-3.35 0
+                                     a1.724 1.724 0 00-2.573-1.066
+                                     c-1.543.94-3.31-.826-2.37-2.37
+                                     a1.724 1.724 0 00-1.065-2.572
+                                     c-1.756-.426-1.756-2.924 0-3.35
+                                     a1.724 1.724 0 001.066-2.573
+                                     c-.94-1.543.826-3.31 2.37-2.37
+                                     .996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <svg class="absolute top-1 right-1 w-3 h-3 text-white/50" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                @endif
 
                 {{-- ❓ Tanda Tanya → Kirim Pesan Bantuan (Siswa) --}}
                 <a href="{{ route('student.kirim-pesan-bantuan') }}"
                    title="Kirim Pesan Bantuan"
-                   class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                   class="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M8.228 9c.549-1.165 2.03-2 3.772-2
@@ -119,7 +164,7 @@
                 {{-- ⚙️ Gear → Ganti Password (Guru) --}}
                 <a href="{{ route('student.ganti-password') }}"
                    title="Ganti Password"
-                   class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                   class="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0
@@ -146,7 +191,7 @@
                 {{-- ❓ Tanda Tanya → Kirim Pesan Bantuan (Guru) --}}
                 <a href="{{ route('student.kirim-pesan-bantuan') }}"
                    title="Kirim Pesan Bantuan"
-                   class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                   class="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M8.228 9c.549-1.165 2.03-2 3.772-2

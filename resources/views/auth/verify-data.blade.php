@@ -78,9 +78,9 @@
                     type="text"
                     name="birth_date"
                     value="{{ old('birth_date') }}"
-                    placeholder="MM/DD/YYYY"
+                    placeholder="Bulan/Tanggal/Tahun"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white">
-                <p class="text-xs text-gray-500">Format: MM/DD/YYYY</p>
+                <p class="text-xs text-gray-500">Format: Bulan/Tanggal/Tahun</p>
             </div>
             
             <button

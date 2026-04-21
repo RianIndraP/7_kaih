@@ -30,7 +30,7 @@
     }
 @endphp
 
-<div class="p-6 bg-gray-50 min-h-screen">
+<div class="p-6 min-h-screen">
 
     {{-- Tombol kembali --}}
     <div class="mb-5">

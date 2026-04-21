@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="p-6 bg-gray-50 min-h-screen">
+<div class="p-6 min-h-screen">
 
     {{-- ===== GREETING ===== --}}
     <p class="text-sm font-medium text-gray-800 mb-5">
@@ -12,7 +12,7 @@
     </p>
 
     {{-- ===== TOP ROW: Profil Guru + Status Siswa ===== --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5 items-stretch">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5 items-start">
 
         {{-- ---- PROFIL GURU ---- --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
@@ -98,7 +98,7 @@
                         </p>
                     </div>
                 @empty
-                    <div class="flex flex-col items-center justify-center py-8 text-center flex-1">
+                    <div class="flex flex-col items-center justify-center py-8 text-center">
                         <svg class="w-10 h-10 text-green-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>

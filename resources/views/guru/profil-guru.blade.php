@@ -42,7 +42,7 @@
         }
     </style>
 
-    <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 min-h-screen">
 
         <h2 class="text-xl font-bold text-gray-900 mb-5">Profil Guru</h2>
 

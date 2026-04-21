@@ -11,7 +11,7 @@
     <div><span class="font-semibold">Tahun Ajaran :</span> {{ $tahunAjaran }}</div>
 </div>
 {{-- Mobile Scroll Hint --}}
-<p class="md:hidden text-xs text-gray-500 mb-2 text-center">
+<p class="md:hidden text-xs text-gray-500 mb-2 text-center print:hidden">
     &larr; Geser ke kanan untuk melihat semua data &rarr;
 </p>
 <div class="overflow-x-auto">

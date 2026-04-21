@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 min-h-screen">
 
         {{-- ===== AREA INSTRUKSI + TOMBOL ===== --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-5">

@@ -109,20 +109,16 @@
                 <div class="flex items-center border-b border-gray-100 py-2">
                     <span class="text-xs text-gray-500 w-28 flex-shrink-0">Kelas</span>
                     <span class="text-xs text-gray-400 mx-2">:</span>
-                    <select id="p_kelas" class="inline-edit flex-1 cursor-pointer">
-                        @foreach (['X RPL 1', 'X RPL 2', 'XI RPL 1', 'XI RPL 2', 'XII RPL 1', 'XII RPL 2'] as $k)
-                            <option value="{{ $k }}" {{ ($user->kelas?->nama_kelas ?? '') == $k ? 'selected' : '' }}>
-                                {{ $k }}</option>
-                        @endforeach
-                    </select>
+                    <input type="text" id="p_kelas" value="{{ $user->kelas?->nama_kelas ?? '-' }}"
+                           class="inline-edit flex-1 bg-gray-50 cursor-not-allowed" placeholder="Kelas" readonly />
                 </div>
                 <div class="flex items-center border-b border-gray-100 py-2">
                     <span class="text-xs text-gray-500 w-28 flex-shrink-0">Jenis Kelamin</span>
                     <span class="text-xs text-gray-400 mx-2">:</span>
-                    <select id="p_jk" class="inline-edit flex-1 cursor-pointer">
-                        <option value="Laki-laki" {{ ($user->jenis_kelamin ?? '') == 'Laki-laki' ? 'selected' : '' }}>
+                    <select id="p_jk" class="flex-1 cursor-pointer bg-transparent border-none outline-none text-sm text-gray-800 font-medium py-1 px-2 rounded hover:bg-blue-50 focus:bg-blue-50">
+                        <option value="Laki-laki" {{ ($user->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>
                             Laki-laki</option>
-                        <option value="Perempuan" {{ ($user->jenis_kelamin ?? '') == 'Perempuan' ? 'selected' : '' }}>
+                        <option value="Perempuan" {{ ($user->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>
                             Perempuan</option>
                     </select>
                 </div>
@@ -143,27 +139,97 @@
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 class="text-sm font-semibold text-gray-900 mb-4">Hobi dan Minat</h3>
             <div class="space-y-3">
-                @foreach ([['id' => 'f_hobi', 'label' => 'Hobi', 'val' => $user->hobi ?? '', 'ph' => 'Hobi kamu...'], ['id' => 'f_cita', 'label' => 'Cita-cita', 'val' => $user->cita_cita ?? '', 'ph' => 'Cita-cita kamu...'], ['id' => 'f_teman', 'label' => 'Teman terbaik', 'val' => $user->teman_terbaik ?? '', 'ph' => 'Nama teman terbaik...'], ['id' => 'f_makan', 'label' => 'Makanan kesukaan', 'val' => $user->makanan_kesukaan ?? '', 'ph' => 'Makanan favorit...'], ['id' => 'f_warna', 'label' => 'Warna kesukaan', 'val' => $user->warna_kesukaan ?? '', 'ph' => 'Warna favorit...']] as $field)
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">{{ $field['label'] }}</label>
-                        <input type="text" id="{{ $field['id'] }}" value="{{ $field['val'] }}"
-                            placeholder="{{ $field['ph'] }}"
-                            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
-                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
-                                  hover:border-gray-300 transition-colors" />
-                    </div>
-                @endforeach
                 <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Gender</label>
-                    <select id="f_gender"
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Hobi</label>
+                    <input type="text" id="f_hobi" value="{{ $user->hobi ?? '' }}"
+                        placeholder="Hobi kamu..."
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
-                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
-                               hover:border-gray-300 transition-colors cursor-pointer">
-                        <option value="Laki-laki" {{ ($user->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
-                        </option>
-                        <option value="Perempuan" {{ ($user->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan
-                        </option>
-                    </select>
+                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                              hover:border-gray-300 transition-colors" />
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Cita-cita</label>
+                    <input type="text" id="f_cita" value="{{ $user->cita_cita ?? '' }}"
+                        placeholder="Cita-cita kamu..."
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                              hover:border-gray-300 transition-colors" />
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Makanan kesukaan</label>
+                    <input type="text" id="f_makan" value="{{ $user->makanan_kesukaan ?? '' }}"
+                        placeholder="Makanan favorit..."
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                              hover:border-gray-300 transition-colors" />
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Warna kesukaan</label>
+                    <input type="text" id="f_warna" value="{{ $user->warna_kesukaan ?? '' }}"
+                        placeholder="Warna favorit..."
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                              hover:border-gray-300 transition-colors" />
+                </div>
+
+                {{-- Teman Terbaik --}}
+                <div class="pt-3 border-t border-gray-200 mt-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-xs font-semibold text-gray-700">Teman Terbaik</label>
+                        <button type="button" onclick="addTemanTerbaik()"
+                            class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors">
+                            + Tambah
+                        </button>
+                    </div>
+                    <div id="temanTerbaikContainer" class="space-y-2">
+                        @php
+                            $temanTerbaikJson = $user->teman_terbaik_json ?? [];
+                            if (empty($temanTerbaikJson) && !empty($user->teman_terbaik)) {
+                                $temanTerbaikJson = [['nama' => $user->teman_terbaik, 'nomor' => '']];
+                            }
+                        @endphp
+                        @if (empty($temanTerbaikJson))
+                            <div class="teman-terbaik-item space-y-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Nama Teman</label>
+                                    <input type="text" name="teman_nama[]" value=""
+                                        placeholder="Nama teman..."
+                                        class="teman-nama w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                                              hover:border-gray-300 transition-colors" />
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 mb-1">Nomor Telepon</label>
+                                    <input type="tel" name="teman_nomor[]" value=""
+                                        placeholder="Nomor telepon..."
+                                        class="teman-nomor w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                                              hover:border-gray-300 transition-colors" />
+                                </div>
+                            </div>
+                        @else
+                            @foreach ($temanTerbaikJson as $teman)
+                                <div class="teman-terbaik-item space-y-2">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Nama Teman</label>
+                                        <input type="text" name="teman_nama[]" value="{{ $teman['nama'] ?? '' }}"
+                                            placeholder="Nama teman..."
+                                            class="teman-nama w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                                                  hover:border-gray-300 transition-colors" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Nomor Telepon</label>
+                                        <input type="tel" name="teman_nomor[]" value="{{ $teman['nomor'] ?? '' }}"
+                                            placeholder="Nomor telepon..."
+                                            class="teman-nomor w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                                                  hover:border-gray-300 transition-colors" />
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -525,6 +591,44 @@
             reader.readAsDataURL(file);
         });
 
+        function addTemanTerbaik() {
+            var container = document.getElementById('temanTerbaikContainer');
+            var newItem = document.createElement('div');
+            newItem.className = 'teman-terbaik-item space-y-2';
+            newItem.innerHTML = `
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Nama Teman</label>
+                    <input type="text" name="teman_nama[]" value=""
+                        placeholder="Nama teman..."
+                        class="teman-nama w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                              hover:border-gray-300 transition-colors" />
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Nomor Telepon</label>
+                    <input type="tel" name="teman_nomor[]" value=""
+                        placeholder="Nomor telepon..."
+                        class="teman-nomor w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800
+                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
+                              hover:border-gray-300 transition-colors" />
+                </div>
+                <button type="button" onclick="removeTemanTerbaik(this)"
+                    class="text-xs text-red-600 hover:text-red-700 mt-1">
+                    - Hapus
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function removeTemanTerbaik(btn) {
+            var container = document.getElementById('temanTerbaikContainer');
+            if (container.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('Minimal harus ada 1 teman terbaik');
+            }
+        }
+
         function saveProfile() {
             // 1. Gunakan FormData, bukan object biasa {}
             var formData = new FormData();
@@ -550,10 +654,9 @@
             formData.append('jk', document.getElementById('p_jk').value);
             formData.append('hobi', document.getElementById('f_hobi').value);
             formData.append('cita', document.getElementById('f_cita').value);
-            formData.append('teman', document.getElementById('f_teman').value);
+            formData.append('teman', document.getElementById('f_teman') ? document.getElementById('f_teman').value : '');
             formData.append('makan', document.getElementById('f_makan').value);
             formData.append('warna', document.getElementById('f_warna').value);
-            formData.append('gender', document.getElementById('f_gender').value);
             formData.append('hp', document.getElementById('f_hp').value);
             formData.append('ortu', document.getElementById('f_ortu').value);
             formData.append('email', document.getElementById('f_email').value);
@@ -561,13 +664,30 @@
             formData.append('latitude', selLat);
             formData.append('longitude', selLng);
 
-            // 3. AMBIL FILE FOTO (PENTING!)
+            // 3. Collect teman terbaik data
+            var temanNamaInputs = document.querySelectorAll('input[name="teman_nama[]"]');
+            var temanNomorInputs = document.querySelectorAll('input[name="teman_nomor[]"]');
+            var temanTerbaikJson = [];
+            
+            for (var i = 0; i < temanNamaInputs.length; i++) {
+                var nama = temanNamaInputs[i].value.trim();
+                var nomor = temanNomorInputs[i].value.trim();
+                if (nama || nomor) {
+                    temanTerbaikJson.push({
+                        nama: nama,
+                        nomor: nomor
+                    });
+                }
+            }
+            formData.append('teman_terbaik_json', JSON.stringify(temanTerbaikJson));
+
+            // 4. AMBIL FILE FOTO (PENTING!)
             var photoInput = document.getElementById('photoInput');
             if (photoInput.files[0]) {
                 formData.append('foto', photoInput.files[0]);
             }
 
-            // 4. Kirim menggunakan Fetch
+            // 5. Kirim menggunakan Fetch
             fetch('{{ route('student.profile.save') }}', {
                     method: 'POST',
                     headers: {

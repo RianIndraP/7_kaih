@@ -76,7 +76,7 @@ Route::post('/create-new-password', [AuthController::class, 'createNewPassword']
 Route::get('/password-success', [AuthController::class, 'showPasswordSuccess'])->name('password-success');
 
 // ── Student (protected) ───────────────────────────────────────────────────────
-Route::middleware(['auth', 'siswa'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'siswa', 'profile.complete'])->prefix('student')->name('student.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -189,6 +189,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/siswa/kelas', [AdminManajemenSiswaController::class, 'addKelas'])->name('siswa.kelas.store');
     Route::post('/siswa', [AdminManajemenSiswaController::class, 'store'])->name('siswa.store');
     Route::post('/siswa/{id}', [AdminManajemenSiswaController::class, 'update'])->name('siswa.update');
+    Route::post('/siswa/bulk-delete', [AdminManajemenSiswaController::class, 'bulkDelete'])->name('siswa.bulk-delete');
     Route::delete('/siswa/{id}', [AdminManajemenSiswaController::class, 'destroy'])->name('siswa.destroy');
     Route::get('/siswa/{id}/data', [AdminManajemenSiswaController::class, 'getData'])->name('siswa.data');
 

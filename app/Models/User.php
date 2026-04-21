@@ -52,6 +52,7 @@ class User extends Authenticatable
         'no_hp',
         'fcm_token',
         'last_login_at',
+        'teman_terbaik_json',
     ];
 
     /**
@@ -77,6 +78,7 @@ class User extends Authenticatable
             'tanggal_masuk' => 'datetime',
             'is_alumni' => 'boolean',
             'password' => 'hashed',
+            'teman_terbaik_json' => 'array',
         ];
     }
 
@@ -170,5 +172,51 @@ class User extends Authenticatable
     public function lampiranA()
     {
         return $this->hasMany(LampiranA::class, 'murid_id');
+    }
+
+    /**
+     * Check if student profile is complete
+     */
+    public function isProfileComplete(): bool
+    {
+        $requiredFields = [
+            'name',
+            'tempat_lahir',
+            'birth_date',
+            'kelas_id',
+            'gender',
+            'nisn',
+            'no_telepon',
+            'no_ortu',
+            'email',
+        ];
+
+        foreach ($requiredFields as $field) {
+            if (empty($this->$field)) {
+                return false;
+            }
+        }
+
+        // Check for at least one best friend with phone number
+        $temanTerbaikJson = $this->teman_terbaik_json ?? [];
+        if (!empty($this->teman_terbaik) && empty($temanTerbaikJson)) {
+            // Backward compatibility: if old teman_terbaik field has data but json is empty
+            return !empty($this->teman_terbaik);
+        }
+
+        if (empty($temanTerbaikJson)) {
+            return false;
+        }
+
+        // Check if at least one entry has both nama and nomor
+        $hasValidEntry = false;
+        foreach ($temanTerbaikJson as $teman) {
+            if (!empty($teman['nama']) && !empty($teman['nomor'])) {
+                $hasValidEntry = true;
+                break;
+            }
+        }
+
+        return $hasValidEntry;
     }
 }

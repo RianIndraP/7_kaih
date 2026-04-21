@@ -120,6 +120,18 @@ class ManajemenSiswaController extends Controller
         return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil dihapus!');
     }
 
+    public function bulkDelete(Request $request)
+    {
+        $validated = $request->validate([
+            'selected_ids' => 'required|string',
+        ]);
+
+        $selectedIds = explode(',', $validated['selected_ids']);
+        $deletedCount = User::whereIn('id', $selectedIds)->delete();
+
+        return redirect()->route('admin.siswa')->with('success', $deletedCount . ' siswa berhasil dihapus!');
+    }
+
     public function addKelas(Request $request): RedirectResponse
     {
         $validated = $request->validate([
