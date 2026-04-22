@@ -56,7 +56,7 @@
         </div>
         
         <p class="text-sm text-gray-600 text-center mb-6 leading-relaxed">
-            Jawab pertanyaan berikut untuk verifikasi akun Anda
+            Jawab Pertanyaan Berikut Untuk Verifikasi Akun Anda
         </p>
         
         <form class="space-y-5" method="POST" action="{{ route('verify-data') }}">
@@ -106,7 +106,7 @@
         <!-- Footer -->
         <div class="mt-8 pt-6 border-t border-gray-200 text-center">
             <p class="text-xs text-gray-500">
-                © 2024 SMK Negeri 5 Telkom Banda Aceh<br>
+                © 2026 SMK Negeri 5 Telkom Banda Aceh<br>
                 Sistem Pelaporan 7 KAIH
             </p>
         </div>
