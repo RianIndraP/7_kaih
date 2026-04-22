@@ -136,6 +136,99 @@ class ListMuridController extends Controller
             $this->filterPesanByPeriode($pesanQuery, $periode, $filter);
             $pesan = $pesanQuery->latest()->first();
 
+            // Get detailed kebiasaan data for harian period
+            $kebiasaanData = null;
+            if ($periode === 'harian') {
+                $kebiasaanData = KebiasaanHarian::where('user_id', $siswa->id)
+                    ->whereDate('tanggal', $filter)
+                    ->first();
+                
+                if ($kebiasaanData) {
+                    // Build sholat list with times
+                    $sholatList = [];
+                    if ($kebiasaanData->sholat_subuh) {
+                        $sholatList[] = [
+                            'nama' => 'Subuh',
+                            'jam' => $this->formatTime($kebiasaanData->jam_sholat_subuh),
+                        ];
+                    }
+                    if ($kebiasaanData->sholat_dzuhur) {
+                        $sholatList[] = [
+                            'nama' => 'Dzuhur',
+                            'jam' => $this->formatTime($kebiasaanData->jam_sholat_dzuhur),
+                        ];
+                    }
+                    if ($kebiasaanData->sholat_ashar) {
+                        $sholatList[] = [
+                            'nama' => 'Ashar',
+                            'jam' => $this->formatTime($kebiasaanData->jam_sholat_ashar),
+                        ];
+                    }
+                    if ($kebiasaanData->sholat_maghrib) {
+                        $sholatList[] = [
+                            'nama' => 'Maghrib',
+                            'jam' => $this->formatTime($kebiasaanData->jam_sholat_maghrib),
+                        ];
+                    }
+                    if ($kebiasaanData->sholat_isya) {
+                        $sholatList[] = [
+                            'nama' => 'Isya',
+                            'jam' => $this->formatTime($kebiasaanData->jam_sholat_isya),
+                        ];
+                    }
+                    
+                    // Parse olahraga JSON data
+                    $olahragaList = [];
+                    if (is_array($kebiasaanData->jenis_olahraga)) {
+                        foreach ($kebiasaanData->jenis_olahraga as $item) {
+                            if (isset($item['jenis'])) {
+                                $olahragaList[] = [
+                                    'jenis' => $item['jenis'],
+                                    'catatan' => $item['catatan'] ?? null,
+                                ];
+                            }
+                        }
+                    }
+                    
+                    // Parse bermasyarakat JSON array
+                    $masyarakatList = [];
+                    if (is_array($kebiasaanData->bersama)) {
+                        foreach ($kebiasaanData->bersama as $item) {
+                            if (is_string($item)) {
+                                $masyarakatList[] = $item;
+                            }
+                        }
+                    }
+                    $masyarakatString = !empty($masyarakatList) ? implode(', ', $masyarakatList) : '-';
+                    
+                    $kebiasaanData = [
+                        'bangun_pagi' => $kebiasaanData->bangun_pagi,
+                        'bangun_pagi_jam' => $this->formatTime($kebiasaanData->jam_bangun),
+                        'bangun_pagi_catatan' => $kebiasaanData->bangun_catatan ?: '-',
+                        'beribadah_sholat_list' => $sholatList,
+                        'beribadah_quran' => $kebiasaanData->baca_quran,
+                        'beribadah_surah' => $this->getSurahName($kebiasaanData->quran_surah),
+                        'beribadah_catatan' => $kebiasaanData->ibadah_catatan ?: '-',
+                        'berolahraga' => $kebiasaanData->berolahraga,
+                        'berolahraga_list' => $olahragaList,
+                        'berolahraga_catatan' => $kebiasaanData->olahraga_catatan ?: '-',
+                        'makan_sehat' => $kebiasaanData->makan_sehat,
+                        'makan_pagi' => $kebiasaanData->makan_pagi ?: '-',
+                        'makan_siang' => $kebiasaanData->makan_siang ?: '-',
+                        'makan_malam' => $kebiasaanData->makan_malam ?: '-',
+                        'makan_catatan' => $kebiasaanData->makan_catatan ?: '-',
+                        'gemar_belajar' => $kebiasaanData->gemar_belajar,
+                        'gemar_belajar_jenis' => $kebiasaanData->materi_belajar ?: '-',
+                        'gemar_belajar_catatan' => $kebiasaanData->belajar_catatan ?: '-',
+                        'bermasyarakat_dengan' => $masyarakatString,
+                        'bermasyarakat_catatan' => $kebiasaanData->masyarakat_catatan ?: '-',
+                        'tidur_cepat' => $kebiasaanData->tidur_cepat,
+                        'tidur_cepat_jam' => $this->formatTime($kebiasaanData->jam_tidur),
+                        'tidur_cepat_catatan' => $kebiasaanData->tidur_catatan ?: '-',
+                    ];
+                }
+            }
+
             return [
                 'id'             => $siswa->id,
                 'nama'           => $siswa->name,
@@ -149,6 +242,7 @@ class ListMuridController extends Controller
                 'umpan_balik_id' => $pesan?->id,
                 'has_umpan_balik'=> $pesan !== null,
                 'mode_no_periode'=> false,
+                'kebiasaan'      => $kebiasaanData,
             ];
         })->sortByDesc('persen')->values();
 
@@ -414,6 +508,72 @@ class ListMuridController extends Controller
                       ->where('tahun', (int) $tahun);
                 break;
         }
+    }
+
+    /**
+     * Format time to HH:MM format (remove seconds)
+     */
+    private function formatTime($time): string
+    {
+        if (is_null($time)) return '-';
+        
+        // If it's already a string, try to parse it
+        if (is_string($time)) {
+            // Check if it has seconds (HH:MM:SS)
+            if (preg_match('/^\d{2}:\d{2}:\d{2}$/', $time)) {
+                return substr($time, 0, 5); // Return HH:MM
+            }
+            return $time;
+        }
+        
+        // If it's a Carbon/DateTime object
+        if ($time instanceof \DateTime) {
+            return $time->format('H:i');
+        }
+        
+        return '-';
+    }
+
+    /**
+     * Get surah name from surah number
+     */
+    private function getSurahName($surahNumber): string
+    {
+        if (is_null($surahNumber)) return '-';
+        
+        $surahNames = [
+            1 => "Al-Fatihah", 2 => "Al-Baqarah", 3 => "Ali Imran", 4 => "An-Nisa",
+            5 => "Al-Maidah", 6 => "Al-Anam", 7 => "Al-Araf", 8 => "Al-Anfal",
+            9 => "At-Taubah", 10 => "Yunus", 11 => "Hud", 12 => "Yusuf",
+            13 => "Ar-Rad", 14 => "Ibrahim", 15 => "Al-Hijr", 16 => "An-Nahl",
+            17 => "Al-Isra", 18 => "Al-Kahf", 19 => "Maryam", 20 => "Ta-Ha",
+            21 => "Al-Anbiya", 22 => "Al-Hajj", 23 => "Al-Muminun", 24 => "An-Nur",
+            25 => "Al-Furqan", 26 => "Asy-Syuara", 27 => "An-Naml", 28 => "Al-Qasas",
+            29 => "Al-Ankabut", 30 => "Ar-Rum", 31 => "Luqman", 32 => "As-Sajdah",
+            33 => "Al-Ahzab", 34 => "Saba", 35 => "Fatir", 36 => "Ya-Sin",
+            37 => "As-Saffat", 38 => "Sad", 39 => "Az-Zumar", 40 => "Ghafir",
+            41 => "Fussilat", 42 => "Asy-Syura", 43 => "Az-Zukhruf", 44 => "Ad-Dukhan",
+            45 => "Al-Jasiyah", 46 => "Al-Ahqaf", 47 => "Muhammad", 48 => "Al-Fath",
+            49 => "Al-Hujurat", 50 => "Qaf", 51 => "Az-Zariyat", 52 => "At-Tur",
+            53 => "An-Najm", 54 => "Al-Qamar", 55 => "Ar-Rahman", 56 => "Al-Waqiah",
+            57 => "Al-Hadid", 58 => "Al-Mujadilah", 59 => "Al-Hashr", 60 => "Al-Mumtahanah",
+            61 => "As-Saff", 62 => "Al-Jumuah", 63 => "Al-Munafiqun", 64 => "At-Taghabun",
+            65 => "At-Talaq", 66 => "At-Tahrim", 67 => "Al-Mulk", 68 => "Al-Qalam",
+            69 => "Al-Haqqah", 70 => "Al-Maarij", 71 => "Nuh", 72 => "Al-Jinn",
+            73 => "Al-Muzzammil", 74 => "Al-Muddassir", 75 => "Al-Qiyamah", 76 => "Al-Insan",
+            77 => "Al-Mursalat", 78 => "An-Naba", 79 => "An-Nazi'at", 80 => "Abasa",
+            81 => "At-Takwir", 82 => "Al-Infitar", 83 => "Al-Mutaffifin", 84 => "Al-Insyiqaq",
+            85 => "Al-Buruj", 86 => "At-Tariq", 87 => "Al-Ala", 88 => "Al-Ghasyiyah",
+            89 => "Al-Fajr", 90 => "Al-Balad", 91 => "Asy-Syams", 92 => "Al-Lail",
+            93 => "Ad-Duha", 94 => "Asy-Syarh", 95 => "At-Tin", 96 => "Al-Alaq",
+            97 => "Al-Qadr", 98 => "Al-Bayyinah", 99 => "Az-Zalzalah", 100 => "Al-Adiyat",
+            101 => "Al-Qariah", 102 => "At-Takathur", 103 => "Al-Asr", 104 => "Al-Humazah",
+            105 => "Al-Fil", 106 => "Quraish", 107 => "Al-Maun", 108 => "Al-Kautsar",
+            109 => "Al-Kafirun", 110 => "An-Nasr", 111 => "Al-Lahab", 112 => "Al-Ikhlas",
+            113 => "Al-Falaq", 114 => "An-Nas",
+        ];
+        
+        return $surahNames[$surahNumber] ?? $surahNumber;
     }
 
     // ── AJAX: ambil detail profil siswa ───────────────────────────────────────
