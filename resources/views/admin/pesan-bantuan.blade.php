@@ -8,54 +8,54 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h2 class="text-xl font-semibold text-gray-900">Pesan Bantuan</h2>
-            <p class="text-sm text-gray-500 mt-1">Daftar pesan bantuan dari siswa</p>
+            <h2 class="text-xl font-bold text-gray-900">Pesan Bantuan</h2>
+            <p class="text-sm text-gray-600 mt-1">Daftar pesan bantuan dari siswa</p>
         </div>
-        <div class="flex items-center gap-2 text-sm text-gray-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
             </svg>
-            <span>{{ $pesanBantuan->count() ?? 0 }} pesan</span>
+            <span class="font-semibold">{{ $pesanBantuan->count() ?? 0 }} pesan</span>
         </div>
     </div>
 
     <!-- Table Card -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-gray-50 border-b border-gray-200">
+                <thead class="bg-blue-100/50 border-b border-blue-200">
                     <tr>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700 w-12">#</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-700">Nama Pengirim</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Kategori</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-700">Judul</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-700">Isi Pesan</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Tanggal</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800 w-12">#</th>
+                        <th class="px-4 py-3 text-left font-semibold text-blue-800">Nama Pengirim</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Kategori</th>
+                        <th class="px-4 py-3 text-left font-semibold text-blue-800">Judul</th>
+                        <th class="px-4 py-3 text-left font-semibold text-blue-800">Isi Pesan</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Tanggal</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-blue-100">
                     @forelse($pesanBantuan as $index => $pesan)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-blue-100/30 transition-colors">
                         <td class="px-4 py-3 text-center text-gray-500">{{ $index + 1 }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <span class="text-xs font-medium text-blue-600">{{ substr($pesan->nama_pengirim, 0, 1) }}</span>
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                                    <span class="text-xs font-semibold text-white">{{ substr($pesan->nama_pengirim, 0, 1) }}</span>
                                 </div>
-                                <span class="font-medium text-gray-900">{{ $pesan->nama_pengirim }}</span>
+                                <span class="font-semibold text-gray-900">{{ $pesan->nama_pengirim }}</span>
                             </div>
                         </td>
                         <td class="px-4 py-3 text-center">
                             @php
                                 $kategoriColors = [
-                                    'teknis' => 'bg-blue-50 text-blue-700',
-                                    'akademik' => 'bg-green-50 text-green-700',
-                                    'lainnya' => 'bg-gray-50 text-gray-700',
-                                    'default' => 'bg-purple-50 text-purple-700'
+                                    'teknis' => 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800',
+                                    'akademik' => 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800',
+                                    'lainnya' => 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800',
+                                    'default' => 'bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800'
                                 ];
                                 $color = $kategoriColors[$pesan->kategori] ?? $kategoriColors['default'];
                             @endphp
-                            <span class="inline-flex px-2.5 py-1 {{ $color }} rounded-md text-xs font-medium capitalize">{{ $pesan->kategori }}</span>
+                            <span class="inline-flex px-2.5 py-1 {{ $color }} rounded-lg text-xs font-semibold capitalize">{{ $pesan->kategori }}</span>
                         </td>
                         <td class="px-4 py-3 text-gray-700 font-medium">{{ $pesan->judul }}</td>
                         <td class="px-4 py-3 text-gray-600 max-w-xs truncate" title="{{ $pesan->isi }}">{{ $pesan->isi }}</td>
@@ -63,13 +63,13 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-4 py-12 text-center text-gray-500">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <td colspan="6" class="px-4 py-12 text-center text-gray-600">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                 </svg>
                             </div>
-                            <p class="text-gray-500">Belum ada pesan bantuan</p>
+                            <p class="font-semibold text-gray-700">Belum ada pesan bantuan</p>
                         </td>
                     </tr>
                     @endforelse

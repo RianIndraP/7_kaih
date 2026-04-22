@@ -142,7 +142,7 @@
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700
                                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
                                    hover:border-gray-300 transition-colors cursor-pointer bg-white">
-                            <option value="" disabled {{ empty($user->gender) ? 'selected' : '' }}>Gender</option>
+                            <option value="" disabled {{ empty($user->gender) ? 'selected' : '' }}>Jenis Kelamin</option>
                             <option value="Laki-laki" {{ ($user->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
                             </option>
                             <option value="Perempuan" {{ ($user->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan

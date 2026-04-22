@@ -14,26 +14,26 @@
 
     <!-- Session Messages -->
     @if(session('success'))
-        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 shadow-sm">
             <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-green-800">{!! session('success') !!}</p>
+                    <p class="text-sm font-semibold text-green-800">{!! session('success') !!}</p>
                 </div>
             </div>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl p-4 shadow-sm">
             <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-red-800">{!! session('error') !!}</p>
+                    <p class="text-sm font-semibold text-red-800">{!! session('error') !!}</p>
                 </div>
             </div>
         </div>
@@ -45,16 +45,16 @@
 
         <div>
 
-            <h2 class="text-xl font-semibold text-gray-900">Daftar Guru</h2>
+            <h2 class="text-xl font-bold text-gray-900">Daftar Guru</h2>
 
-            <p class="text-sm text-gray-500 mt-1">Kelola data guru sekolah</p>
+            <p class="text-sm text-gray-600 mt-1">Kelola data guru sekolah</p>
 
         </div>
 
         <div class="flex flex-wrap gap-2">
 
             <a href="{{ route('admin.guru.template') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-300 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:border-green-400 transition-all shadow-sm">
+               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300 rounded-xl text-sm font-semibold text-green-700 hover:from-green-100 hover:to-emerald-100 hover:border-green-400 transition-all shadow-sm">
                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
@@ -62,7 +62,7 @@
             </a>
 
             <button onclick="openImportModal()" 
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm">
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                 </svg>
@@ -70,7 +70,7 @@
             </button>
 
             <button onclick="openAddModal()" 
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-all shadow-sm">
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-700 border border-transparent rounded-xl text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-800 transition-all shadow-md">
 
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
@@ -90,7 +90,7 @@
 
     <!-- Filter Card -->
 
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-md p-5">
 
         <div class="flex flex-wrap gap-4 items-end">
 
@@ -130,41 +130,41 @@
 
     <!-- Table -->
 
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-md overflow-hidden">
 
         <div class="overflow-x-auto">
 
             <table class="w-full text-sm">
 
-                <thead class="bg-gray-50 border-b border-gray-200">
+                <thead class="bg-blue-100/50 border-b border-blue-200">
 
                     <tr>
 
-                        <th class="px-4 py-3 text-left font-medium text-gray-700">NIP/NIK</th>
+                        <th class="px-4 py-3 text-left font-semibold text-blue-800">NIP/NIK</th>
 
-                        <th class="px-4 py-3 text-left font-medium text-gray-700">Nama</th>
+                        <th class="px-4 py-3 text-left font-semibold text-blue-800">Nama</th>
 
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">JK</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">JK</th>
 
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Tgl Lahir</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Tgl Lahir</th>
 
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Telepon</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Telepon</th>
 
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Status</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Status</th>
 
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Unit Kerja</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Unit Kerja</th>
 
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Aksi</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Aksi</th>
 
                     </tr>
 
                 </thead>
 
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-blue-100">
 
                     @forelse($guru as $g)
 
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-blue-100/30 transition-colors">
 
                         <td class="px-4 py-3 font-medium text-gray-900">{{ $g->user->nip ?? $g->user->nik ?? '-' }}</td>
 
@@ -174,7 +174,7 @@
 
                             @if($g->user->gender)
 
-                                <span class="inline-flex px-2 py-1 {{ $g->user->gender == 'Laki-laki' ? 'bg-blue-50 text-blue-700' : 'bg-pink-50 text-pink-700' }} rounded text-xs font-medium">{{ $g->user->gender }}</span>
+                                <span class="inline-flex px-2 py-1 {{ $g->user->gender == 'Laki-laki' ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800' : 'bg-gradient-to-r from-pink-100 to-rose-100 text-pink-800' }} rounded-lg text-xs font-semibold">{{ $g->user->gender }}</span>
 
                             @else
 
@@ -188,7 +188,7 @@
 
                         <td class="px-4 py-3 text-center text-gray-600">{{ $g->user->no_telepon ?? '-' }}</td>
 
-                        <td class="px-4 py-3 text-center"><span class="inline-flex px-2 py-1 bg-purple-50 text-purple-700 rounded text-xs font-medium">{{ $g->status_pegawai ?? '-' }}</span></td>
+                        <td class="px-4 py-3 text-center"><span class="inline-flex px-2 py-1 bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 rounded-lg text-xs font-semibold">{{ $g->status_pegawai ?? '-' }}</span></td>
 
                         <td class="px-4 py-3 text-center text-gray-600">{{ $g->unit_kerja ?? '-' }}</td>
 
@@ -226,7 +226,7 @@
 
         @if($guru->hasPages())
 
-        <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">{{ $guru->links() }}</div>
+        <div class="px-4 py-3 border-t border-blue-200 bg-blue-50/50">{{ $guru->links() }}</div>
 
         @endif
 

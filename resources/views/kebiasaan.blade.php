@@ -391,10 +391,10 @@
                     </div>
 
                     {{-- Form --}}
-                    <div class="space-y-4">
+                    <div class="space-y-6">
                         <div>
-                            <p class="text-sm font-medium text-gray-700 mb-2">Apakah kamu makan sehat hari ini?</p>
-                            <div class="flex items-center gap-6">
+                            <p class="text-sm font-medium text-gray-700 mb-3">Apakah kamu makan sehat hari ini?</p>
+                            <div class="flex items-center gap-8">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="mk_status" value="iya"
                                            {{ $kebiasaan->makan_sehat === true ? 'checked' : '' }}
@@ -413,14 +413,14 @@
                         </div>
 
                         {{-- Detail 3 waktu makan — muncul hanya jika "iya" --}}
-                        <div id="mk_detail_section" class="{{ $kebiasaan->makan_sehat === true ? '' : 'hidden-field' }}">
+                        <div id="mk_detail_section" class="{{ $kebiasaan->makan_sehat === true ? '' : 'hidden-field' }} space-y-5">
                             @foreach ([
                                 ['key' => 'pagi',  'label' => 'Makan pagi dengan apa?',  'val' => $kebiasaan->makan_pagi,  'done' => $kebiasaan->makan_pagi_done],
                                 ['key' => 'siang', 'label' => 'Makan siang dengan apa?', 'val' => $kebiasaan->makan_siang, 'done' => $kebiasaan->makan_siang_done],
                                 ['key' => 'malam', 'label' => 'Makan malam dengan apa?', 'val' => $kebiasaan->makan_malam, 'done' => $kebiasaan->makan_malam_done],
                             ] as $makan)
                                 <div>
-                                    <div class="flex items-center gap-2 mb-1">
+                                    <div class="flex items-center gap-3 mb-3">
                                         {{-- Checkbox kanan: jika dicentang → input aktif --}}
                                         <label class="flex items-center gap-2 cursor-pointer flex-shrink-0">
                                             <input type="checkbox"
@@ -438,7 +438,7 @@
                                            name="mk_{{ $makan['key'] }}"
                                            value="{{ old('mk_' . $makan['key'], $makan['val']) }}"
                                            {{ !$makan['done'] ? 'disabled' : '' }}
-                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
+                                           class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800
                                                   focus:outline-none focus:ring-2 focus:ring-blue-500
                                                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
                                                   transition-colors"
@@ -449,9 +449,9 @@
 
                         {{-- Catatan --}}
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
                             <textarea id="mk_catatan" name="mk_catatan" rows="3" required
-                                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
+                                      class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->makan_catatan }}</textarea>
                         </div>
@@ -576,13 +576,30 @@
             ================================================================ --}}
             <div id="panel_tidur_cepat" class="tab-panel hidden">
                 {{-- Locked message overlay --}}
-                <div id="tidur_locked_message" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
-                    <svg class="w-12 h-12 text-amber-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                    <h3 class="text-lg font-semibold text-amber-800 mb-2">Form Terkunci</h3>
-                    <p class="text-amber-700 text-sm">Form "Tidur Cepat" baru bisa diisi mulai <strong>jam 8 malam</strong>.</p>
-                    <p class="text-amber-600 text-xs mt-2">Silakan kembali lagi setelah jam 8 malam.</p>
+                <div id="tidur_locked_message" class="hidden bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-8 text-center shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-amber-800 mb-3">Form Terkunci</h3>
+                    <p class="text-amber-700 text-sm mb-4">Form "Tidur Cepat" baru bisa diisi mulai <strong>jam 8 malam</strong>.</p>
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl px-5 py-4 mb-4 text-left shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shrink-0 shadow-md">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-blue-800 mb-1">Informasi Penting</p>
+                                <p class="text-xs text-blue-700">
+                                    Waktu tidur cepat dianjurkan mulai jam <strong>21:00 - 22:00</strong> (9 PM - 10 PM)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-amber-600 text-xs">Silakan kembali lagi setelah jam 8 malam untuk mengisi form.</p>
                 </div>
 
                 {{-- Form content (will be disabled if locked) --}}
@@ -921,11 +938,14 @@ function checkTidurCepatLock() {
         lockedMessage.classList.add('hidden');
         formContent.classList.remove('opacity-50', 'pointer-events-none');
     } else {
-        // Lock the tab
-        tabBtn.disabled = true;
-        tabBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        // Allow tab to be clicked but show locked message
+        tabBtn.disabled = false;
+        tabBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         tabBtn.onclick = () => {
-            tampilkanToast('Form Tidur Cepat baru bisa diisi mulai jam 8 malam!', 'red');
+            switchTab('tidur_cepat');
+            lockIcon.classList.remove('hidden');
+            lockedMessage.classList.remove('hidden');
+            formContent.classList.add('opacity-50', 'pointer-events-none');
         };
         lockIcon.classList.remove('hidden');
         lockedMessage.classList.remove('hidden');

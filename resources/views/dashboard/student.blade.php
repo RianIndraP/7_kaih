@@ -29,33 +29,65 @@
             </div>
         @endif
 
-        {{-- ===== TANGGAL INFO ===== --}}
-        <div class="mb-6">
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+        {{-- ===== UNREAD MESSAGES NOTIFICATION ===== --}}
+        @if (auth()->user()->isProfileComplete())
+            @php
+                $unreadPesan = \App\Models\PesanGuruSiswa::where('siswa_id', auth()->id())
+                    ->whereDoesntHave('reads', fn($q) => $q->where('siswa_id', auth()->id()))
+                    ->count();
+            @endphp
+            @if ($unreadPesan > 0)
+                <div class="mb-4 flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl px-5 py-3 shadow-md">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md shrink-0">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
+                                     a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
+                                     C7.67 6.165 6 8.388 6 11v3.159
+                                     c0 .538-.214 1.055-.595 1.436L4 17h5
+                                     m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-blue-800">{{ $unreadPesan }} Pesan Baru dari Guru Wali</p>
+                        <p class="text-xs text-blue-600 mt-0.5">Anda memiliki pesan yang belum dibaca</p>
+                    </div>
+                    <a href="{{ route('student.pesan') }}"
+                        class="text-xs font-semibold text-blue-600 hover:text-blue-800
+                          hover:underline shrink-0 transition-colors">
+                        Lihat Pesan →
+                    </a>
+                </div>
+            @endif
+        @endif
+
+        {{-- ===== TANGGAL INFO ===== }}
+        <div class="mb-4">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-md p-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shadow-md">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 font-medium">Data Hari Ini</p>
+                            <p class="text-xs text-blue-600 font-medium">Data Hari Ini</p>
                             <p class="text-lg font-bold text-gray-900">
                                 {{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('l, d F Y') }}
                             </p>
                         </div>
                     </div>
                     @if ($kebiasaanHariIni)
-                        <div class="flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1.5 rounded-full">
+                        <div class="flex items-center gap-2 bg-green-500 text-white px-3 py-1.5 rounded-full shadow-md">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                             <span class="text-xs font-semibold">Sudah Lengkap</span>
                         </div>
                     @else
-                        <div class="flex items-center gap-2 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-full">
+                        <div class="flex items-center gap-2 bg-orange-500 text-white px-3 py-1.5 rounded-full shadow-md">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -86,35 +118,37 @@
             $semuaSudahIsi = $selesai >= $totalKebiasaan;
         @endphp
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5 items-stretch">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 items-stretch">
 
             {{-- ============================================================
              KIRI: Profil Siswa (atas) + Aksi Cepat (bawah)
              keduanya dalam satu flex column agar setinggi kolom kanan
         ============================================================ --}}
-            <div class="flex flex-col gap-5">
+            <div class="flex flex-col gap-4">
 
                 {{-- ---- PROFIL SISWA ---- --}}
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1">
-                    <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        <span class="text-sm font-semibold text-gray-800">Profil Siswa</span>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-md overflow-hidden flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 px-4 py-3 border-b border-blue-100 bg-white/50">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-bold text-gray-800">Profil Siswa</span>
                     </div>
 
-                    <div class="p-5 flex items-center gap-5">
+                    <div class="p-4 flex items-center gap-3 flex-1">
                         {{-- Foto --}}
                         <div class="shrink-0">
                             <div
-                                class="w-24 h-24 rounded-full bg-gray-200 border-4 border-gray-300
+                                class="w-28 h-28 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 border-4 border-white shadow-lg
                                     flex items-center justify-center overflow-hidden">
                                 @if (!empty($user->foto))
                                     <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto {{ $user->name }}"
                                         class="w-full h-full object-cover" />
                                 @else
-                                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor"
+                                    <svg class="w-16 h-16 text-white/80" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -124,7 +158,7 @@
                         </div>
 
                         {{-- Info --}}
-                        <div class="space-y-1.5">
+                        <div class="space-y-2 flex-1">
                             <p class="text-sm text-gray-700">
                                 Nama: <span class="font-semibold text-gray-900">{{ $user->name ?? '-' }}</span>
                             </p>
@@ -140,31 +174,33 @@
                 </div>
 
                 {{-- ---- AKSI CEPAT ---- --}}
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span class="text-sm font-semibold text-gray-800">Aksi Cepat</span>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-md overflow-hidden">
+                    <div class="flex items-center gap-2 px-4 py-3 border-b border-blue-100 bg-white/50">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-bold text-gray-800">Aksi Cepat</span>
                     </div>
 
-                    <div class="p-4 space-y-3">
+                    <div class="p-4 space-y-2">
                         {{-- Isi data 7 Kebiasaan --}}
                         <a href="{{ route('student.kebiasaan') }}"
-                            class="flex items-center gap-3 w-full border border-gray-200 hover:border-blue-300
-                              hover:bg-blue-50 rounded-lg px-4 py-3 transition-colors group">
+                            class="flex items-center gap-3 w-full bg-white/60 border border-blue-200 hover:border-blue-400
+                              hover:bg-white/80 rounded-lg px-3 py-2.5 transition-colors group shadow-sm">
                             <div
-                                class="w-8 h-8 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center
-                                    justify-center shrink-0 transition-colors">
-                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center
+                                    justify-center shrink-0 transition-transform group-hover:scale-110">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0
                                                                  00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2
                                                                  2 0 012 2m-6 9l2 2 4-4" />
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-800 group-hover:text-blue-700 transition-colors">
+                                <p class="text-sm font-semibold text-gray-800 group-hover:text-blue-700 transition-colors">
                                     Isi data 7 Kebiasaan
                                 </p>
                                 <p class="text-xs text-gray-500 mt-0.5">Catat kebiasaan harian kamu</p>
@@ -177,24 +213,24 @@
 
                         {{-- Pesan Dari Guru Wali --}}
                         <a href="{{ route('student.pesan') }}"
-                            class="flex items-center gap-3 w-full border border-gray-200 hover:border-purple-300
-                              hover:bg-purple-50 rounded-lg px-4 py-3 transition-colors group">
+                            class="flex items-center gap-3 w-full bg-white/60 border border-blue-200 hover:border-blue-400
+                              hover:bg-white/80 rounded-lg px-3 py-2.5 transition-colors group shadow-sm">
                             <div
-                                class="w-8 h-8 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center
-                                    justify-center shrink-0 transition-colors">
-                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor"
+                                class="w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center
+                                    justify-center shrink-0 transition-transform group-hover:scale-110">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0
                                                                  012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-800 group-hover:text-purple-700 transition-colors">
+                                <p class="text-sm font-semibold text-gray-800 group-hover:text-blue-700 transition-colors">
                                     Pesan Dari Guru Wali
                                 </p>
                                 <p class="text-xs text-gray-500 mt-0.5">Lihat pesan terbaru dari guru wali</p>
                             </div>
-                            <svg class="w-4 h-4 text-gray-400 group-hover:text-purple-500 transition-colors shrink-0"
+                            <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors shrink-0"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                             </svg>
@@ -207,12 +243,18 @@
             {{-- ============================================================
              KANAN: Status 7 Kebiasaan — mengisi penuh tinggi kolom kiri
         ============================================================ --}}
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-                <div class="px-4 py-3 border-b border-gray-100">
-                    <span class="text-sm font-semibold text-gray-800">Status 7 Kebiasaan Anak Indonesia Hebat</span>
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-md overflow-hidden flex flex-col">
+                <div class="flex items-center gap-2 px-5 py-4 border-b border-blue-100 bg-white/50">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-bold text-gray-800">Status 7 Kebiasaan Anak Indonesia Hebat</span>
                 </div>
 
-                <div class="p-4 flex flex-col gap-3 flex-1">
+                <div class="p-4 flex flex-col gap-2 flex-1">
 
                     {{-- Warning: hanya muncul jika BELUM semua diisi --}}
                     @if (!$semuaSudahIsi)
@@ -300,29 +342,33 @@
 
         {{-- ===== NOTIFICATION BANNER BAWAH ===== --}}
         @if (!$kebiasaanHariIni)
-            <div class="flex items-center gap-3 bg-white border border-yellow-200 rounded-xl px-5 py-3 shadow-sm">
-                <svg class="w-5 h-5 text-yellow-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
+            <div class="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-xl px-4 py-2.5 shadow-md">
+                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0
                                                  001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                </svg>
+                    </svg>
+                </div>
                 <p class="text-sm text-gray-700">Anda belum mengisi data kebiasaan hari ini</p>
                 <a href="{{ route('student.kebiasaan') }}"
-                    class="ml-auto text-xs font-semibold text-blue-600 hover:text-blue-800
+                    class="ml-auto text-xs font-semibold text-orange-600 hover:text-orange-800
                       hover:underline shrink-0 transition-colors">
                     Isi Sekarang →
                 </a>
             </div>
         @else
-            <div class="flex items-center gap-3 bg-white border border-green-200 rounded-xl px-5 py-3 shadow-sm">
-                <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
+            <div class="flex items-center gap-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl px-4 py-2.5 shadow-md">
+                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
                 <p class="text-sm text-gray-700">Kebiasaan hari ini sudah diisi. Pertahankan! 🎉</p>
             </div>
         @endif
 
         {{-- Notifikasi Section --}}
-        <div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-100">
+        <div class="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-100">
             <div class="flex items-start gap-4">
                 {{-- Icon --}}
                 <div class="shrink-0 w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">

@@ -7,10 +7,10 @@
 <div class="space-y-6">
     <!-- Flash Messages -->
     @if(session('success'))
-        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 shadow-sm">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
@@ -22,10 +22,10 @@
     @endif
 
     @if(session('error'))
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl p-4 shadow-sm">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </div>
@@ -39,26 +39,26 @@
     <!-- Header & Stats -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h2 class="text-xl font-semibold text-gray-900">Daftar Siswa</h2>
-            <p class="text-sm text-gray-500 mt-1">Kelola data siswa sekolah</p>
+            <h2 class="text-xl font-bold text-gray-900">Daftar Siswa</h2>
+            <p class="text-sm text-gray-600 mt-1">Kelola data siswa sekolah</p>
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('admin.siswa.template') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-300 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:border-green-400 transition-all shadow-sm">
+               class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300 rounded-xl text-sm font-semibold text-green-700 hover:from-green-100 hover:to-emerald-100 hover:border-green-400 transition-all shadow-sm">
                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 Download Template
             </a>
             <button onclick="openImportModal()" 
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm">
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                 </svg>
                 Import Excel
             </button>
             <button onclick="openAddModal()" 
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-all shadow-sm">
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-700 border border-transparent rounded-xl text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-800 transition-all shadow-md">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -68,7 +68,7 @@
     </div>
 
     <!-- Filter Card -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-md p-5">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <!-- Kelas Filter -->
             <div>
@@ -122,11 +122,11 @@
     </div>
 
     <!-- Table Card -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-md overflow-hidden">
         <!-- Bulk Delete Bar -->
-        <div id="bulkDeleteBar" class="hidden bg-red-50 border-b border-red-200 px-4 py-3 flex items-center justify-between">
-            <span class="text-sm text-red-700"><span id="selectedCount">0</span> siswa dipilih</span>
-            <button type="button" onclick="bulkDeleteStudents()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+        <div id="bulkDeleteBar" class="hidden bg-gradient-to-r from-red-50 to-rose-50 border-b border-red-200 px-4 py-3 flex items-center justify-between">
+            <span class="text-sm text-red-800"><span id="selectedCount">0</span> siswa dipilih</span>
+            <button type="button" onclick="bulkDeleteStudents()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
@@ -137,24 +137,24 @@
 
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-gray-50 border-b border-gray-200">
+                <thead class="bg-blue-100/50 border-b border-blue-200">
                     <tr>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700 w-12">
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800 w-12">
                             <input type="checkbox" id="selectAll" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer">
                         </th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-700">NISN</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-700">Nama Lengkap</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">JK</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Kelas</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Guru Wali</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Angkatan</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Tanggal Lahir</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-700">Aksi</th>
+                        <th class="px-4 py-3 text-left font-semibold text-blue-800">NISN</th>
+                        <th class="px-4 py-3 text-left font-semibold text-blue-800">Nama Lengkap</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">JK</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Kelas</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Guru Wali</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Angkatan</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Tanggal Lahir</th>
+                        <th class="px-4 py-3 text-center font-semibold text-blue-800">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-blue-100">
                     @forelse($siswa as $s)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-blue-100/30 transition-colors">
                         <td class="px-4 py-3 text-center">
                             <input type="checkbox" class="student-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer" value="{{ $s->id }}">
                         </td>
@@ -162,7 +162,7 @@
                         <td class="px-4 py-3 text-gray-700">{{ $s->name }}</td>
                         <td class="px-4 py-3 text-center">
                             @if($s->gender)
-                                <span class="inline-flex px-2 py-1 {{ $s->gender == 'Laki-laki' ? 'bg-blue-50 text-blue-700' : 'bg-pink-50 text-pink-700' }} rounded text-xs font-medium">
+                                <span class="inline-flex px-2 py-1 {{ $s->gender == 'Laki-laki' ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800' : 'bg-gradient-to-r from-pink-100 to-rose-100 text-pink-800' }} rounded-lg text-xs font-semibold">
                                     {{ $s->gender == 'Laki-laki' ? 'L' : 'P' }}
                                 </span>
                             @else
@@ -170,7 +170,7 @@
                             @endif
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <span class="inline-flex px-2.5 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                            <span class="inline-flex px-2.5 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-lg text-xs font-semibold">
                                 {{ $s->kelas?->nama_kelas ?? '-' }}
                             </span>
                         </td>
@@ -215,7 +215,7 @@
         
         <!-- Pagination -->
         @if($siswa->hasPages())
-        <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
+        <div class="px-4 py-3 border-t border-blue-200 bg-blue-50/50">
             {{ $siswa->links() }}
         </div>
         @endif

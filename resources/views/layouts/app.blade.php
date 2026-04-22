@@ -90,17 +90,17 @@
 
         /* App background - luxurious light gradient */
         .app-bg {
-            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 40%, #f5f3ff 100%);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #f0f9ff 100%);
         }
 
-        /* Sidebar gradient - luxurious deep purple-blue */
+        /* Sidebar gradient - luxurious blue-indigo */
         .sidebar-gradient {
-            background: linear-gradient(180deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%);
+            background: linear-gradient(180deg, #2563eb 0%, #4f46e5 50%, #4338ca 100%);
         }
 
         /* Header gradient - matching luxurious gradient */
         .header-gradient {
-            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%);
+            background: linear-gradient(90deg, #2563eb 0%, #4f46e5 50%, #2563eb 100%);
         }
     </style>
 </head>

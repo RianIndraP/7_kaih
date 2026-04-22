@@ -1,5 +1,5 @@
 <!-- Header -->
-<header class="header-gradient shadow-sm">
+<header class="header-gradient shadow-md">
     <div class="px-6 py-4 flex items-center justify-between">
 
         {{-- Kiri: hamburger + judul halaman --}}
@@ -60,7 +60,7 @@
                         </svg>
                         {{-- Badge jumlah pesan belum dibaca --}}
                         @php
-                            $unreadPesan = \App\Models\PesanGuru::where('siswa_id', auth()->id())
+                            $unreadPesan = \App\Models\PesanGuruSiswa::where('siswa_id', auth()->id())
                                 ->whereDoesntHave('reads', fn($q) => $q->where('siswa_id', auth()->id()))
                                 ->count();
                         @endphp

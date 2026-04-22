@@ -390,8 +390,10 @@ class ManajemenSiswaController extends Controller
             'nisn' => $user->nisn,
             'name' => $user->name,
             'kelas_id' => $user->kelas_id,
+            'angkatan' => $user->angkatan,
             'gender' => $user->gender,
             'birth_date' => $user->birth_date ? $user->birth_date->format('Y-m-d') : null,
+            'guru_wali_id' => $user->guru_wali_id,
             'no_telepon' => $user->no_telepon,
             'email' => $user->email,
         ]);

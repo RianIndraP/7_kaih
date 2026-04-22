@@ -81,7 +81,7 @@ class ListMuridController extends Controller
                     'has_umpan_balik'=> false,
                     'mode_no_periode'=> true, // flag untuk tampilan tanpa periode
                 ];
-            });
+            })->sortByDesc('persen')->values();
 
             return response()->json([
                 'success'  => true,
@@ -150,7 +150,7 @@ class ListMuridController extends Controller
                 'has_umpan_balik'=> $pesan !== null,
                 'mode_no_periode'=> false,
             ];
-        });
+        })->sortByDesc('persen')->values();
 
         return response()->json([
             'success'  => true,

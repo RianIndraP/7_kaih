@@ -3,7 +3,7 @@
 
 <!-- Sidebar -->
 <div id="sidebar"
-    class="sidebar-transition fixed lg:relative lg:translate-x-0 -translate-x-full w-64 sidebar-gradient min-h-screen shadow-md z-40">
+    class="sidebar-transition fixed lg:relative lg:translate-x-0 -translate-x-full w-64 sidebar-gradient min-h-screen shadow-xl z-40">
     <div class="p-6">
         <!-- Mobile Close Button -->
         <button id="mobileCloseBtn" class="lg:hidden absolute top-4 right-4 p-2 text-white/80 hover:text-white">
@@ -66,13 +66,25 @@
 
             {{-- Pesan Dari Guru Wali - Locked if profile incomplete --}}
             @if (auth()->user()->isProfileComplete())
+                @php
+                    $unreadCount = \App\Models\PesanGuruSiswa::where('siswa_id', auth()->id())
+                        ->whereDoesntHave('reads', fn($q) => $q->where('siswa_id', auth()->id()))
+                        ->count();
+                @endphp
                 <a href="{{ route('student.pesan') }}"
                     class="flex items-center space-x-3 {{ request()->routeIs('student.pesan') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }} rounded-lg p-3 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
-                        </path>
-                    </svg>
+                    <div class="relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                            </path>
+                        </svg>
+                        @if ($unreadCount > 0)
+                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md">
+                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                            </span>
+                        @endif
+                    </div>
                     <span>Pesan Dari Guru Wali</span>
                 </a>
             @else
@@ -89,13 +101,13 @@
                 </div>
             @endif
             <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                class="flex items-center space-x-3 text-white/90 hover:bg-white/10 rounded-lg p-3 transition-colors cursor-pointer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                    </path>
+                class="flex items-center gap-3 text-red-300 hover:bg-red-500/20 rounded-lg
+                  px-3 py-2.5 text-sm transition-colors cursor-pointer">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7
+                         a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                <span>Keluar</span>
+                Keluar
             </a>
         </nav>
     </div>

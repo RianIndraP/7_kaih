@@ -125,7 +125,7 @@
                 @foreach ([
                     ['label' => 'Nisn :', 'value' => $user->nisn ?? '-'],
                     ['label' => 'Nama :', 'value' => $user->name ?? '-'],
-                    ['label' => 'Kelas :', 'value' => $user->kelas ?? '-'],
+                    ['label' => 'Kelas :', 'value' => $user->kelas?->nama_kelas ?? '-'],
                 ] as $row)
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">{{ $row['label'] }}</label>

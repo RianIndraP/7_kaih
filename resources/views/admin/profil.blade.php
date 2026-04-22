@@ -8,9 +8,9 @@
 <div class="w-full">
     {{-- Header --}}
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-semibold text-gray-900">Profil Operator</h1>
+        <h1 class="text-xl font-bold text-gray-900">Profil Operator</h1>
         <button type="submit" form="formProfil" id="btnSave"
-                class="hidden px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                class="hidden px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl hover:from-blue-700 hover:to-indigo-800 transition-all shadow-md flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
@@ -19,13 +19,13 @@
     </div>
 
     @if(session('success'))
-        <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+        <div class="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl text-green-800 text-sm shadow-sm">
             {{ session('success') }}
         </div>
     @endif
 
     @if($errors->any())
-        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div class="mb-4 p-4 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl text-red-800 text-sm shadow-sm">
             <ul class="list-disc list-inside">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -39,11 +39,11 @@
         @csrf
         @method('PUT')
 
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-md p-6">
             <div class="flex items-start gap-8">
                 {{-- Foto Profil --}}
                 <div class="shrink-0 text-center">
-                    <div class="relative w-28 h-36 bg-gray-100 border-2 border-gray-200 rounded-xl overflow-hidden group cursor-pointer"
+                    <div class="relative w-28 h-36 bg-gradient-to-br from-blue-100 to-indigo-100 border-2 border-blue-300 rounded-xl overflow-hidden group cursor-pointer shadow-md"
                          onclick="document.getElementById('inputFoto').click()">
                         @if (!empty($user->foto))
                             <img id="previewFoto" src="{{ asset('storage/' . $user->foto) }}"
@@ -51,7 +51,7 @@
                                  class="w-full h-full object-cover"/>
                         @else
                             <div id="previewFoto" class="w-full h-full flex items-center justify-center">
-                                <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
@@ -71,56 +71,56 @@
                         </div>
                         <input type="file" id="inputFoto" name="foto" accept="image/*" class="hidden" onchange="handleFotoChange(this)">
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">Klik foto untuk ganti</p>
+                    <p class="text-xs text-gray-600 mt-2">Klik foto untuk ganti</p>
                 </div>
 
                 {{-- Info Data --}}
                 <div class="flex-1 grid grid-cols-3 gap-x-6 gap-y-4">
                     {{-- Nama --}}
                     <div class="col-span-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1">Nama Lengkap</label>
                         <input type="text" name="name" value="{{ $user->name }}" data-original="{{ $user->name }}"
-                               class="editable-field w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-colors"
+                               class="editable-field w-full px-4 py-2.5 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-300 transition-colors bg-white"
                                oninput="checkChanges()">
                     </div>
 
                     {{-- NIP --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">NIP</label>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1">NIP</label>
                         <input type="text" name="nip" value="{{ $user->nip }}" data-original="{{ $user->nip }}"
-                               class="editable-field w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-colors"
+                               class="editable-field w-full px-4 py-2.5 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-300 transition-colors bg-white"
                                oninput="checkChanges()">
                     </div>
 
                     {{-- Email --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1">Email</label>
                         <input type="email" name="email" value="{{ $user->email }}" data-original="{{ $user->email }}"
-                               class="editable-field w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-colors"
+                               class="editable-field w-full px-4 py-2.5 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-300 transition-colors bg-white"
                                oninput="checkChanges()">
                     </div>
 
                     {{-- No. HP --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">No. HP</label>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1">No. HP</label>
                         <input type="tel" name="no_telepon" value="{{ $user->no_telepon }}" data-original="{{ $user->no_telepon }}"
-                               class="editable-field w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-colors"
+                               class="editable-field w-full px-4 py-2.5 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-300 transition-colors bg-white"
                                oninput="checkChanges()">
                     </div>
 
                     {{-- Tempat Lahir --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tempat Lahir</label>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1">Tempat Lahir</label>
                         <input type="text" name="tempat_lahir" value="{{ $user->tempat_lahir }}" data-original="{{ $user->tempat_lahir }}"
-                               class="editable-field w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-colors"
+                               class="editable-field w-full px-4 py-2.5 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-300 transition-colors bg-white"
                                oninput="checkChanges()">
                     </div>
 
                     {{-- Tanggal Lahir --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
+                        <label class="block text-sm font-semibold text-gray-800 mb-1">Tanggal Lahir</label>
                         <input type="date" name="birth_date" value="{{ $user->birth_date?->format('Y-m-d') }}" data-original="{{ $user->birth_date?->format('Y-m-d') }}"
-                               class="editable-field w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-colors"
+                               class="editable-field w-full px-4 py-2.5 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-300 transition-colors bg-white"
                                onchange="checkChanges()">
                     </div>
                 </div>

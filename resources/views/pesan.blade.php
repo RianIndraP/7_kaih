@@ -9,16 +9,16 @@
     {{-- ===== HEADER ===== --}}
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h2 class="text-xl font-bold text-gray-900">Pesan guru wali</h2>
+            <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">Pesan Guru Wali</h2>
             @if ($belumDibaca > 0)
-                <p class="text-xs text-gray-500 mt-0.5">
-                    <span class="inline-flex items-center gap-1">
-                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                        {{ $belumDibaca }} pesan belum dibaca
+                <p class="text-sm text-gray-600 mt-1">
+                    <span class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-full px-3 py-1">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                        <span class="font-semibold text-blue-700">{{ $belumDibaca }} pesan belum dibaca</span>
                     </span>
                 </p>
             @else
-                <p class="text-xs text-gray-500 mt-0.5">Semua pesan sudah dibaca</p>
+                <p class="text-sm text-gray-500 mt-1">Semua pesan sudah dibaca</p>
             @endif
         </div>
     </div>
@@ -35,16 +35,16 @@
                 onclick="bukaPesan({{ $pesan->id }}, this)"
                 data-id="{{ $pesan->id }}"
                 data-dibaca="{{ $sudahDibaca ? '1' : '0' }}"
-                class="pesan-item flex items-center gap-4 w-full bg-white border rounded-xl px-5 py-4
-                       cursor-pointer transition-all duration-200 select-none
+                class="pesan-item flex items-center gap-4 w-full bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl px-5 py-4
+                       cursor-pointer transition-all duration-200 select-none shadow-md hover:shadow-lg hover:scale-[1.01]
                        {{ $sudahDibaca
-                          ? 'border-gray-200 opacity-60 hover:opacity-80'
-                          : 'border-gray-300 shadow-sm hover:shadow-md hover:border-blue-300' }}">
+                          ? 'opacity-60 hover:opacity-80'
+                          : '' }}">
 
                 {{-- Ikon pesan --}}
-                <div class="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center
-                            {{ $sudahDibaca ? 'bg-gray-100' : 'bg-blue-50' }}">
-                    <svg class="w-5 h-5 {{ $sudahDibaca ? 'text-gray-400' : 'text-blue-500' }}"
+                <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center shadow-md
+                            {{ $sudahDibaca ? 'bg-gray-200' : 'bg-gradient-to-br from-blue-500 to-indigo-600' }}">
+                    <svg class="w-6 h-6 {{ $sudahDibaca ? 'text-gray-500' : 'text-white' }}"
                          fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0
@@ -54,22 +54,22 @@
 
                 {{-- Judul + guru --}}
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium truncate
-                               {{ $sudahDibaca ? 'text-gray-400' : 'text-gray-800' }}">
+                    <p class="text-base font-semibold truncate
+                               {{ $sudahDibaca ? 'text-gray-500' : 'text-gray-900' }}">
                         {{ $pesan->judul }}
                     </p>
-                    <p class="text-xs mt-0.5 {{ $sudahDibaca ? 'text-gray-400' : 'text-gray-500' }}">
+                    <p class="text-sm mt-0.5 {{ $sudahDibaca ? 'text-gray-400' : 'text-gray-600' }}">
                         {{ $pesan->guru->name ?? 'Guru Wali' }}
                     </p>
                 </div>
 
                 {{-- Waktu + badge unread --}}
                 <div class="flex-shrink-0 flex flex-col items-end gap-1">
-                    <span class="text-xs {{ $sudahDibaca ? 'text-gray-400' : 'text-gray-500' }}">
+                    <span class="text-xs {{ $sudahDibaca ? 'text-gray-400' : 'text-gray-600' }}">
                         {{ $pesan->waktuRelatif() }}
                     </span>
                     @if (!$sudahDibaca)
-                        <span class="unread-dot w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span class="unread-dot w-2.5 h-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-md"></span>
                     @endif
                 </div>
             </div>
@@ -77,15 +77,15 @@
         @empty
             {{-- Empty state --}}
             <div class="flex flex-col items-center justify-center py-20 text-center">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-5 shadow-md">
+                    <svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                               d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0
                                  012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                     </svg>
                 </div>
-                <p class="text-sm font-medium text-gray-600">Belum ada pesan dari guru wali</p>
-                <p class="text-xs text-gray-400 mt-1">Pesan akan muncul di sini saat guru wali mengirim pesan</p>
+                <p class="text-base font-semibold text-gray-700">Belum ada pesan dari guru wali</p>
+                <p class="text-sm text-gray-500 mt-1">Pesan akan muncul di sini saat guru wali mengirim pesan</p>
             </div>
         @endforelse
 
@@ -103,53 +103,55 @@
 
 {{-- ===== MODAL BACA PESAN ===== --}}
 <div id="modalPesan"
-     class="fixed inset-0 bg-black/50 z-[9999] hidden items-center justify-center p-4"
+     class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4"
      onclick="tutupModal(event)">
-    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+    <div class="bg-gradient-to-br from-white to-blue-50 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-blue-100"
          onclick="event.stopPropagation()">
 
         {{-- Modal header --}}
-        <div class="flex items-start justify-between px-6 pt-5 pb-3">
-            <div class="flex-1 min-w-0 pr-4">
-                <p id="modalJudul"
-                   class="text-sm font-semibold text-gray-900 leading-snug"></p>
-                <div class="flex items-center gap-3 mt-1">
-                    <p id="modalGuru" class="text-xs text-gray-500"></p>
-                    <span class="text-gray-300">·</span>
-                    <p id="modalWaktu" class="text-xs text-gray-400"></p>
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 pt-5 pb-4">
+            <div class="flex items-start justify-between">
+                <div class="flex-1 min-w-0 pr-4">
+                    <p id="modalJudul"
+                       class="text-base font-bold text-white leading-snug"></p>
+                    <div class="flex items-center gap-3 mt-1">
+                        <p id="modalGuru" class="text-xs text-blue-100"></p>
+                        <span class="text-blue-200">·</span>
+                        <p id="modalWaktu" class="text-xs text-blue-200"></p>
+                    </div>
                 </div>
+                <button onclick="tutupModal()"
+                        class="flex-shrink-0 p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-xl transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
-            <button onclick="tutupModal()"
-                    class="flex-shrink-0 p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
         </div>
 
         {{-- Divider --}}
-        <div class="mx-6 border-t border-dashed border-gray-200"></div>
+        <div class="h-1 bg-gradient-to-r from-blue-200 to-indigo-200"></div>
 
         {{-- Isi pesan --}}
-        <div class="px-6 py-4">
+        <div class="px-6 py-5">
             <div id="modalLoading"
                  class="flex items-center justify-center py-8 hidden">
-                <svg class="w-6 h-6 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                <svg class="w-8 h-8 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                     <path class="opacity-75" fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                 </svg>
             </div>
             <div id="modalIsi"
-                 class="text-sm text-gray-700 leading-relaxed border border-dashed border-gray-300
-                        rounded-xl px-4 py-4 bg-gray-50 min-h-[120px] whitespace-pre-wrap"></div>
+                 class="text-sm text-gray-700 leading-relaxed border-2 border-blue-100
+                        rounded-2xl px-5 py-4 bg-gradient-to-br from-blue-50 to-indigo-50 min-h-[120px] whitespace-pre-wrap shadow-inner"></div>
         </div>
 
         {{-- Footer --}}
         <div class="px-6 pb-5 flex justify-center">
             <button onclick="tutupModal()"
-                    class="px-8 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-sm
-                           font-medium text-gray-700 rounded-lg transition-colors shadow-sm">
+                    class="px-8 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-sm
+                           font-semibold text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
                 Tutup
             </button>
         </div>
@@ -216,32 +218,31 @@
        Update tampilan baris → abu-abu setelah dibaca
     ───────────────────────────────────────────────────────────────────────── */
     function tandaiSudahDibaca(elRow) {
-        // Border & opacity
-        elRow.classList.remove('border-gray-300', 'shadow-sm', 'hover:shadow-md', 'hover:border-blue-300');
-        elRow.classList.add('border-gray-200', 'opacity-60', 'hover:opacity-80');
+        // Opacity
+        elRow.classList.add('opacity-60', 'hover:opacity-80');
 
         // Ikon
         const icon = elRow.querySelector('svg');
         if (icon) {
-            icon.classList.remove('text-blue-500');
-            icon.classList.add('text-gray-400');
+            icon.classList.remove('text-white');
+            icon.classList.add('text-gray-500');
         }
-        const iconWrap = elRow.querySelector('.w-9');
+        const iconWrap = elRow.querySelector('.flex-shrink-0');
         if (iconWrap) {
-            iconWrap.classList.remove('bg-blue-50');
-            iconWrap.classList.add('bg-gray-100');
+            iconWrap.classList.remove('bg-gradient-to-br', 'from-blue-500', 'to-indigo-600');
+            iconWrap.classList.add('bg-gray-200');
         }
 
         // Teks judul
-        const judul = elRow.querySelector('.text-sm.font-medium');
+        const judul = elRow.querySelector('.text-base.font-semibold');
         if (judul) {
-            judul.classList.remove('text-gray-800');
-            judul.classList.add('text-gray-400');
+            judul.classList.remove('text-gray-900');
+            judul.classList.add('text-gray-500');
         }
 
         // Teks guru & waktu
-        elRow.querySelectorAll('.text-xs').forEach(el => {
-            el.classList.remove('text-gray-500');
+        elRow.querySelectorAll('.text-sm').forEach(el => {
+            el.classList.remove('text-gray-600');
             el.classList.add('text-gray-400');
         });
 
