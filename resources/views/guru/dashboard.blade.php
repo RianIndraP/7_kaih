@@ -151,7 +151,7 @@
                     </svg>
                 </div>
                 <span class="text-sm font-medium text-gray-800 group-hover:text-blue-700 transition-colors">
-                    Absen siswa
+                    Absen Siswa
                 </span>
             </a>
 

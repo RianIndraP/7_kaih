@@ -126,7 +126,7 @@
 
             {{-- Data Kepegawaian --}}
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 class="text-sm font-semibold text-gray-900 mb-4">Data kepegawaian</h3>
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">Data Kepegawaian</h3>
                 <div class="space-y-3">
 
                     <div>

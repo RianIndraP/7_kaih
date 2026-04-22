@@ -51,8 +51,8 @@
                     <select id="selectPeriode"
                         class="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
                                text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                        <option value="">periode</option>
-                        <option value="harian">Per hari</option>
+                        <option value="">Periode</option>
+                        <option value="harian">Per Hari</option>
                         <option value="mingguan">Per Minggu</option>
                         <option value="pertemuan">Per Pertemuan</option>
                         <option value="bulanan">Per Bulan</option>
@@ -442,7 +442,7 @@
                         <tbody id="historyBody">
                             <tr>
                                 <td colspan="4" class="px-3 py-6 text-center text-gray-400">
-                                    Memuat history...
+                                    Memuat History...
                                 </td>
                             </tr>
                         </tbody>
