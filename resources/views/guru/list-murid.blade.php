@@ -538,16 +538,16 @@
                             </div>
                             <h4 class="text-sm font-bold text-gray-800">Tidur Cepat</h4>
                         </div>
-                        <div class="grid grid-cols-3 gap-3 text-sm">
-                            <div class="bg-gray-50 rounded-lg p-2">
+                        <div class="flex flex-wrap gap-3 text-sm">
+                            <div class="bg-gray-50 rounded-lg p-2 min-w-[80px]">
                                 <p class="text-xs text-gray-500 mb-1">Status</p>
                                 <p id="detailTidurCepatStatus" class="font-semibold text-gray-800">-</p>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-2">
+                            <div class="bg-gray-50 rounded-lg p-2 min-w-[80px]">
                                 <p class="text-xs text-gray-500 mb-1">Jam</p>
                                 <p id="detailTidurCepatJam" class="font-semibold text-gray-800">-</p>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-2">
+                            <div class="bg-gray-50 rounded-lg p-2 flex-1 min-w-[120px]">
                                 <p class="text-xs text-gray-500 mb-1">Catatan</p>
                                 <p id="detailTidurCepatCatatan" class="font-semibold text-gray-800">-</p>
                             </div>

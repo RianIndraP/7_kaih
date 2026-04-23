@@ -40,11 +40,11 @@
                 class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
                 id="lampiranSelect" onchange="handleLampiran(this.value)">
                 <option value="" selected>Pilih Lampiran</option>
-                <option value="A">Lampiran A - ( Identitas Siswa )</option>
-                <option value="B">Lampiran B - ( Perkembangan Siswa )</option>
-                <option value="C">Lampiran C - ( Catatan Pertemuan )</option>
-                <option value="D">Lampiran D</option>
-                <option value="E">Lampiran E</option>
+                <option value="A">Lampiran A - ( Identitas Murid Dampingan )</option>
+                <option value="B">Lampiran B - ( Catatn Perkembangan Murid )</option>
+                <option value="C">Lampiran C - ( Rekap Pertemuan Dengan Murid )</option>
+                <option value="D">Lampiran D - ( Laporan Semester Guru Wali )</option>
+                <option value="E">Lampiran E - ( Dokumentasi Pertemuan )</option>
             </select>
 
             <select
