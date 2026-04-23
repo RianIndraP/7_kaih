@@ -20,7 +20,6 @@ use App\Http\Controllers\Student\GantiPasswordController;
 use App\Http\Controllers\Student\KebiasaanController;
 use App\Http\Controllers\Student\PesanBantuanController;
 use App\Http\Controllers\Student\PesanController;
-use App\Models\FcmToken;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
