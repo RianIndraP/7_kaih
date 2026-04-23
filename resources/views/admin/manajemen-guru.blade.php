@@ -166,7 +166,7 @@
 
                     <tr class="hover:bg-blue-100/30 transition-colors">
 
-                        <td class="px-4 py-3 font-medium text-gray-900">{{ $g->user->nip ?? $g->user->nik ?? '-' }}</td>
+                        <td class="px-4 py-3 font-medium text-gray-900">{{ !empty($g->user->nip) ? $g->user->nip : ($g->user->nik ?? '-') }}</td>
 
                         <td class="px-4 py-3 text-gray-700">{{ $g->user->name ?? '-' }}</td>
 
