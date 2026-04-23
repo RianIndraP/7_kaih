@@ -17,8 +17,14 @@
             color: #1d4ed8;
         }
 
-        .sidebar-logo {
-            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+        /* Sidebar gradient - luxurious blue-indigo */
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #2563eb 0%, #4f46e5 50%, #4338ca 100%);
+        }
+
+        /* Header gradient - matching luxurious gradient */
+        .header-gradient {
+            background: linear-gradient(90deg, #2563eb 0%, #4f46e5 50%, #2563eb 100%);
         }
 
         .card-shadow {
@@ -45,10 +51,15 @@
             padding: 2px 4px;
             box-shadow: 0 0 0 1px #3b82f6;
         }
+
+        /* App background */
+        .app-bg {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #f0f9ff 100%);
+        }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body class="app-bg min-h-screen">
     <div class="flex relative min-h-screen">
 
         {{-- ========== MOBILE OVERLAY ========== --}}
@@ -57,7 +68,7 @@
         {{-- ========== SIDEBAR ADMIN ========== --}}
         <div id="sidebar"
             class="sidebar-transition fixed lg:static lg:translate-x-0 -translate-x-full
-                    w-64 bg-white min-h-screen border-r border-gray-200 shadow-md z-50 shrink-0">
+                    w-64 sidebar-gradient min-h-screen shadow-xl z-50 shrink-0">
             <div class="p-6 flex flex-col h-full">
 
                 {{-- Mobile close --}}
@@ -72,12 +83,12 @@
 
                 {{-- Brand --}}
                 <div class="flex flex-col items-center mb-8">
-                    <div class="w-20 h-20 sidebar-logo rounded-xl flex items-center justify-center mb-3">
+                    <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 border border-white/30">
                         <img src="{{ asset('img/logo-1.png') }}" alt="Logo SMK Negeri 5"
                             class="size-[76px] object-contain">
                     </div>
-                    <h2 class="text-sm font-bold text-gray-900 text-center leading-tight">SMK NEGERI 5</h2>
-                    <p class="text-xs text-gray-500 text-center">TELKOM BANDA ACEH</p>
+                    <h2 class="text-sm font-bold text-white text-center leading-tight">SMK NEGERI 5</h2>
+                    <p class="text-xs text-white/80 text-center">TELKOM BANDA ACEH</p>
                 </div>
 
                 {{-- Navigasi Admin --}}
@@ -85,7 +96,7 @@
 
                     <a href="{{ route('admin.dashboard') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                              {{ request()->routeIs('admin.dashboard') ? 'nav-active font-medium' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                              {{ request()->routeIs('admin.dashboard') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1
@@ -96,7 +107,7 @@
 
                     <a href="{{ route('admin.profil') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                              {{ request()->routeIs('admin.profil') ? 'nav-active font-medium' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                              {{ request()->routeIs('admin.profil') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -106,7 +117,7 @@
 
                     <a href="{{ route('admin.siswa') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                              {{ request()->routeIs('admin.siswa*') ? 'nav-active font-medium' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                              {{ request()->routeIs('admin.siswa*') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7
                                      20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0
@@ -118,7 +129,7 @@
 
                     <a href="{{ route('admin.guru') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                              {{ request()->routeIs('admin.guru*') ? 'nav-active font-medium' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                              {{ request()->routeIs('admin.guru*') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -128,7 +139,7 @@
 
                     <a href="{{ route('admin.kelas') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                           {{ request()->routeIs('admin.kelas*') ? 'nav-active font-medium' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                           {{ request()->routeIs('admin.kelas*') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -138,7 +149,7 @@
 
                     <a href="{{ route('admin.kebiasaan') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                              {{ request()->routeIs('admin.kebiasaan*') ? 'nav-active font-medium' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                              {{ request()->routeIs('admin.kebiasaan*') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2
                                      2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -148,7 +159,7 @@
 
                     <a href="{{ route('admin.pesan-bantuan') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors
-                              {{ request()->routeIs('admin.pesan-bantuan*') ? 'nav-active font-medium' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50' }}">
+                              {{ request()->routeIs('admin.pesan-bantuan*') ? 'bg-white/20 text-white font-medium' : 'text-white/80 hover:text-white hover:bg-white/10' }}">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -161,7 +172,7 @@
                         @csrf
                         <button type="submit"
                             class="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm
-                                       text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors">
+                                       text-red-300 hover:bg-red-500/20 transition-colors">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7
                                          a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -177,23 +188,23 @@
         <div class="flex-1 lg:ml-0 min-w-0">
 
             {{-- Header --}}
-            <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <header class="header-gradient shadow-md sticky top-0 z-30">
                 <div class="px-6 py-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <button id="mobileMenuBtn"
-                            class="lg:hidden p-2 text-gray-500 hover:text-gray-800 rounded-lg hover:bg-gray-100">
+                            class="lg:hidden p-2 text-white/80 hover:text-white rounded-lg hover:bg-white/20">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <h1 class="text-base font-semibold text-gray-900">
+                        <h1 class="text-base font-semibold text-white">
                             @yield('page_title', 'Dashboard')
                         </h1>
                     </div>
                     <div class="flex items-center gap-2">
                         <a href="{{ route('admin.pengaturan') }}"
-                            class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                            class="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94
@@ -211,7 +222,7 @@
             </header>
 
             {{-- Page Content --}}
-            <main class="flex-1 p-6 bg-gray-50 min-h-screen">
+            <main class="flex-1 p-6 app-bg min-h-screen">
                 @yield('content')
             </main>
         </div>

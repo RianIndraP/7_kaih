@@ -42,7 +42,7 @@
         }
     </style>
 
-    <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 min-h-screen">
 
         <h2 class="text-xl font-bold text-gray-900 mb-5">Profil Guru</h2>
 
@@ -126,7 +126,7 @@
 
             {{-- Data Kepegawaian --}}
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 class="text-sm font-semibold text-gray-900 mb-4">Data kepegawaian</h3>
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">Data Kepegawaian</h3>
                 <div class="space-y-3">
 
                     <div>
@@ -142,7 +142,7 @@
                             class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700
                                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400
                                    hover:border-gray-300 transition-colors cursor-pointer bg-white">
-                            <option value="" disabled {{ empty($user->gender) ? 'selected' : '' }}>Gender</option>
+                            <option value="" disabled {{ empty($user->gender) ? 'selected' : '' }}>Jenis Kelamin</option>
                             <option value="Laki-laki" {{ ($user->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
                             </option>
                             <option value="Perempuan" {{ ($user->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan

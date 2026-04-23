@@ -8,8 +8,9 @@
 
 <div class="p-6">
     {{-- Filter Section --}}
-    <form method="GET" action="{{ route('admin.kebiasaan') }}" class="mb-6">
-        <div class="flex flex-wrap items-end gap-4">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-md overflow-hidden mb-6">
+        <form method="GET" action="{{ route('admin.kebiasaan') }}">
+            <div class="p-4 flex flex-wrap items-end gap-4">
             {{-- Guru Wali Dropdown --}}
             <div>
                 <label class="block text-sm text-gray-600 mb-1">Guru Wali</label>
@@ -50,30 +51,31 @@
             {{-- Buttons --}}
             <div class="flex gap-2">
                 <a href="{{ route('admin.kebiasaan') }}"
-                   class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                   class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors">
                     Reset
                 </a>
                 <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                        class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-xl text-sm font-semibold hover:from-blue-700 hover:to-indigo-800 transition-all shadow-md">
                     Terapkan
                 </button>
             </div>
         </div>
     </form>
+    </div>
 
     {{-- Table --}}
-    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-md overflow-hidden">
         <table class="w-full">
-            <thead class="bg-gray-100 border-b border-gray-200">
+            <thead class="bg-blue-100/50 border-b border-blue-200">
                 <tr>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 w-12">#</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nama Siswa</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nama Guru Wali</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Penyelesaian Form</th>
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800 w-12">#</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Nama Siswa</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Nama Guru Wali</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Penyelesaian Form</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Tanggal</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-blue-100">
                 @forelse ($kebiasaan as $index => $item)
                     @php
                         $persen = 0;
@@ -81,16 +83,16 @@
                             $persen = $item->persentaseSelesai();
                         }
                     @endphp
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-blue-100/30 transition-colors">
                         <td class="px-4 py-3 text-sm text-gray-600">{{ $kebiasaan->firstItem() + $index }}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">{{ $item->user?->name ?? '-' }}</td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{ $item->user?->waliKelas?->user?->name ?? '-' }}</td>
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-2">
-                                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden max-w-[100px]">
-                                    <div class="h-full bg-gray-800 rounded-full" style="width: {{ $persen }}%"></div>
+                                <div class="flex-1 h-2 bg-blue-200 rounded-full overflow-hidden max-w-[100px]">
+                                    <div class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full" style="width: {{ $persen }}%"></div>
                                 </div>
-                                <span class="text-sm text-gray-600 min-w-[40px]">{{ $persen }}%</span>
+                                <span class="text-sm font-semibold text-blue-800 min-w-[40px]">{{ $persen }}%</span>
                             </div>
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{ $item->tanggal?->format('d/m/Y') ?? '-' }}</td>
@@ -121,7 +123,7 @@
 
             {{-- Page numbers --}}
             @foreach ($kebiasaan->getUrlRange(1, $kebiasaan->lastPage()) as $page => $url)
-                <a href="{{ $url }}" class="px-3 py-1.5 border rounded text-sm {{ $page == $kebiasaan->currentPage() ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 text-gray-600 hover:bg-gray-50' }}">
+                <a href="{{ $url }}" class="px-3 py-1.5 border rounded text-sm font-semibold {{ $page == $kebiasaan->currentPage() ? 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white border-blue-600' : 'border-gray-300 text-gray-600 hover:bg-gray-50' }}">
                     {{ $page }}
                 </a>
             @endforeach

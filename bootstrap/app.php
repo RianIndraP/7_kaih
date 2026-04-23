@@ -14,8 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
 
         $middleware->alias([
-            'guru'  => App\Http\Middleware\GuruMiddleware::class,
-            'siswa' => App\Http\Middleware\SiswaMiddleware::class,
+            'guru'              => App\Http\Middleware\GuruMiddleware::class,
+            'siswa'             => App\Http\Middleware\SiswaMiddleware::class,
+            'profile.complete'  => App\Http\Middleware\ProfileComplete::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

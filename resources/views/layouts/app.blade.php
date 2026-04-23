@@ -87,10 +87,25 @@
         .leaflet-container {
             z-index: 999;
         }
+
+        /* App background - luxurious light gradient */
+        .app-bg {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #f0f9ff 100%);
+        }
+
+        /* Sidebar gradient - luxurious blue-indigo */
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #2563eb 0%, #4f46e5 50%, #4338ca 100%);
+        }
+
+        /* Header gradient - matching luxurious gradient */
+        .header-gradient {
+            background: linear-gradient(90deg, #2563eb 0%, #4f46e5 50%, #2563eb 100%);
+        }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body class="app-bg min-h-screen">
     <div class="flex relative">
         @include('includes.sidebar')
 
@@ -99,7 +114,7 @@
             @include('includes.header')
 
             <!-- Page Content -->
-            <main class="p-6 bg-gray-50 min-h-screen">
+            <main class="p-6 app-bg min-h-screen">
                 @yield('content')
             </main>
         </div>

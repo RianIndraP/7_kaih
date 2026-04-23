@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 min-h-screen">
 
         {{-- ===== AREA INSTRUKSI + TOMBOL ===== --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-5">
@@ -18,7 +18,7 @@
                     rounded-lg p-4 bg-gray-50">
                     <p>
                         Mohon dipilih status untuk siswa yang datang. Biarkan saja jika tidak hadir,
-                        absensi akan direfresh tiap 2 minggu setelah disimpan. Mohon di isi hati-hati.
+                        absensi akan direfresh setiap 2 minggu setelah disimpan. Mohon di isi hati-hati.
                         Jika tidak ada pertemuan mohon tekan <strong>Tidak ada pertemuan</strong>.
                     </p>
                 </div>
@@ -29,7 +29,7 @@
                         class="px-4 py-2 bg-white border border-gray-300
                        text-sm font-medium text-gray-700 rounded-lg transition-colors
                        shadow-sm whitespace-nowrap w-full">
-                        Tidak ada pertemuan
+                        Tidak Ada Pertemuan
                     </button>
 
                     <button onclick="simpanAbsen()"
@@ -151,7 +151,7 @@
                                                    {{ $aktif ? 'border-gray-300 bg-white text-gray-800' : 'border-gray-200 bg-gray-100 text-gray-400' }}"
                                             data-siswa="{{ $siswa->id }}" {{ !$aktif ? 'disabled' : '' }}>
                                             <option value="tidak_hadir" {{ $status === 'tidak_hadir' ? 'selected' : '' }}>
-                                                Tidak hadir
+                                                Tidak Hadir
                                             </option>
                                             <option value="hadir" {{ $status === 'hadir' ? 'selected' : '' }}>Hadir
                                             </option>

@@ -11,7 +11,7 @@ class Kelas extends Model
 
     protected $table = 'kelas';
 
-    protected $fillable = ['nama_kelas', 'color_index'];
+    protected $fillable = ['nama_kelas'];
 
     public function siswa()
     {

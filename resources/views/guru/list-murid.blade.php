@@ -16,7 +16,7 @@
             display: block;
         }
     </style>
-    <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 min-h-screen">
 
         {{-- ===== FILTER PENCARIAN ===== --}}
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-5">
@@ -51,8 +51,8 @@
                     <select id="selectPeriode"
                         class="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
                                text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                        <option value="">periode</option>
-                        <option value="harian">Per hari</option>
+                        <option value="">Periode</option>
+                        <option value="harian">Per Hari</option>
                         <option value="mingguan">Per Minggu</option>
                         <option value="pertemuan">Per Pertemuan</option>
                         <option value="bulanan">Per Bulan</option>
@@ -281,7 +281,7 @@
 
     {{-- ===== MODAL DETAIL MURID ===== --}}
     <div id="modalDetail" class="fixed inset-0 bg-black/50 z-[9999] hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+        <div class="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
                 <h3 class="text-base font-semibold text-gray-900">Detail Info Murid</h3>
@@ -293,7 +293,22 @@
                 </button>
             </div>
 
-            <div class="p-6">
+            {{-- Tab Switcher - hanya muncul jika periode harian --}}
+            <div id="detailTabSwitcher" class="hidden flex border-b border-gray-200">
+                <button id="tabPenyelesaian" onclick="switchDetailTab('penyelesaian')"
+                    class="flex-1 py-3 text-sm font-medium border-b-2 border-blue-600
+                           text-blue-700 bg-blue-50 transition-colors">
+                    Penyelesaian Form
+                </button>
+                <button id="tabDetail" onclick="switchDetailTab('detail')"
+                    class="flex-1 py-3 text-sm font-medium border-b-2 border-transparent
+                           text-gray-500 hover:text-gray-700 transition-colors">
+                    Detail Form
+                </button>
+            </div>
+
+            {{-- Panel Penyelesaian Form --}}
+            <div id="panelPenyelesaian" class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                     {{-- Penyelesaian Form --}}
@@ -334,6 +349,207 @@
                                 class="text-xs text-gray-600 border border-gray-200 rounded-xl p-3
                                     bg-gray-50 max-h-32 overflow-y-auto leading-relaxed">
                                 -
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Panel Detail Form --}}
+            <div id="panelDetail" class="hidden p-5">
+                <div class="columns-1 md:columns-2 gap-4 space-y-4" id="detailFormContent">
+                    {{-- Bangun Pagi --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow break-inside-avoid">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-800">Bangun Pagi</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-3 text-sm">
+                            <div class="bg-gray-50 rounded-lg p-2 min-w-[80px]">
+                                <p class="text-xs text-gray-500 mb-1">Status</p>
+                                <p id="detailBangunPagiStatus" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2 min-w-[80px]">
+                                <p class="text-xs text-gray-500 mb-1">Jam</p>
+                                <p id="detailBangunPagiJam" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2 flex-1 min-w-[120px]">
+                                <p class="text-xs text-gray-500 mb-1">Catatan</p>
+                                <p id="detailBangunPagiCatatan" class="font-semibold text-gray-800">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Beribadah --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow break-inside-avoid">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-800">Beribadah</h4>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-2">Sholat</p>
+                                <div id="detailBeribadahSholatList" class="space-y-1.5">
+                                    <!-- Sholat items will be rendered here -->
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-gray-50 rounded-lg p-2">
+                                    <p class="text-xs text-gray-500 mb-1">Quran</p>
+                                    <p id="detailBeribadahQuran" class="font-semibold text-gray-800">-</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-2">
+                                    <p class="text-xs text-gray-500 mb-1">Surah</p>
+                                    <p id="detailBeribadahSurah" class="font-semibold text-gray-800">-</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Catatan</p>
+                                <p id="detailBeribadahCatatan" class="font-semibold text-gray-800">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Berolahraga --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow break-inside-avoid">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-800">Berolahraga</h4>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Status</p>
+                                <p id="detailBerolahragaStatus" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-2">Jenis</p>
+                                <div id="detailBerolahragaList" class="space-y-2">
+                                    <!-- Olahraga items will be rendered here -->
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Catatan Umum</p>
+                                <p id="detailBerolahragaCatatan" class="font-semibold text-gray-800">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Makan Sehat --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow break-inside-avoid">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-800">Makan Sehat</h4>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Status</p>
+                                <p id="detailMakanSehatStatus" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Pagi</p>
+                                <p id="detailMakanPagi" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Siang</p>
+                                <p id="detailMakanSiang" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Malam</p>
+                                <p id="detailMakanMalam" class="font-semibold text-gray-800">-</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2">
+                            <p class="text-xs text-gray-500 mb-1">Catatan</p>
+                            <p id="detailMakanSehatCatatan" class="font-semibold text-gray-800">-</p>
+                        </div>
+                    </div>
+
+                    {{-- Gemar Belajar --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow break-inside-avoid">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-violet-400 to-purple-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-800">Gemar Belajar</h4>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Status</p>
+                                <p id="detailGemarBelajarStatus" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Materi</p>
+                                <p id="detailGemarBelajarJenis" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Catatan</p>
+                                <p id="detailGemarBelajarCatatan" class="font-semibold text-gray-800">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Bermasyarakat --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow break-inside-avoid">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-800">Bermasyarakat</h4>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Bersama</p>
+                                <p id="detailBermasyarakatDengan" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Catatan</p>
+                                <p id="detailBermasyarakatCatatan" class="font-semibold text-gray-800">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tidur Cepat --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow break-inside-avoid">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-400 to-violet-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-800">Tidur Cepat</h4>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-sm">
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Status</p>
+                                <p id="detailTidurCepatStatus" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Jam</p>
+                                <p id="detailTidurCepatJam" class="font-semibold text-gray-800">-</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2">
+                                <p class="text-xs text-gray-500 mb-1">Catatan</p>
+                                <p id="detailTidurCepatCatatan" class="font-semibold text-gray-800">-</p>
                             </div>
                         </div>
                     </div>
@@ -442,7 +658,7 @@
                         <tbody id="historyBody">
                             <tr>
                                 <td colspan="4" class="px-3 py-6 text-center text-gray-400">
-                                    Memuat history...
+                                    Memuat History...
                                 </td>
                             </tr>
                         </tbody>
@@ -826,7 +1042,131 @@
 
             document.getElementById('detailUmpanBalik').textContent = siswa.umpan_balik || '-';
 
+            // Show/hide tab switcher based on periode
+            var tabSwitcher = document.getElementById('detailTabSwitcher');
+            if (periode === 'harian') {
+                tabSwitcher.classList.remove('hidden');
+                tabSwitcher.classList.add('flex');
+                // Reset to penyelesaian tab
+                switchDetailTab('penyelesaian');
+            } else {
+                tabSwitcher.classList.add('hidden');
+                tabSwitcher.classList.remove('flex');
+                // Hide detail panel, show penyelesaian panel
+                document.getElementById('panelPenyelesaian').classList.remove('hidden');
+                document.getElementById('panelDetail').classList.add('hidden');
+            }
+
+            // Store current siswa data for detail tab
+            window.currentDetailSiswa = siswa;
+            window.currentDetailPeriode = periode;
+
             bukaModal('modalDetail');
+        }
+
+        /* ── Switch Detail Tab ───────────────────────────────── */
+        function switchDetailTab(tab) {
+            var tabPenyelesaian = document.getElementById('tabPenyelesaian');
+            var tabDetail = document.getElementById('tabDetail');
+            var panelPenyelesaian = document.getElementById('panelPenyelesaian');
+            var panelDetail = document.getElementById('panelDetail');
+
+            if (tab === 'penyelesaian') {
+                tabPenyelesaian.classList.add('border-blue-600', 'text-blue-700', 'bg-blue-50');
+                tabPenyelesaian.classList.remove('border-transparent', 'text-gray-500');
+                tabDetail.classList.remove('border-blue-600', 'text-blue-700', 'bg-blue-50');
+                tabDetail.classList.add('border-transparent', 'text-gray-500');
+                panelPenyelesaian.classList.remove('hidden');
+                panelDetail.classList.add('hidden');
+            } else {
+                tabDetail.classList.add('border-blue-600', 'text-blue-700', 'bg-blue-50');
+                tabDetail.classList.remove('border-transparent', 'text-gray-500');
+                tabPenyelesaian.classList.remove('border-blue-600', 'text-blue-700', 'bg-blue-50');
+                tabPenyelesaian.classList.add('border-transparent', 'text-gray-500');
+                panelDetail.classList.remove('hidden');
+                panelPenyelesaian.classList.add('hidden');
+                
+                // Populate detail form data
+                populateDetailForm();
+            }
+        }
+
+        /* ── Populate Detail Form ──────────────────────────────── */
+        function populateDetailForm() {
+            var siswa = window.currentDetailSiswa;
+            if (!siswa || !siswa.kebiasaan) return;
+
+            var k = siswa.kebiasaan;
+
+            // Bangun Pagi
+            document.getElementById('detailBangunPagiStatus').textContent = k.bangun_pagi === true ? 'Iya' : (k.bangun_pagi === false ? 'Tidak' : '-');
+            document.getElementById('detailBangunPagiJam').textContent = k.bangun_pagi_jam || '-';
+            document.getElementById('detailBangunPagiCatatan').textContent = k.bangun_pagi_catatan || '-';
+
+            // Beribadah
+            // Render sholat list
+            var sholatListEl = document.getElementById('detailBeribadahSholatList');
+            sholatListEl.innerHTML = '';
+            
+            if (k.beribadah_sholat_list && k.beribadah_sholat_list.length > 0) {
+                k.beribadah_sholat_list.forEach(function(item) {
+                    var itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex items-center justify-between bg-white rounded p-2 border border-gray-100';
+                    itemDiv.innerHTML = '<span class="font-medium text-gray-700">' + item.nama + '</span><span class="text-sm font-semibold text-green-600">' + item.jam + '</span>';
+                    sholatListEl.appendChild(itemDiv);
+                });
+            } else {
+                sholatListEl.innerHTML = '<span class="text-gray-400 text-sm">-</span>';
+            }
+            
+            document.getElementById('detailBeribadahQuran').textContent = k.beribadah_quran === true ? 'Iya' : (k.beribadah_quran === false ? 'Tidak' : '-');
+            document.getElementById('detailBeribadahSurah').textContent = k.beribadah_surah || '-';
+            document.getElementById('detailBeribadahCatatan').textContent = k.beribadah_catatan || '-';
+
+            // Berolahraga
+            document.getElementById('detailBerolahragaStatus').textContent = k.berolahraga === true ? 'Iya' : (k.berolahraga === false ? 'Tidak' : '-');
+            
+            // Render olahraga list
+            var olahragaListEl = document.getElementById('detailBerolahragaList');
+            olahragaListEl.innerHTML = '';
+            
+            if (k.berolahraga_list && k.berolahraga_list.length > 0) {
+                k.berolahraga_list.forEach(function(item) {
+                    var itemDiv = document.createElement('div');
+                    itemDiv.className = 'bg-white rounded-lg p-2 border border-gray-100';
+                    var text = '<div class="font-semibold text-gray-800">' + item.jenis + '</div>';
+                    if (item.catatan) {
+                        text += '<div class="text-xs text-gray-500 mt-1">Catatan: ' + item.catatan + '</div>';
+                    }
+                    itemDiv.innerHTML = text;
+                    olahragaListEl.appendChild(itemDiv);
+                });
+            } else {
+                olahragaListEl.innerHTML = '<span class="text-gray-400 text-sm">-</span>';
+            }
+            
+            document.getElementById('detailBerolahragaCatatan').textContent = k.berolahraga_catatan || '-';
+
+            // Makan Sehat
+            document.getElementById('detailMakanSehatStatus').textContent = k.makan_sehat === true ? 'Iya' : (k.makan_sehat === false ? 'Tidak' : '-');
+            document.getElementById('detailMakanPagi').textContent = k.makan_pagi || '-';
+            document.getElementById('detailMakanSiang').textContent = k.makan_siang || '-';
+            document.getElementById('detailMakanMalam').textContent = k.makan_malam || '-';
+            document.getElementById('detailMakanSehatCatatan').textContent = k.makan_catatan || '-';
+
+            // Gemar Belajar
+            document.getElementById('detailGemarBelajarStatus').textContent = k.gemar_belajar === true ? 'Iya' : (k.gemar_belajar === false ? 'Tidak' : '-');
+            document.getElementById('detailGemarBelajarJenis').textContent = k.gemar_belajar_jenis || '-';
+            document.getElementById('detailGemarBelajarCatatan').textContent = k.gemar_belajar_catatan || '-';
+
+            // Bermasyarakat
+            document.getElementById('detailBermasyarakatDengan').textContent = k.bermasyarakat_dengan || '-';
+            document.getElementById('detailBermasyarakatCatatan').textContent = k.bermasyarakat_catatan || '-';
+
+            // Tidur Cepat
+            document.getElementById('detailTidurCepatStatus').textContent = k.tidur_cepat === true ? 'Iya' : (k.tidur_cepat === false ? 'Tidak' : '-');
+            document.getElementById('detailTidurCepatJam').textContent = k.tidur_cepat_jam || '-';
+            document.getElementById('detailTidurCepatCatatan').textContent = k.tidur_cepat_catatan || '-';
         }
 
         /* ── Pesan Modal ──────────────────────────────────────── */

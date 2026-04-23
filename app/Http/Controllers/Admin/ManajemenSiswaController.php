@@ -120,6 +120,18 @@ class ManajemenSiswaController extends Controller
         return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil dihapus!');
     }
 
+    public function bulkDelete(Request $request)
+    {
+        $validated = $request->validate([
+            'selected_ids' => 'required|string',
+        ]);
+
+        $selectedIds = explode(',', $validated['selected_ids']);
+        $deletedCount = User::whereIn('id', $selectedIds)->delete();
+
+        return redirect()->route('admin.siswa')->with('success', $deletedCount . ' siswa berhasil dihapus!');
+    }
+
     public function addKelas(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -378,8 +390,10 @@ class ManajemenSiswaController extends Controller
             'nisn' => $user->nisn,
             'name' => $user->name,
             'kelas_id' => $user->kelas_id,
+            'angkatan' => $user->angkatan,
             'gender' => $user->gender,
             'birth_date' => $user->birth_date ? $user->birth_date->format('Y-m-d') : null,
+            'guru_wali_id' => $user->guru_wali_id,
             'no_telepon' => $user->no_telepon,
             'email' => $user->email,
         ]);

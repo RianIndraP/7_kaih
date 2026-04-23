@@ -7,7 +7,7 @@
 </div>
 
 {{-- Mobile scroll hint --}}
-<div class="md:hidden text-xs text-gray-500 text-center mb-2 px-2">
+<div class="md:hidden text-xs text-gray-500 text-center mb-2 px-2 print:hidden">
     ← Geser ke kanan untuk melihat semua data →
 </div>
 
@@ -23,8 +23,8 @@
                     <th class="border border-gray-300 px-2 md:px-3 py-2 text-left font-semibold">Nama Murid</th>
                     <th class="border border-gray-300 px-2 md:px-3 py-2 text-center font-semibold">NIS/NISN</th>
                     <th class="border border-gray-300 px-2 md:px-3 py-2 text-center font-semibold">Kelas</th>
-                    <th class="border border-gray-300 px-2 md:px-3 py-2 text-center font-semibold">JK</th>
-                    <th class="border border-gray-300 px-2 md:px-3 py-2 text-center font-semibold hidden md:table-cell">Kontak Ortu</th>
+                    <th class="border border-gray-300 px-2 md:px-3 py-2 text-center font-semibold">Jenis Kelamin</th>
+                    <th class="border border-gray-300 px-2 md:px-3 py-2 text-center font-semibold">Kontak Ortu</th>
                     <th class="border border-gray-300 px-2 md:px-3 py-2 text-left font-semibold">Catatan</th>
                 </tr>
             </thead>
@@ -40,8 +40,8 @@
                         <td class="border border-gray-300 px-2 md:px-3 py-2 text-center text-gray-600 text-xs md:text-sm">
                             {{ $i->kelas->nama_kelas ?? '-' }}</td>
                         <td class="border border-gray-300 px-2 md:px-3 py-2 text-center text-gray-600 text-xs md:text-sm">
-                            {{ $i->gender == 'Laki-laki' ? 'L' : ($i->gender == 'Perempuan' ? 'P' : $i->gender) }}</td>
-                        <td class="border border-gray-300 px-2 md:px-3 py-2 text-center text-gray-600 text-xs md:text-sm hidden md:table-cell">
+                            {{ $i->gender ?? '-' }}</td>
+                        <td class="border border-gray-300 px-2 md:px-3 py-2 text-center text-gray-600 text-xs md:text-sm">
                             {{ $i->no_ortu ?? '-' }}</td>
                         <td class="border border-gray-300 px-2 py-1">
                             <textarea name="catatan[{{ $i->id }}]" placeholder="Tulis catatan..." class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[50px] md:min-h-[60px]">{{ $catatanA[$i->id] ?? '' }}</textarea>

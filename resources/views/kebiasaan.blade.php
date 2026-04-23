@@ -10,7 +10,7 @@
     .tab-btn { white-space: nowrap; }
 </style>
 
-<div class="bg-gray-50 min-h-screen">
+<div class="min-h-screen">
 
     {{-- Tanggal --}}
     <div class="mb-6">
@@ -30,13 +30,13 @@
         {{-- ===== TAB BAR ===== --}}
         @php
             $tabs = [
-                ['id' => 'bangun_pagi',   'label' => 'bangun pagi'],
-                ['id' => 'beribadah',     'label' => 'beribadah'],
-                ['id' => 'berolahraga',   'label' => 'berolahraga'],
-                ['id' => 'makan_sehat',   'label' => 'makan sehat'],
-                ['id' => 'gemar_belajar', 'label' => 'gemar belajar'],
-                ['id' => 'bermasyarakat', 'label' => 'bermasyarakat'],
-                ['id' => 'tidur_cepat',   'label' => 'tidur cepat'],
+                ['id' => 'bangun_pagi',   'label' => 'Bangun pagi'],
+                ['id' => 'beribadah',     'label' => 'Beribadah'],
+                ['id' => 'berolahraga',   'label' => 'Berolahraga'],
+                ['id' => 'makan_sehat',   'label' => 'Makan sehat'],
+                ['id' => 'gemar_belajar', 'label' => 'Gemar belajar'],
+                ['id' => 'bermasyarakat', 'label' => 'Bermasyarakat'],
+                ['id' => 'tidur_cepat',   'label' => 'Tidur cepat'],
             ];
             $checklist = $kebiasaan->exists ? $kebiasaan->statusChecklist() : [];
         @endphp
@@ -45,9 +45,18 @@
             @foreach ($tabs as $i => $tab)
                 <button onclick="switchTab('{{ $tab['id'] }}')"
                         id="tab_{{ $tab['id'] }}"
+                        data-tab-id="{{ $tab['id'] }}"
                         class="tab-btn relative flex-shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors
-                               {{ $i === 0 ? 'border-blue-600 text-blue-700 bg-blue-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50' }}">
+                               {{ $i === 0 ? 'border-blue-600 text-blue-700 bg-blue-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50' }}
+                               {{ $tab['id'] === 'tidur_cepat' ? 'tidur-tab' : '' }}">
                     {{ $tab['label'] }}
+                    @if ($tab['id'] === 'tidur_cepat')
+                        <span id="tidur-lock-icon" class="hidden ml-1.5 text-gray-400">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                    @endif
                     @if (!empty($checklist[$tab['id']]))
                         <span class="done-dot inline-block w-1.5 h-1.5 bg-green-500 rounded-full ml-1.5 align-middle"></span>
                     @endif
@@ -103,7 +112,7 @@
                         {{-- Catatan --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
-                            <textarea id="bp_catatan" name="bp_catatan" rows="4"
+                            <textarea id="bp_catatan" name="bp_catatan" rows="4" required
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->bangun_catatan }}</textarea>
@@ -251,7 +260,7 @@
                         {{-- Catatan --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
-                            <textarea id="ib_catatan" name="ib_catatan" rows="3"
+                            <textarea id="ib_catatan" name="ib_catatan" rows="3" required
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->ibadah_catatan }}</textarea>
@@ -330,7 +339,7 @@
                                                 </svg>
                                             </button>
                                         </div>
-                                        <textarea name="ol_catatan[]" rows="2"
+                                        <textarea name="ol_catatan[]" rows="2" required
                                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                                                          focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                                   placeholder="Catatan untuk olahraga ini...">{{ $catatanFill }}</textarea>
@@ -342,7 +351,7 @@
                         {{-- Catatan umum (selalu tampil) --}}
                         <div id="ol_catatan_umum_section" class="{{ $kebiasaan->berolahraga === false ? '' : 'hidden-field' }}">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
-                            <textarea id="ol_catatan_umum" name="ol_catatan_umum" rows="4"
+                            <textarea id="ol_catatan_umum" name="ol_catatan_umum" rows="4" required
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->olahraga_catatan }}</textarea>
@@ -382,10 +391,10 @@
                     </div>
 
                     {{-- Form --}}
-                    <div class="space-y-4">
+                    <div class="space-y-6">
                         <div>
-                            <p class="text-sm font-medium text-gray-700 mb-2">Apakah kamu makan sehat hari ini?</p>
-                            <div class="flex items-center gap-6">
+                            <p class="text-sm font-medium text-gray-700 mb-3">Apakah kamu makan sehat hari ini?</p>
+                            <div class="flex items-center gap-8">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="mk_status" value="iya"
                                            {{ $kebiasaan->makan_sehat === true ? 'checked' : '' }}
@@ -404,14 +413,14 @@
                         </div>
 
                         {{-- Detail 3 waktu makan — muncul hanya jika "iya" --}}
-                        <div id="mk_detail_section" class="{{ $kebiasaan->makan_sehat === true ? '' : 'hidden-field' }}">
+                        <div id="mk_detail_section" class="{{ $kebiasaan->makan_sehat === true ? '' : 'hidden-field' }} space-y-5">
                             @foreach ([
                                 ['key' => 'pagi',  'label' => 'Makan pagi dengan apa?',  'val' => $kebiasaan->makan_pagi,  'done' => $kebiasaan->makan_pagi_done],
                                 ['key' => 'siang', 'label' => 'Makan siang dengan apa?', 'val' => $kebiasaan->makan_siang, 'done' => $kebiasaan->makan_siang_done],
                                 ['key' => 'malam', 'label' => 'Makan malam dengan apa?', 'val' => $kebiasaan->makan_malam, 'done' => $kebiasaan->makan_malam_done],
                             ] as $makan)
                                 <div>
-                                    <div class="flex items-center gap-2 mb-1">
+                                    <div class="flex items-center gap-3 mb-3">
                                         {{-- Checkbox kanan: jika dicentang → input aktif --}}
                                         <label class="flex items-center gap-2 cursor-pointer flex-shrink-0">
                                             <input type="checkbox"
@@ -429,7 +438,7 @@
                                            name="mk_{{ $makan['key'] }}"
                                            value="{{ old('mk_' . $makan['key'], $makan['val']) }}"
                                            {{ !$makan['done'] ? 'disabled' : '' }}
-                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
+                                           class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800
                                                   focus:outline-none focus:ring-2 focus:ring-blue-500
                                                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed
                                                   transition-colors"
@@ -440,9 +449,9 @@
 
                         {{-- Catatan --}}
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
-                            <textarea id="mk_catatan" name="mk_catatan" rows="3"
-                                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                            <textarea id="mk_catatan" name="mk_catatan" rows="3" required
+                                      class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->makan_catatan }}</textarea>
                         </div>
@@ -502,7 +511,7 @@
                         {{-- Catatan (selalu tampil) --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
-                            <textarea id="bl_catatan" name="bl_catatan" rows="5"
+                            <textarea id="bl_catatan" name="bl_catatan" rows="5" required
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->belajar_catatan }}</textarea>
@@ -531,7 +540,7 @@
                     {{-- Form --}}
                     <div class="space-y-4">
                         <div>
-                            <p class="text-sm font-medium text-gray-700 mb-2">Dengan siapa kamu melakukan kegiatan itu?</p>
+                            <p class="text-sm font-medium text-gray-700 mb-2">Dengan siapa kamu bermasyarakat hari ini?</p>
                             @php $bersamaData = $kebiasaan->bersama ?? []; @endphp
                             <div class="flex flex-wrap gap-4">
                                 @foreach (['keluarga' => 'Keluarga', 'teman' => 'Teman', 'tetangga' => 'Tetangga', 'publik' => 'Publik'] as $val => $label)
@@ -547,7 +556,7 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
-                            <textarea id="ms_catatan" name="ms_catatan" rows="7"
+                            <textarea id="ms_catatan" name="ms_catatan" rows="7" required
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->masyarakat_catatan }}</textarea>
@@ -566,7 +575,35 @@
                  TAB 7 – TIDUR CEPAT
             ================================================================ --}}
             <div id="panel_tidur_cepat" class="tab-panel hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Locked message overlay --}}
+                <div id="tidur_locked_message" class="hidden bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-8 text-center shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-amber-800 mb-3">Form Terkunci</h3>
+                    <p class="text-amber-700 text-sm mb-4">Form "Tidur Cepat" baru bisa diisi mulai <strong>jam 8 malam</strong>.</p>
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl px-5 py-4 mb-4 text-left shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shrink-0 shadow-md">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-blue-800 mb-1">Informasi Penting</p>
+                                <p class="text-xs text-blue-700">
+                                    Waktu tidur cepat dianjurkan mulai jam <strong>21:00 - 22:00</strong> (9 PM - 10 PM)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-amber-600 text-xs">Silakan kembali lagi setelah jam 8 malam untuk mengisi form.</p>
+                </div>
+
+                {{-- Form content (will be disabled if locked) --}}
+                <div id="tidur_form_content" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Kutipan --}}
                     <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm text-gray-700 leading-relaxed self-start">
                         <p>Rasulullah mengajarkan untuk segera beristirahat setelah menunaikan kewajiban hari itu (Isya), agar tidak membuang waktu untuk hal yang sia-sia.</p>
@@ -607,7 +644,7 @@
                         {{-- Catatan (selalu tampil) --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
-                            <textarea id="tc_catatan" name="tc_catatan" rows="5"
+                            <textarea id="tc_catatan" name="tc_catatan" rows="5" required
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                                       placeholder="Tuliskan catatan...">{{ $kebiasaan->tidur_catatan }}</textarea>
@@ -695,7 +732,7 @@ function tambahOlahraga() {
                 </svg>
             </button>
         </div>
-        <textarea name="ol_catatan[]" rows="2"
+        <textarea name="ol_catatan[]" rows="2" required
                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800
                          focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   placeholder="Catatan untuk olahraga ini..."></textarea>`;
@@ -737,6 +774,11 @@ function kirimKebiasaan(section) {
             data.status  = document.querySelector('input[name="bp_status"]:checked')?.value ?? null;
             data.jam     = document.getElementById('bp_jam')?.value || null;
             data.catatan = document.getElementById('bp_catatan')?.value;
+            if (!data.catatan?.trim()) {
+                tampilkanToast('Catatan wajib diisi!', 'red');
+                document.getElementById('bp_catatan').focus();
+                return;
+            }
             break;
 
         case 'beribadah':
@@ -748,6 +790,11 @@ function kirimKebiasaan(section) {
             data.quran   = document.querySelector('input[name="quran_status"]:checked')?.value ?? null;
             data.surah   = document.querySelector('select[name="quran_surah"]')?.value || null;
             data.catatan = document.getElementById('ib_catatan')?.value;
+            if (!data.catatan?.trim()) {
+                tampilkanToast('Catatan wajib diisi!', 'red');
+                document.getElementById('ib_catatan').focus();
+                return;
+            }
             break;
 
         case 'berolahraga':
@@ -755,9 +802,22 @@ function kirimKebiasaan(section) {
             if (data.status === 'iya') {
                 const jenis   = [...document.querySelectorAll('select[name="ol_jenis[]"]')].map(e => e.value);
                 const catatan = [...document.querySelectorAll('textarea[name="ol_catatan[]"]')].map(e => e.value);
+                // Validasi catatan olahraga
+                for (let i = 0; i < catatan.length; i++) {
+                    if (!catatan[i]?.trim()) {
+                        tampilkanToast('Catatan untuk setiap olahraga wajib diisi!', 'red');
+                        document.querySelectorAll('textarea[name="ol_catatan[]"]')[i].focus();
+                        return;
+                    }
+                }
                 data.jenis    = jenis.map((j, i) => ({ jenis: j, catatan: catatan[i] || '' }));
             } else {
                 data.catatan = document.getElementById('ol_catatan_umum')?.value;
+                if (!data.catatan?.trim()) {
+                    tampilkanToast('Catatan wajib diisi!', 'red');
+                    document.getElementById('ol_catatan_umum').focus();
+                    return;
+                }
             }
             break;
 
@@ -770,23 +830,43 @@ function kirimKebiasaan(section) {
             data.malam      = document.querySelector('input[name="mk_malam"]')?.value || null;
             data.malam_done = document.getElementById('cb_mk_malam')?.checked ? 1 : 0;
             data.catatan    = document.getElementById('mk_catatan')?.value;
+            if (!data.catatan?.trim()) {
+                tampilkanToast('Catatan wajib diisi!', 'red');
+                document.getElementById('mk_catatan').focus();
+                return;
+            }
             break;
 
         case 'gemar_belajar':
             data.status    = document.querySelector('input[name="bl_status"]:checked')?.value ?? null;
             data.pelajaran = document.querySelector('input[name="bl_pelajaran"]')?.value || null;
             data.catatan   = document.getElementById('bl_catatan')?.value;
+            if (!data.catatan?.trim()) {
+                tampilkanToast('Catatan wajib diisi!', 'red');
+                document.getElementById('bl_catatan').focus();
+                return;
+            }
             break;
 
         case 'bermasyarakat':
             data.dengan  = [...document.querySelectorAll('input[name="ms_dengan[]"]:checked')].map(e => e.value);
             data.catatan = document.getElementById('ms_catatan')?.value;
+            if (!data.catatan?.trim()) {
+                tampilkanToast('Catatan wajib diisi!', 'red');
+                document.getElementById('ms_catatan').focus();
+                return;
+            }
             break;
 
         case 'tidur_cepat':
             data.status  = document.querySelector('input[name="tc_status"]:checked')?.value ?? null;
             data.jam     = document.getElementById('tc_jam')?.value || null;
             data.catatan = document.getElementById('tc_catatan')?.value;
+            if (!data.catatan?.trim()) {
+                tampilkanToast('Catatan wajib diisi!', 'red');
+                document.getElementById('tc_catatan').focus();
+                return;
+            }
             break;
     }
 
@@ -809,6 +889,13 @@ function kirimKebiasaan(section) {
                 dot.className = 'done-dot inline-block w-1.5 h-1.5 bg-green-500 rounded-full ml-1.5 align-middle';
                 btn.appendChild(dot);
             }
+
+            // Auto-forward to next section
+            const currentIndex = TAB_IDS.indexOf(section);
+            if (currentIndex !== -1 && currentIndex < TAB_IDS.length - 1) {
+                const nextSection = TAB_IDS[currentIndex + 1];
+                setTimeout(() => switchTab(nextSection), 500);
+            }
         } else {
             tampilkanToast('Gagal: ' + (res.message ?? 'Terjadi kesalahan'), 'red');
         }
@@ -830,6 +917,47 @@ function tampilkanToast(pesan, warna = 'green') {
         toast.classList.remove('opacity-100','translate-y-0');
     }, 3000);
 }
+
+/* ── Tidur Cepat Time Lock ────────────────────────────────── */
+function checkTidurCepatLock() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const isAfter8PM = currentHour >= 20; // 20:00 = 8 PM
+
+    const tabBtn = document.getElementById('tab_tidur_cepat');
+    const lockIcon = document.getElementById('tidur-lock-icon');
+    const lockedMessage = document.getElementById('tidur_locked_message');
+    const formContent = document.getElementById('tidur_form_content');
+
+    if (isAfter8PM) {
+        // Unlock the tab
+        tabBtn.disabled = false;
+        tabBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        tabBtn.onclick = () => switchTab('tidur_cepat');
+        lockIcon.classList.add('hidden');
+        lockedMessage.classList.add('hidden');
+        formContent.classList.remove('opacity-50', 'pointer-events-none');
+    } else {
+        // Allow tab to be clicked but show locked message
+        tabBtn.disabled = false;
+        tabBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        tabBtn.onclick = () => {
+            switchTab('tidur_cepat');
+            lockIcon.classList.remove('hidden');
+            lockedMessage.classList.remove('hidden');
+            formContent.classList.add('opacity-50', 'pointer-events-none');
+        };
+        lockIcon.classList.remove('hidden');
+        lockedMessage.classList.remove('hidden');
+        formContent.classList.add('opacity-50', 'pointer-events-none');
+    }
+}
+
+// Check on page load
+document.addEventListener('DOMContentLoaded', checkTidurCepatLock);
+
+// Check every minute to auto-unlock at 8 PM
+setInterval(checkTidurCepatLock, 60000);
 </script>
 
 @endsection

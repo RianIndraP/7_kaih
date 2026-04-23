@@ -23,14 +23,16 @@ class DashboardController extends Controller
             $siswaWaliKelas = $guru->siswaWaliKelas;
         }
 
-        // Siswa yang BELUM mengisi kebiasaan hari ini
-        $tanggal = Carbon::today()->toDateString();
+        // Total siswa asuh
+        $totalSiswaAsuh = $siswaWaliKelas->count();
 
+        // Siswa yang BELUM lengkap mengisi kebiasaan hari ini (belum 100% selesai)
+        $tanggal = Carbon::today()->toDateString();
         $siswaBlumMengisi = $siswaWaliKelas->filter(function ($siswa) use ($tanggal) {
             $kebiasaan = KebiasaanHarian::where('user_id', $siswa->id)
                 ->where('tanggal', $tanggal)
                 ->first();
-            return ! $kebiasaan || $kebiasaan->hitungSelesai() === 0;
+            return ! $kebiasaan || $kebiasaan->persentaseSelesai() < 100;
         });
 
         // Statistik pesan bantuan
@@ -46,6 +48,7 @@ class DashboardController extends Controller
             'siswaWaliKelas',
             'siswaBlumMengisi',
             'totalSiswa',
+            'totalSiswaAsuh',
             'totalPesanBantuan',
             'totalPesanBantuanProses',
             'pesanBantuanTerbaru'

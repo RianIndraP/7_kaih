@@ -31,7 +31,7 @@
 
 @section('content')
 
-    <div class="p-6 bg-gray-50 min-h-screen" id="pelaporan-container">
+    <div class="p-6 min-h-screen" id="pelaporan-container">
 
         {{-- ══ FILTER BAR ══ --}}
         <div
@@ -40,9 +40,9 @@
                 class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
                 id="lampiranSelect" onchange="handleLampiran(this.value)">
                 <option value="" selected>Pilih Lampiran</option>
-                <option value="A">Lampiran A</option>
-                <option value="B">Lampiran B</option>
-                <option value="C">Lampiran C</option>
+                <option value="A">Lampiran A - ( Identitas Siswa )</option>
+                <option value="B">Lampiran B - ( Perkembangan Siswa )</option>
+                <option value="C">Lampiran C - ( Catatan Pertemuan )</option>
                 <option value="D">Lampiran D</option>
                 <option value="E">Lampiran E</option>
             </select>
@@ -102,7 +102,7 @@
 
             <button
                 class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                type="button" onclick="window.print()">
+                type="button" onclick="forceWhiteBackgroundAndPrint()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -277,6 +277,20 @@
 
         @media print {
 
+            /* ── Force white background on ALL elements first ── */
+            html,
+            body,
+            .app-bg,
+            #pelaporan-container,
+            .lampiran-panel:not(.hidden),
+            .lampiran-panel:not(.hidden) * {
+                background: white !important;
+                background-color: white !important;
+                background-image: none !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
             /* ── Sembunyikan semua elemen dulu ── */
             body * {
                 visibility: hidden;
@@ -300,7 +314,6 @@
                 border: none !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
-                background: white !important;
             }
 
             /* ── Ukuran kertas & margin ── */
@@ -313,14 +326,12 @@
             body {
                 margin: 0 !important;
                 padding: 0 !important;
-                background: white !important;
             }
 
             /* ── Reset border-radius & shadow semua elemen ── */
             * {
                 border-radius: 0 !important;
                 box-shadow: none !important;
-                background: transparent !important;
             }
 
             /* ── Pertahankan border tabel ── */
@@ -434,6 +445,69 @@
             const pct = Math.min(100, Math.max(0, input.value || 0));
             const bar = input.closest('td').querySelector('.d-bar');
             if (bar) bar.style.width = pct + '%';
+        }
+
+        function forceWhiteBackgroundAndPrint() {
+            // Store original backgrounds of page background elements only
+            const html = document.documentElement;
+            const body = document.body;
+            const appBgElements = document.querySelectorAll('.app-bg');
+            const mainElements = document.querySelectorAll('main');
+
+            const originalHtmlBg = html.style.background;
+            const originalBodyBg = body.style.background;
+            const originalAppBg = [];
+            const originalMainBg = [];
+
+            appBgElements.forEach(el => {
+                originalAppBg.push({
+                    el: el,
+                    bg: el.style.background,
+                    bgImage: el.style.backgroundImage,
+                    bgColor: el.style.backgroundColor
+                });
+                el.style.setProperty('background', 'white', 'important');
+                el.style.setProperty('background-image', 'none', 'important');
+                el.style.setProperty('background-color', 'white', 'important');
+            });
+
+            mainElements.forEach(el => {
+                originalMainBg.push({
+                    el: el,
+                    bg: el.style.background,
+                    bgImage: el.style.backgroundImage,
+                    bgColor: el.style.backgroundColor
+                });
+                el.style.setProperty('background', 'white', 'important');
+                el.style.setProperty('background-image', 'none', 'important');
+                el.style.setProperty('background-color', 'white', 'important');
+            });
+
+            html.style.setProperty('background', 'white', 'important');
+            html.style.setProperty('background-image', 'none', 'important');
+            html.style.setProperty('background-color', 'white', 'important');
+            body.style.setProperty('background', 'white', 'important');
+            body.style.setProperty('background-image', 'none', 'important');
+            body.style.setProperty('background-color', 'white', 'important');
+
+            // Print
+            window.print();
+
+            // Restore original backgrounds after print dialog closes
+            setTimeout(() => {
+                html.style.background = originalHtmlBg;
+                body.style.background = originalBodyBg;
+                originalAppBg.forEach(item => {
+                    item.el.style.background = item.bg;
+                    item.el.style.backgroundImage = item.bgImage;
+                    item.el.style.backgroundColor = item.bgColor;
+                });
+                originalMainBg.forEach(item => {
+                    item.el.style.background = item.bg;
+                    item.el.style.backgroundImage = item.bgImage;
+                    item.el.style.backgroundColor = item.bgColor;
+                });
+            }, 500);
         }
 
         function applyFilter() {

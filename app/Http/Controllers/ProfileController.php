@@ -27,6 +27,13 @@ class ProfileController extends Controller
      */
     public function save(Request $request)
     {
+        // Decode teman_terbaik_json from string to array
+        if ($request->has('teman_terbaik_json') && is_string($request->teman_terbaik_json)) {
+            $request->merge([
+                'teman_terbaik_json' => json_decode($request->teman_terbaik_json, true) ?? []
+            ]);
+        }
+
         // Validate the request data
         $validated = $request->validate([
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
@@ -39,9 +46,12 @@ class ProfileController extends Controller
             'hobi' => 'nullable|string|max:255',
             'cita' => 'nullable|string|max:255',
             'teman' => 'nullable|string|max:255',
+            'teman_terbaik_json' => 'nullable|array',
+            'teman_terbaik_json.*.nama' => 'nullable|string|max:255',
+            'teman_terbaik_json.*.nomor' => 'nullable|string|max:20',
             'makan' => 'nullable|string|max:255',
             'warna' => 'nullable|string|max:50',
-            'gender' => 'required|in:Laki-laki,Perempuan',
+            'gender' => 'nullable|in:Laki-laki,Perempuan',
             'hp' => 'nullable|string|max:20',
             'ortu' => 'nullable|string|max:20',
             'email' => 'required|email|max:255',
@@ -87,12 +97,13 @@ class ProfileController extends Controller
                 'birth_date' => $validated['tanggal_lahir'],
                 'ttl' => $validated['tempat_lahir'] . ', ' . date('d F Y', strtotime($validated['tanggal_lahir'])),
                 'jenis_kelamin' => $validated['jk'],
+                'gender' => $validated['jk'], // Sync gender with jenis_kelamin
                 'hobi' => $validated['hobi'],
                 'cita_cita' => $validated['cita'],
                 'teman_terbaik' => $validated['teman'],
+                'teman_terbaik_json' => $validated['teman_terbaik_json'] ?? null,
                 'makanan_kesukaan' => $validated['makan'],
                 'warna_kesukaan' => $validated['warna'],
-                'gender' => $validated['gender'],
                 'no_telepon' => $validated['hp'],
                 'no_ortu' => $validated['ortu'],
                 'email' => $validated['email'],
