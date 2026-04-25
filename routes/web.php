@@ -98,7 +98,7 @@ Route::middleware(['auth', 'siswa', 'profile.complete'])->prefix('student')->nam
 
     // Ganti Password
     Route::get('/ganti-password', [GantiPasswordController::class, 'index'])->name('ganti-password');
-    Route::post('/ganti-password', [GantiPasswordController::class, 'update'])->name('ganti-password.update');
+    Route::put('/ganti-password', [GantiPasswordController::class, 'update'])->name('ganti-password.update');
 
     // Kirim Pesan Bantuan (ikon ?)
     Route::get('/kirim-pesan-bantuan', [PesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
