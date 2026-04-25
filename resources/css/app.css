@@ -8,4 +8,139 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-200: #bfdbfe;
+    --color-brand-400: #60a5fa;
+    --color-brand-500: #3b82f6;
+    --color-brand-600: #2563eb;
+    --color-brand-700: #1d4ed8;
+    --color-brand-800: #1e40af;
+
+    --color-indigo-500: #6366f1;
+    --color-indigo-600: #4f46e5;
+    --color-indigo-700: #4338ca;
+    --color-indigo-800: #3730a3;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes expandWidth {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: var(--target-w);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* ── Utility helpers not in Tailwind core ─── */
+.anim-fade-up {
+    animation: fadeInUp 0.38s ease both;
+}
+
+.anim-fade-up-1 {
+    animation: fadeInUp 0.38s 0.05s ease both;
+}
+
+.anim-fade-up-2 {
+    animation: fadeInUp 0.38s 0.10s ease both;
+}
+
+.anim-fade-up-3 {
+    animation: fadeInUp 0.38s 0.15s ease both;
+}
+
+.anim-fade-up-4 {
+    animation: fadeInUp 0.38s 0.20s ease both;
+}
+
+/* Sidebar gradient (can't express 3-stop in Tailwind utility) */
+.sidebar-gradient {
+    background: linear-gradient(180deg, #1d4ed8 0%, #4f46e5 60%, #4338ca 100%);
+}
+
+/* Header gradient */
+.header-gradient {
+    background: linear-gradient(90deg, #2563eb 0%, #4f46e5 60%, #2563eb 100%);
+}
+
+/* Greeting card gradient */
+.greeting-gradient {
+    background: linear-gradient(135deg, #1d4ed8 0%, #4f46e5 55%, #7c3aed 100%);
+}
+
+/* Page background */
+.page-bg {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #eef2ff 100%);
+}
+
+/* Quick-action icon gradient */
+.icon-gradient {
+    background: linear-gradient(135deg, #3b82f6, #4f46e5);
+}
+
+/* Profile photo gradient */
+.photo-gradient {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+}
+
+/* Notification card gradient */
+.notif-gradient {
+    background: linear-gradient(135deg, #eff6ff, #eef2ff);
+}
+
+/* Notification button gradient */
+.notif-btn-gradient {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+}
+
+/* Progress fill */
+.progress-fill-blue {
+    background: linear-gradient(90deg, #2563eb, #4f46e5);
+}
+
+.progress-fill-green {
+    background: linear-gradient(90deg, #16a34a, #15803d);
+}
+
+/* Sidebar active item left accent */
+.nav-active-accent {
+    box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.55);
+}
+
+/* Scrollbar for sidebar */
+.sb-scroll::-webkit-scrollbar {
+    width: 3px;
+}
+
+.sb-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+}
+
+.sb-scroll::-webkit-scrollbar-track {
+    background: transparent;
 }
