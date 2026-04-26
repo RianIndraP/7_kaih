@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,21 +88,21 @@ class ProfileController extends Controller
             // Update user profile data
             /** @var \App\Models\User $user */
             $user->update([
-                'name' => $validated['nama'],
-                'foto' => $validated['foto'] ?? $user->foto,
-                'nisn' => $validated['nisn'],
-                'kelas_id' => $kelasId,
+                'name'      => $validated['nama'],
+                'foto'      => $validated['foto'] ?? $user->foto,
+                'nisn'      => $validated['nisn'],
+                'kelas_id'  => $kelasId,
                 'tempat_lahir' => $validated['tempat_lahir'],
                 'birth_date' => $validated['tanggal_lahir'],
                 'ttl' => $validated['tempat_lahir'] . ', ' . date('d F Y', strtotime($validated['tanggal_lahir'])),
                 'jenis_kelamin' => $validated['jk'],
                 'gender' => $validated['jk'], // Sync gender with jenis_kelamin
-                'hobi' => $validated['hobi'],
-                'cita_cita' => $validated['cita'],
-                'teman_terbaik' => $validated['teman'],
+                'hobi' => $validated['hobi'] ?? null,
+                'cita_cita' => $validated['cita'] ?? null,
+                'teman_terbaik' => $validated['teman'] ?? null,
                 'teman_terbaik_json' => $validated['teman_terbaik_json'] ?? null,
-                'makanan_kesukaan' => $validated['makan'],
-                'warna_kesukaan' => $validated['warna'],
+                'makanan_kesukaan' => $validated['makan'] ?? null,
+                'warna_kesukaan' => $validated['warna'] ?? null,
                 'no_telepon' => $validated['hp'],
                 'no_ortu' => $validated['ortu'],
                 'email' => $validated['email'],

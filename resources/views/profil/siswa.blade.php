@@ -1011,6 +1011,7 @@
                 });
             });
             formData.append('teman_terbaik_json', JSON.stringify(temanJson));
+            formData.append('teman', temanJson.length > 0 ? temanJson[0].nama : ''); // Ambil nama pertama untuk kolom 'teman_terbaik'
 
             const photoInput = document.getElementById('photoInput');
             if (photoInput.files[0]) formData.append('foto', photoInput.files[0]);
