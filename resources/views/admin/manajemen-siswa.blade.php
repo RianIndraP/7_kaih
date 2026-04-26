@@ -489,8 +489,9 @@
                     <span>Kolom C: Kelas</span>
                     <span>Kolom D: Tahun Masuk</span>
                     <span>Kolom E: Tanggal Lahir (dd/mm/yyyy)</span>
-                    <span>Kolom F: Jenis Kelam  (Laki laki/Perempuan)</span>
-                    <span>Kolom G: Guru Wali</span>
+                    <span>Kolom F: Tempat Lahir</span>
+                    <span>Kolom G: Jenis Kelam  (Laki laki/Perempuan)</span>
+                    <span>Kolom H: Guru Wali</span>
                 </div>
 
                 <p class="text-xs text-amber-600 mt-2">* Kolom wajib diisi</p>

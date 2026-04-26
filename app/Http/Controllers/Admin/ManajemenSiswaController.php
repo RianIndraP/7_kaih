@@ -199,8 +199,9 @@ class ManajemenSiswaController extends Controller
                 $kelasName = trim($row[2] ?? '');
                 $angkatan = trim($row[3] ?? '');
                 $birthDate = trim($row[4] ?? '');
-                $gender = trim($row[5] ?? '');
-                $guruWaliName = trim($row[6] ?? '');
+                $birthPlace = trim($row[5] ?? '');
+                $gender = trim($row[6] ?? '');
+                $guruWaliName = trim($row[7] ?? '');
                 
                 // Row errors for this student
                 $rowErrors = [];
@@ -354,6 +355,7 @@ class ManajemenSiswaController extends Controller
                         'kelas_id' => $kelas?->id,
                         'angkatan' => $parsedAngkatan,
                         'birth_date' => $parsedBirthDate,
+                        'tempat_lahir' => $birthPlace ?: null,
                         'gender' => $normalizedGender,
                         'guru_wali_id' => $guruWali?->id,
                         'email' => $nisn . '@student.7kaih.sch.id',
@@ -393,6 +395,7 @@ class ManajemenSiswaController extends Controller
             'angkatan' => $user->angkatan,
             'gender' => $user->gender,
             'birth_date' => $user->birth_date ? $user->birth_date->format('Y-m-d') : null,
+            'tempat_lahir' => $user->tempat_lahir,
             'guru_wali_id' => $user->guru_wali_id,
             'no_telepon' => $user->no_telepon,
             'email' => $user->email,
@@ -408,10 +411,10 @@ class ManajemenSiswaController extends Controller
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            $headers = ['No', 'Nama Siswa', 'NISN', 'Kelas', 'Jenis Kelamin (L/P)', 'Tanggal Lahir (YYYY-MM-DD)', 'No Telepon', 'Email'];
+            $headers = ['No', 'Nama Siswa', 'NISN', 'Kelas', 'Jenis Kelamin (L/P)', 'Tanggal Lahir (YYYY-MM-DD)', 'Tempat Lahir', 'No Telepon', 'Email'];
             $sheet->fromArray($headers, null, 'A1');
 
-            $sampleData = ['1', 'Contoh Nama Siswa', '1234567890', 'X RPL 1', 'L', '2008-05-15', '08123456789', 'siswa@email.com'];
+            $sampleData = ['1', 'Contoh Nama Siswa', '1234567890', 'X RPL 1', 'L', '2008-05-15', 'Jakarta', '08123456789', 'siswa@email.com'];
             $sheet->fromArray($sampleData, null, 'A2');
 
             $headerStyle = [
@@ -420,9 +423,9 @@ class ManajemenSiswaController extends Controller
                 'alignment' => ['horizontal' => 'center'],
                 'borders' => ['allBorders' => ['borderStyle' => 'thin']]
             ];
-            $sheet->getStyle('A1:H1')->applyFromArray($headerStyle);
+            $sheet->getStyle('A1:I1')->applyFromArray($headerStyle);
 
-            foreach (range('A', 'H') as $col) {
+            foreach (range('A', 'I') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
