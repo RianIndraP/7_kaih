@@ -331,27 +331,22 @@
                     <div class="grid grid-cols-2 gap-2" id="habitsGrid">
                         @foreach ($kebiasaanList as $key => $label)
                             @php $checked = !empty($kebiasaanData[$key]); @endphp
-                            <div data-key="{{ $key }}" onclick="toggleHabit(this)"
+                            <div data-key="{{ $key }}"
                                 class="habit-item flex items-center gap-2 px-3 py-2.5 rounded-[10px]
-                                    border cursor-pointer select-none transition-all duration-200
-                                    {{ $checked
-                                        ? 'bg-blue-50 border-blue-200 checked'
-                                        : 'bg-white border-gray-200 hover:border-blue-200 hover:bg-blue-50/50' }}">
+                                    border select-none transition-all duration-200
+                                    {{ $checked ? 'bg-blue-50 border-blue-200 checked' : 'bg-white border-gray-200 ?>' }}">
                                 {{-- Checkbox --}}
                                 <div
-                                    class="hbox flex items-center justify-center w-[17px] h-[17px] rounded-[5px] border-2
-                                        shrink-0 transition-all duration-200
+                                    class="flex items-center justify-center w-[17px] h-[17px] rounded-[5px] border-2 shrink-0
                                         {{ $checked ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300' }}">
-                                    <svg class="w-2.5 h-2.5 text-white {{ $checked ? 'opacity-100' : 'opacity-0' }}
-                                            transition-opacity duration-150"
+                                    <svg class="w-2.5 h-2.5 text-white {{ $checked ? 'opacity-100' : 'opacity-0' }}"
                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                                 <span
-                                    class="text-[12px] font-medium transition-colors duration-200
-                                         {{ $checked ? 'text-blue-700 font-bold' : 'text-gray-600' }}">
+                                    class="text-[12px] font-medium {{ $checked ? 'text-blue-700 font-bold' : 'text-gray-600' }}">
                                     {{ $label }}
                                 </span>
                             </div>
@@ -498,73 +493,6 @@
 
 @section('scripts')
     <script>
-        /* ══ HABITS INTERACTIVE TOGGLE ══════════════════ */
-        const TOTAL_HABITS = {{ count($kebiasaanList) }};
-        const habitFill = document.getElementById('habitFill');
-        const habitPct = document.getElementById('habitPct');
-        const habitFooter = document.getElementById('habitFooter');
-        const kebiasaanRoute = "{{ route('student.kebiasaan') }}";
-
-        function toggleHabit(el) {
-            const isChecked = el.classList.contains('checked');
-            const hbox = el.querySelector('.hbox');
-            const checkSvg = hbox.querySelector('svg');
-            const label = el.querySelector('span');
-
-            if (isChecked) {
-                el.classList.remove('checked', 'bg-blue-50', 'border-blue-200');
-                el.classList.add('bg-white', 'border-gray-200', 'hover:border-blue-200', 'hover:bg-blue-50/50');
-                hbox.classList.remove('bg-blue-600', 'border-blue-600');
-                hbox.classList.add('bg-white', 'border-gray-300');
-                checkSvg.classList.replace('opacity-100', 'opacity-0');
-                label.classList.remove('text-blue-700', 'font-bold');
-                label.classList.add('text-gray-600');
-            } else {
-                el.classList.add('checked', 'bg-blue-50', 'border-blue-200');
-                el.classList.remove('bg-white', 'border-gray-200', 'hover:border-blue-200', 'hover:bg-blue-50/50');
-                hbox.classList.add('bg-blue-600', 'border-blue-600');
-                hbox.classList.remove('bg-white', 'border-gray-300');
-                checkSvg.classList.replace('opacity-0', 'opacity-100');
-                label.classList.add('text-blue-700', 'font-bold');
-                label.classList.remove('text-gray-600');
-            }
-
-            updateProgress();
-        }
-
-        function updateProgress() {
-            const checked = document.querySelectorAll('.habit-item.checked').length;
-            const p = Math.round(checked / TOTAL_HABITS * 100);
-
-            habitFill.style.width = p + '%';
-            habitPct.textContent = p + '% Lengkap';
-
-            if (p >= 100) {
-                habitFill.classList.remove('progress-fill-blue');
-                habitFill.classList.add('progress-fill-green');
-                habitFooter.innerHTML = `
-                <div class="inline-flex items-center gap-1.5 text-[12px] font-bold text-green-600">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Semua kebiasaan hari ini sudah diisi!
-                </div>`;
-            } else {
-                habitFill.classList.remove('progress-fill-green');
-                habitFill.classList.add('progress-fill-blue');
-                habitFooter.innerHTML = `
-                <a href="${kebiasaanRoute}"
-                   class="inline-flex items-center gap-1.5 text-[12px] font-bold text-blue-600
-                          no-underline transition-all duration-200 hover:text-blue-800 hover:gap-2">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                    Lengkapi data kebiasaan →
-                </a>`;
-            }
-        }
-
         /* ══ FIREBASE PUSH NOTIFICATION ════════════════ */
         const firebaseConfig = {
             apiKey: "AIzaSyA-AM4wp75BPE6qO_qpCOBJhI5Al20MAJ0",
