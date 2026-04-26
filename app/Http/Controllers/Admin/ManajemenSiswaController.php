@@ -214,10 +214,7 @@ class ManajemenSiswaController extends Controller
 
                 // Check if NISN already exists
                 $existingUser = User::where('nisn', $nisn)->first();
-                if ($existingUser) {
-                    $errors[] = $name . ' (NISN: ' . $nisn . ') - NISN sudah ada di database - Data diabaikan';
-                    continue;
-                }
+                $isUpdate = $existingUser ? true : false;
 
                 // Find kelas_id by kelas name
                 $kelas = null;
@@ -347,21 +344,29 @@ class ManajemenSiswaController extends Controller
                     }
                 }
 
-                // Create user
+                // Create or update user
                 try {
-                    User::create([
-                        'nisn' => $nisn,
-                        'name' => $name,
-                        'kelas_id' => $kelas?->id,
-                        'angkatan' => $parsedAngkatan,
-                        'birth_date' => $parsedBirthDate,
-                        'tempat_lahir' => $birthPlace ?: null,
-                        'gender' => $normalizedGender,
-                        'guru_wali_id' => $guruWali?->id,
-                        'email' => $nisn . '@student.7kaih.sch.id',
-                        'password' => Hash::make('siswa'),
-                    ]);
-                    $imported++;
+                    User::updateOrCreate(
+                        ['nisn' => $nisn], // Search criteria
+                        [
+                            'name' => $name,
+                            'kelas_id' => $kelas?->id,
+                            'angkatan' => $parsedAngkatan,
+                            'birth_date' => $parsedBirthDate,
+                            'tempat_lahir' => $birthPlace ?: null,
+                            'gender' => $normalizedGender,
+                            'guru_wali_id' => $guruWali?->id,
+                            'email' => $nisn . '@student.7kaih.sch.id',
+                            // Only set password for new users
+                            'password' => $isUpdate ? $existingUser->password : Hash::make('siswa'),
+                        ]
+                    );
+                    
+                    if ($isUpdate) {
+                        $imported++;
+                    } else {
+                        $imported++;
+                    }
                     
                     // Add error info for this student if any fields failed
                     if (!empty($rowErrors)) {
@@ -373,7 +378,7 @@ class ManajemenSiswaController extends Controller
             }
 
             // Build summary message
-            $message = 'Import berhasil! ' . $imported . ' siswa ditambahkan.';
+            $message = 'Import berhasil! ' . $imported . ' data siswa diproses.';
             if (!empty($errors)) {
                 $message .= '<br><br><strong>Rincian data yang bermasalah:</strong><br>' . implode('<br>', $errors);
             }
