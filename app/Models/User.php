@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -154,6 +155,18 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return empty($this->nisn) && empty($this->nip) && empty($this->nik);
+    }
+
+    /**
+     * Check if user is a Kepala Sekolah (Principal)
+     */
+    public function isKepalaSekolah(): bool
+    {
+        if (!$this->isGuru()) {
+            return false;
+        }
+        
+        return $this->guru && $this->guru->status_pegawai === 'Kepala Sekolah';
     }
 
     /**

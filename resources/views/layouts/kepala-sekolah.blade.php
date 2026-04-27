@@ -2,16 +2,16 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'Admin | SMK N 5 Telkom Banda Aceh')</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'SMK N 5 Telkom Banda Aceh | Kepala Sekolah')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        /* Custom styles for admin - blue/indigo theme (matching student/kepala sekolah sidebar) */
+        /* Custom styles for kepala sekolah - blue/indigo theme (matching student sidebar) */
         .sidebar-gradient {
             background: linear-gradient(180deg, #1d4ed8 0%, #4f46e5 60%, #4338ca 100%);
         }
@@ -35,6 +35,10 @@
         .shadow-[0_2px_18px_rgba(124,58,237,0.22)] {
             box-shadow: 0 2px 18px rgba(37, 99, 235, 0.22);
         }
+        
+        .border-indigo-600 {
+            border-color: #2563eb;
+        }
     </style>
 </head>
 
@@ -51,13 +55,13 @@
                   -translate-x-full lg:translate-x-0
                   transition-transform duration-300 ease-in-out
                   shadow-[4px_0_24px_rgba(124,58,237,0.18)] print:hidden">
-        @include('includes.sidebar-admin')
+        @include('includes.sidebar-kepala-sekolah')
     </aside>
 
     {{-- ── MAIN WRAPPER ── --}}
     <div class="lg:ml-60 flex flex-col min-h-screen transition-[margin] duration-300 ease-in-out print:ml-0">
 
-        @include('includes.header-admin')
+        @include('includes.header-kepala-sekolah')
 
         <main class="flex-1 p-5 lg:p-6">
             @yield('content')

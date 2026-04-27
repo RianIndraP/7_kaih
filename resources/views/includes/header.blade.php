@@ -2,7 +2,7 @@
 <header
     class="header-gradient sticky top-0 z-30 flex items-center justify-between
                px-5 lg:px-6 h-[58px] shrink-0
-               shadow-[0_2px_18px_rgba(37,99,235,0.22)]">
+               shadow-[0_2px_18px_rgba(37,99,235,0.22)] print:hidden">
 
     {{-- Left: hamburger + page title --}}
     <div class="flex items-center gap-2.5 min-w-0">

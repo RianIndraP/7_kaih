@@ -16,139 +16,165 @@
             display: block;
         }
     </style>
-    <div class="p-6 min-h-screen">
+    <div class="p-5 lg:p-6 min-h-screen">
 
         {{-- ===== FILTER PENCARIAN ===== --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-5">
-
-            {{-- Baris 1: Search + Info --}}
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
-                <div class="relative flex-1 max-w-xs">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <input type="text" id="searchInput" placeholder="search"
-                        class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-full text-sm
-                              focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500">
-                    <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke-width="2" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01" />
-                    </svg>
-                    Pilih Periode dan Bulan dari laporan yang ingin dilihat
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6">
+            {{-- Header Gradient --}}
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Cari Data Siswa</h2>
+                        <p class="text-xs text-white/80">Pilih periode dan filter untuk menampilkan data</p>
+                    </div>
                 </div>
             </div>
 
-            {{-- Baris 2: Periode + Filter Dinamis + Tombol --}}
-            <div class="flex flex-wrap items-center gap-3">
-
-                {{-- Dropdown Periode --}}
-                <div class="relative">
-                    <select id="selectPeriode"
-                        class="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
-                               text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                        <option value="">Periode</option>
-                        <option value="harian">Per Hari</option>
-                        <option value="mingguan">Per Minggu</option>
-                        <option value="pertemuan">Per Pertemuan</option>
-                        <option value="bulanan">Per Bulan</option>
-                    </select>
-                    <svg class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
+            {{-- Filter Content --}}
+            <div class="p-5">
+                {{-- Baris 1: Search --}}
+                <div class="mb-4">
+                    <div class="relative">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Cari nama siswa..."
+                            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl text-sm
+                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                  bg-gray-50 hover:bg-white transition-colors" />
+                    </div>
                 </div>
 
-                {{-- Filter Dinamis: muncul sesuai periode --}}
+                {{-- Baris 2: Periode + Filter Dinamis + Tombol --}}
+                <div class="flex flex-wrap items-center gap-3">
 
-                {{-- Harian: input tanggal --}}
-                <div id="filter_harian" class="hidden">
-                    <input type="date" id="input_tanggal"
-                        class="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700
-                              focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    {{-- Dropdown Periode --}}
+                    <div class="relative">
+                        <select id="selectPeriode"
+                            class="appearance-none border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm
+                                   text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer
+                                   hover:border-blue-300 transition-colors min-w-[140px]">
+                            <option value="">Periode</option>
+                            <option value="harian">Per Hari</option>
+                            <option value="mingguan">Per Minggu</option>
+                            <option value="pertemuan">Per Pertemuan</option>
+                            <option value="bulanan">Per Bulan</option>
+                        </select>
+                        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+
+                    {{-- Filter Dinamis: muncul sesuai periode --}}
+
+                    {{-- Harian: input tanggal --}}
+                    <div id="filter_harian" class="hidden">
+                        <input type="date" id="input_tanggal"
+                            class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700
+                                  focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-300 transition-colors" />
+                    </div>
+
+                    {{-- Mingguan: 1 dropdown, tahun otomatis dari JS --}}
+                    <div id="filter_mingguan" class="hidden relative">
+                        <select id="select_minggu"
+                            class="appearance-none border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm
+                                   text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer
+                                   hover:border-blue-300 transition-colors min-w-[220px]">
+                            <option value="">-- Pilih Minggu --</option>
+                        </select>
+                        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+
+                    {{-- Per Pertemuan: 1 dropdown, tahun otomatis dari JS --}}
+                    <div id="filter_pertemuan" class="hidden relative">
+                        <select id="select_pertemuan"
+                            class="appearance-none border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm
+                                   text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer
+                                   hover:border-blue-300 transition-colors min-w-[240px]">
+                            <option value="">-- Pilih Pertemuan --</option>
+                        </select>
+                        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+
+                    {{-- Bulanan: 1 dropdown, tahun otomatis dari JS --}}
+                    <div id="filter_bulanan" class="hidden relative">
+                        <select id="select_bulan"
+                            class="appearance-none border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm
+                                   text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer
+                                   hover:border-blue-300 transition-colors min-w-[180px]">
+                            <option value="">-- Pilih Bulan --</option>
+                        </select>
+                        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+
+                    {{-- Tombol Cari & Download --}}
+                    <button onclick="cariData()"
+                        class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
+                               text-sm font-medium text-white rounded-xl transition-all duration-200 shadow-md
+                               hover:shadow-lg flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Cari
+                    </button>
+                    <button onclick="downloadPDF()"
+                        class="px-6 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-sm font-medium
+                               text-gray-700 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md
+                               flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download PDF
+                    </button>
                 </div>
-
-                {{-- Mingguan: 1 dropdown, tahun otomatis dari JS --}}
-                <div id="filter_mingguan" class="hidden relative">
-                    <select id="select_minggu"
-                        class="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
-                               text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer min-w-[220px]">
-                        <option value="">-- Pilih Minggu --</option>
-                    </select>
-                    <svg class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-
-                {{-- Per Pertemuan: 1 dropdown, tahun otomatis dari JS --}}
-                <div id="filter_pertemuan" class="hidden relative">
-                    <select id="select_pertemuan"
-                        class="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
-                               text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer min-w-[240px]">
-                        <option value="">-- Pilih Pertemuan --</option>
-                    </select>
-                    <svg class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-
-                {{-- Bulanan: 1 dropdown, tahun otomatis dari JS --}}
-                <div id="filter_bulanan" class="hidden relative">
-                    <select id="select_bulan"
-                        class="appearance-none border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm
-                               text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer min-w-[180px]">
-                        <option value="">-- Pilih Bulan --</option>
-                    </select>
-                    <svg class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-
-                {{-- Tombol Cari & Download --}}
-                <button onclick="cariData()"
-                    class="px-5 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium
-                           text-gray-700 rounded-lg transition-colors shadow-sm">
-                    Cari
-                </button>
-                <button onclick="downloadPDF()"
-                    class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-sm font-medium text-white
-                           rounded-lg transition-colors shadow-sm flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download PDF
-                </button>
             </div>
         </div>
 
         {{-- ===== TABEL MURID ===== --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm" id="tabelMurid">
-                    <thead class="bg-gray-50 border-b border-gray-200">
+                    <thead class="bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 w-10">No</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Nama</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Kelas</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">NISN</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Penyelesaian Form</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Umpan balik</th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600">Aksi</th>
+                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-12">No</th>
+                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Nama</th>
+                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Kelas</th>
+                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">NISN</th>
+                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Penyelesaian Form</th>
+                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Umpan balik</th>
+                            <th class="px-5 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-32">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelBody">
+                    <tbody id="tabelBody" class="divide-y divide-gray-100">
                         {{-- Diisi oleh JS setelah search --}}
                         <tr id="emptyRow">
-                            <td colspan="7" class="px-4 py-12 text-center text-gray-400 text-sm">
-                                Pilih periode dan klik <strong>Cari</strong> untuk menampilkan data
+                            <td colspan="7" class="px-5 py-16 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+                                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-gray-500 text-sm font-medium">Pilih periode dan klik <span class="text-blue-600 font-bold">Cari</span> untuk menampilkan data</p>
+                                </div>
                             </td>
                         </tr>
                     </tbody>

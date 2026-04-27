@@ -13,6 +13,7 @@ use App\Http\Controllers\Guru\GuruProfilController as GuruProfilController;
 use App\Http\Controllers\Guru\ListMuridController;
 use App\Http\Controllers\Guru\PelaporanController as GuruPelaporanController;
 use App\Http\Controllers\Guru\PesanBantuanController as GuruPesanBantuanController;
+use App\Http\Controllers\KepalaSekolah\DashboardController as KepalaSekolahDashboardController;
 use App\Http\Controllers\NotifController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\DashboardController;
@@ -30,6 +31,8 @@ Route::get('/', function () {
         $user = Auth::user();
         if ($user->isSiswa()) {
             return redirect()->route('student.dashboard');
+        } else if ($user->isKepalaSekolah()) {
+            return redirect()->route('kepala-sekolah.dashboard');
         } else if ($user->isGuru()) {
             return redirect()->route('guru.dashboard');
         } else if ($user->isAdmin()) {
@@ -159,6 +162,52 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     // Kirim Pesan Bantuan
     Route::get('/kirim-pesan-bantuan', [GuruPesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
     Route::post('/kirim-pesan-bantuan', [GuruPesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store');
+});
+
+// ── Kepala Sekolah (protected) ─────────────────────────────────────────────────────
+Route::middleware(['auth'])->prefix('kepala-sekolah')->name('kepala-sekolah.')->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [KepalaSekolahDashboardController::class, 'index'])->name('dashboard');
+
+    // Data Kebiasaan
+    Route::get('/data-kebiasaan', [KepalaSekolahDashboardController::class, 'index'])->name('data-kebiasaan');
+
+    // Data Guru Wali
+    Route::get('/data-guru-wali', [\App\Http\Controllers\KepalaSekolah\DataGuruWaliController::class, 'index'])->name('data-guru-wali');
+
+    // Data Kelas
+    Route::get('/data-kelas', [\App\Http\Controllers\KepalaSekolah\DataKelasController::class, 'index'])->name('data-kelas');
+    Route::get('/data-kelas/{id}', [\App\Http\Controllers\KepalaSekolah\DataKelasController::class, 'show'])->name('data-kelas.show');
+
+    // Data Siswa
+    Route::get('/data-siswa', [KepalaSekolahDashboardController::class, 'index'])->name('data-siswa');
+
+    // Profil Kepala Sekolah
+    Route::get('/profil', [KepalaSekolahDashboardController::class, 'profil'])->name('profil');
+
+    // Ganti Password
+    Route::get('/ganti-password', [\App\Http\Controllers\KepalaSekolah\GantiPasswordController::class, 'index'])->name('ganti-password');
+    Route::put('/ganti-password', [\App\Http\Controllers\KepalaSekolah\GantiPasswordController::class, 'update'])->name('ganti-password.update');
+
+    // Kirim Pesan Bantuan
+    Route::get('/kirim-pesan-bantuan', [\App\Http\Controllers\KepalaSekolah\KirimPesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
+    Route::post('/kirim-pesan-bantuan', [\App\Http\Controllers\KepalaSekolah\KirimPesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store');
+
+    // Save Profil
+    Route::post('/save-profil', [KepalaSekolahDashboardController::class, 'saveProfil'])->name('save-profil');
+
+    // Delete Location
+    Route::post('/delete-location', [KepalaSekolahDashboardController::class, 'deleteLocation'])->name('delete-location');
+
+    // Data Kebiasaan
+    Route::get('/data-kebiasaan', [KepalaSekolahDashboardController::class, 'dataKebiasaan'])->name('data-kebiasaan');
+    Route::get('/data-kebiasaan-detail/{guruId}', [KepalaSekolahDashboardController::class, 'dataKebiasaanDetail'])->name('data-kebiasaan-detail');
+
+    // Chart Data API
+    Route::get('/chart-data', [KepalaSekolahDashboardController::class, 'getChartData'])->name('chart-data');
+    Route::get('/siswa-by-kelas', [KepalaSekolahDashboardController::class, 'getSiswaByKelas'])->name('siswa-by-kelas');
+    Route::get('/guru-by-status', [KepalaSekolahDashboardController::class, 'getGuruByStatus'])->name('guru-by-status');
 });
 
 // ── Admin (protected) ─────────────────────────────────────────────────────────

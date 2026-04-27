@@ -1,10 +1,10 @@
-<div class="text-center mb-4">
+<div class="text-center mb-4 print:hidden">
     <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN D
     </div>
     <div class="text-base font-semibold text-gray-800">Rekap Pertemuan Guru Wali Bulanan</div>
 </div>
 <div
-    class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-700">
+    class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-700 print:hidden">
     <div><span class="font-semibold">Nama Guru Wali :</span> {{ $guru->user->name }}</div>
     <div><span class="font-semibold">Kelas/Murid Dampingan :</span> {{ $guru->unit_kerja }}</div>
     <div><span class="font-semibold">Semester :</span> {{ $semester }}</div>
@@ -59,8 +59,9 @@
                         </td>
 
                         <td class="border border-gray-300 px-2 py-1 text-center">
+                            <div class="text-xs text-gray-700 print:block hidden">Kelompok</div>
                             <select name="data[{{ $num }}][format]"
-                                class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                class="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 print:hidden">
                                 <option value="individu">Individu</option>
                                 <option value="kelompok" selected>Kelompok</option>
                             </select>

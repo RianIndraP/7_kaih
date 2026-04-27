@@ -2,9 +2,51 @@
     @csrf
     <input type="hidden" name="pertemuan" value="{{ request('pertemuan', 1) }}">
 
+    <style>
+        @media print {
+            .print-table-container {
+                overflow: visible !important;
+            }
+            .print-table {
+                min-width: auto !important;
+                width: 100% !important;
+                font-size: 10px !important;
+            }
+            .print-table th,
+            .print-table td {
+                padding: 4px 6px !important;
+                font-size: 10px !important;
+            }
+            .print-table th:nth-child(1),
+            .print-table td:nth-child(1) {
+                width: 5% !important;
+            }
+            .print-table th:nth-child(2),
+            .print-table td:nth-child(2) {
+                width: 15% !important;
+            }
+            .print-table th:nth-child(3),
+            .print-table td:nth-child(3) {
+                width: 20% !important;
+            }
+            .print-table th:nth-child(4),
+            .print-table td:nth-child(4) {
+                width: 25% !important;
+            }
+            .print-table th:nth-child(5),
+            .print-table td:nth-child(5) {
+                width: 25% !important;
+            }
+            .print-table th:nth-child(6),
+            .print-table td:nth-child(6) {
+                width: 10% !important;
+            }
+        }
+    </style>
+
     @if ($pertemuan)
         {{-- ══ KONTEN JIKA DATA ADA ══ --}}
-        <div class="text-center mb-6">
+        <div class="text-center mb-6 print:hidden">
             <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN C</div>
             <div class="text-base font-semibold text-gray-800">Catatan Pertemuan Guru Wali dengan Siswa</div>
             <div class="text-xs text-gray-500 mt-1">
@@ -14,8 +56,8 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[900px] text-sm border-collapse">
+        <div class="overflow-x-auto print-table-container">
+            <table class="w-full min-w-[900px] text-sm border-collapse print-table">
                 <thead>
                     <tr class="bg-blue-50 text-gray-700">
                         <th class="border border-gray-300 px-3 py-2 text-center font-semibold w-10">NO</th>
@@ -40,12 +82,18 @@
                             @php $c = $catatanC[$m->id] ?? null; @endphp
 
                             <td class="border border-gray-300 px-2 py-1">
+                                @if(filled($c->topik ?? ''))
+                                    <div class="text-xs text-gray-700 print:block hidden">{{ $c->topik }}</div>
+                                @endif
                                 <textarea name="data[{{ $m->id }}][topik]" placeholder="Topik/masalah..."
-                                    class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:ring-2 focus:ring-blue-300 min-h-[60px]">{{ $c->topik ?? '' }}</textarea>
+                                    class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:ring-2 focus:ring-blue-300 min-h-[60px] print:hidden">{{ $c->topik ?? '' }}</textarea>
                             </td>
                             <td class="border border-gray-300 px-2 py-1">
+                                @if(filled($c->tindak_lanjut ?? ''))
+                                    <div class="text-xs text-gray-700 print:block hidden">{{ $c->tindak_lanjut }}</div>
+                                @endif
                                 <textarea name="data[{{ $m->id }}][tindak]" placeholder="Tindak lanjut..."
-                                    class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:ring-2 focus:ring-blue-300 min-h-[60px]">{{ $c->tindak_lanjut ?? '' }}</textarea>
+                                    class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:ring-2 focus:ring-blue-300 min-h-[60px] print:hidden">{{ $c->tindak_lanjut ?? '' }}</textarea>
                             </td>
                             <td class="border border-gray-300 px-2 py-1 text-center">
                                 @php $status = $absensi[$m->id]->status ?? null; @endphp

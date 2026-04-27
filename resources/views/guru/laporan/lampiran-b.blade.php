@@ -4,7 +4,7 @@
     <input type="hidden" name="bulan" value="{{ request('bulan', now()->month) }}">
     <input type="hidden" name="tahun" value="{{ request('tahun', now()->year) }}">
 
-    <div class="text-center mb-4">
+    <div class="text-center mb-4 print:hidden">
         <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN B
         </div>
         <div class="text-base font-semibold text-gray-800">Catatan Perkembangan Siswa Binaan</div>
@@ -64,8 +64,11 @@
                                     {{ $data->tindak_lanjut ?? '-' }}
                                 </td>
                                 <td class="border border-gray-300 px-2 py-1">
+                                    @if(filled($data->keterangan ?? ''))
+                                        <div class="text-xs text-gray-700 print:block hidden">{{ $data->keterangan }}</div>
+                                    @endif
                                     <textarea name="data[{{ $m->id }}][{{ $key }}][keterangan]" placeholder="Keterangan..."
-                                        class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px]">{{ $data->keterangan ?? '' }}</textarea>
+                                        class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[60px] print:hidden">{{ $data->keterangan ?? '' }}</textarea>
                                 </td>
                             </tr>
                         @endforeach

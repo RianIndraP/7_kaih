@@ -24,16 +24,16 @@
         class="sidebar-gradient fixed top-0 left-0 w-60 min-h-screen flex flex-col z-40
                   -translate-x-full lg:translate-x-0
                   transition-transform duration-300 ease-in-out
-                  shadow-[4px_0_24px_rgba(37,99,235,0.18)]">
+                  shadow-[4px_0_24px_rgba(37,99,235,0.18)] print:hidden">
         @include('includes.sidebar')
     </aside>
 
     {{-- ── MAIN WRAPPER ── --}}
-    <div class="lg:ml-60 flex flex-col min-h-screen transition-[margin] duration-300 ease-in-out">
+    <div class="lg:ml-60 flex flex-col min-h-screen transition-[margin] duration-300 ease-in-out print:ml-0">
 
         @include('includes.header')
 
-        <main class="flex-1 p-5 lg:p-6">
+        <main class="flex-1 p-5 lg:p-8 xl:p-10 2xl:p-12">
             @yield('content')
         </main>
 

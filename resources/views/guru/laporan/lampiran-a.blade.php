@@ -1,4 +1,4 @@
-<div class="text-center mb-4 px-2">
+<div class="text-center mb-4 px-2 print:hidden">
     <div class="inline-block px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN A</div>
     <div class="text-sm md:text-base font-semibold text-gray-800">Daftar Identitas Siswa Binaan Guru Wali</div>
     <div class="text-xs text-gray-500 mt-1">
@@ -44,7 +44,10 @@
                         <td class="border border-gray-300 px-2 md:px-3 py-2 text-center text-gray-600 text-xs md:text-sm">
                             {{ $i->no_ortu ?? '-' }}</td>
                         <td class="border border-gray-300 px-2 py-1">
-                            <textarea name="catatan[{{ $i->id }}]" placeholder="Tulis catatan..." class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[50px] md:min-h-[60px]">{{ $catatanA[$i->id] ?? '' }}</textarea>
+                            @if(filled($catatanA[$i->id] ?? ''))
+                                <div class="text-xs text-gray-700 print:block hidden">{{ $catatanA[$i->id] }}</div>
+                            @endif
+                            <textarea name="catatan[{{ $i->id }}]" placeholder="Tulis catatan..." class="w-full text-xs border border-gray-200 rounded-md px-2 py-1.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[50px] md:min-h-[60px] print:hidden">{{ $catatanA[$i->id] ?? '' }}</textarea>
                         </td>
                     </tr>
                 @endforeach

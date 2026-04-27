@@ -22,6 +22,8 @@ class AuthController extends Controller
     {
         if ($user->isSiswa()) {
             return redirect()->route('student.dashboard');
+        } else if ($user->isKepalaSekolah()) {
+            return redirect()->route('kepala-sekolah.dashboard');
         } else if ($user->isGuru()) {
             return redirect()->route('guru.dashboard');
         } else if ($user->isAdmin()) {
@@ -61,6 +63,8 @@ class AuthController extends Controller
             // Redirect based on user type
             if ($user->isSiswa()) {
                 return redirect()->route('student.dashboard');
+            } else if ($user->isKepalaSekolah()) {
+                return redirect()->route('kepala-sekolah.dashboard');
             } else if ($user->isGuru()) {
                 return redirect()->route('guru.dashboard');
             } else if ($user->isAdmin()) {

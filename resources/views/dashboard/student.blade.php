@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="max-w-[1100px] mx-auto space-y-4">
+    <div class="max-w-[1100px] lg:max-w-[1600px] xl:max-w-[1800px] 2xl:max-w-[1900px] mx-auto space-y-4 px-4 sm:px-6 lg:px-8 xl:px-10">
 
         {{-- ═══════════════════════════════════════════
          GREETING CARD

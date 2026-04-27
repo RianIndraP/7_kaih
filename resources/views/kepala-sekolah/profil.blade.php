@@ -1,6 +1,6 @@
-@extends('layouts.layouts-guru')
+@extends('layouts.kepala-sekolah')
 
-@section('title', 'SMK N 5 Telkom Banda Aceh | Profil Guru')
+@section('title', 'SMK N 5 Telkom Banda Aceh | Profil Kepala Sekolah')
 
 @section('content')
 
@@ -22,12 +22,12 @@
         }
 
         .inline-edit:hover {
-            background: #f0f9ff;
+            background: #faf5ff;
         }
 
         .inline-edit:focus {
-            background: #eff6ff;
-            color: #1d4ed8;
+            background: #f3e8ff;
+            color: #7c3aed;
         }
 
         #mapPreviewMap {
@@ -40,9 +40,14 @@
             width: 100%;
             height: 380px;
         }
+
+        /* Blue/indigo theme overrides (matching student sidebar) */
+        .greeting-gradient {
+            background: linear-gradient(135deg, #1d4ed8 0%, #4f46e5 100%);
+        }
     </style>
 
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen page-bg">
         <div class="px-3 sm:px-4 md:px-6 py-4 max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto">
             {{-- Header yang compact --}}
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 shadow-md text-white">
@@ -53,7 +58,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold">Profil Guru</h1>
+                        <h1 class="text-xl font-bold">Profil Kepala Sekolah</h1>
                         <p class="text-blue-100 text-xs mt-1">Kelola informasi pribadi dan profesional</p>
                     </div>
                 </div>
@@ -69,7 +74,7 @@
                         <div id="photoCircle"
                             class="w-20 h-20 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 border-3 border-white shadow-lg overflow-hidden group hover:scale-105 transition-transform">
                             @if (!empty($user->foto))
-                                <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto Guru"
+                                <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto Kepala Sekolah"
                                     class="w-full h-full object-cover" />
                             @else
                                 <div class="w-full h-full flex items-center justify-center">
@@ -168,10 +173,11 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Status Pegawai</label>
-                        <input type="text" id="f_status_guru" value="{{ $guru->status_pegawai ?? '-' }}"
-                            placeholder="Status guru"
-                            class="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500 font-medium cursor-not-allowed
-                                  focus:outline-none" readonly />
+                        <input type="text" id="f_status_kepala_sekolah" value="{{ $guru->status_pegawai ?? '' }}"
+                            placeholder="Status kepala sekolah" readonly
+                            class="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500
+                                  cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 focus:bg-white
+                                  hover:border-gray-300 transition-all" />
                     </div>
 
                     <div>
@@ -230,7 +236,6 @@
                             class="w-full px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-800
                                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 focus:bg-white
                                   hover:border-gray-300 transition-all" />
-                        <p class="text-sm text-gray-600 mt-1.5 font-medium">⚠️ HARAP GUNAKAN EMAIL AKTIF ANDA</p>
                     </div>
 
                     {{-- MAP PREVIEW --}}
@@ -478,7 +483,7 @@
             reader.onload = function(e) {
                 var circle = document.getElementById('photoCircle');
                 circle.innerHTML = '<img src="' + e.target.result +
-                    '" alt="Foto Guru" class="w-full h-full object-cover"/>';
+                    '" alt="Foto Kepala Sekolah" class="w-full h-full object-cover"/>';
             };
             reader.readAsDataURL(file);
         });
@@ -486,7 +491,7 @@
         function clearLocation() {
             if (confirm("Apakah Anda yakin ingin menghapus lokasi dari profil?")) {
 
-                fetch('{{ route('guru.profil.delete-location') }}', {
+                fetch('/kepala-sekolah/delete-location', {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -532,7 +537,6 @@
         }
 
         /* ── Simpan profil ──────────────────────────────────────── */
-        /* ── Simpan profil (SINKRON DENGAN SISTEM SISWA) ── */
         function simpanProfil() {
             var btn = event.currentTarget;
             var alamatTeks = document.getElementById('addressDisplay').innerText.trim();
@@ -549,7 +553,7 @@
             formData.append('tempat_lahir', document.getElementById('p_tempat_lahir').value);
             formData.append('tanggal_lahir', document.getElementById('p_tanggal_lahir').value);
             formData.append('nip', document.getElementById('p_nip').value);
-            formData.append('status_guru', document.getElementById('f_status_guru').value);
+            formData.append('status_kepala_sekolah', document.getElementById('f_status_kepala_sekolah').value);
             formData.append('gender', document.getElementById('f_gender').value);
             formData.append('unit_kerja', document.getElementById('f_unit_kerja').value);
             formData.append('hp', document.getElementById('f_hp').value);
@@ -570,7 +574,7 @@
             btn.innerText = 'Menyimpan...';
 
             // 5. Kirim menggunakan Fetch
-            fetch('{{ route('guru.profil.save') }}', {
+            fetch('/kepala-sekolah/save-profil', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',

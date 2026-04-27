@@ -35,10 +35,7 @@
               {{ request()->routeIs('student.dashboard')
                   ? 'bg-white/22 text-white font-bold nav-active-accent'
                   : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
-        <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
+        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">🏠</span>
         <span class="flex-1">Dashboard</span>
     </a>
 
@@ -49,10 +46,7 @@
               {{ request()->routeIs('student.profile*')
                   ? 'bg-white/22 text-white font-bold nav-active-accent'
                   : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
-        <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
+        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">🧑‍🎓</span>
         <span class="flex-1">Profil Siswa</span>
     </a>
 
@@ -64,20 +58,14 @@
                   {{ request()->routeIs('student.kebiasaan')
                       ? 'bg-white/22 text-white font-bold nav-active-accent'
                       : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
-            <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">📝</span>
             <span class="flex-1">7 Kebiasaan</span>
         </a>
     @else
         <div
             class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
                     opacity-45 cursor-not-allowed text-white/72 bg-white/5">
-            <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">📝</span>
             <span class="flex-1">7 Kebiasaan</span>
             <svg class="w-3.5 h-3.5 shrink-0 text-white/40" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -100,10 +88,7 @@
                   {{ request()->routeIs('student.pesan')
                       ? 'bg-white/22 text-white font-bold nav-active-accent'
                       : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
-            <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">💬</span>
             <span class="flex-1">Pesan Guru Wali</span>
             @if ($unreadCount > 0)
                 <span
@@ -117,10 +102,7 @@
         <div
             class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
                     opacity-45 cursor-not-allowed text-white/72 bg-white/5">
-            <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">💬</span>
             <span class="flex-1">Pesan Guru Wali</span>
             <svg class="w-3.5 h-3.5 shrink-0 text-white/40" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -139,10 +121,7 @@
                    text-[13px] font-medium text-red-300/82 bg-transparent border-none
                    cursor-pointer transition-all duration-200 font-sans
                    hover:bg-red-500/18 hover:text-red-300">
-        <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
+        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">🚪</span>
         Keluar
     </button>
 </div>

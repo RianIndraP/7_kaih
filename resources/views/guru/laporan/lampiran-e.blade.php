@@ -1,11 +1,11 @@
-<div class="text-center mb-4">
+<div class="text-center mb-4 print:hidden">
     <div class="inline-block px-3 py-0.5 bg-blue-600 text-white text-xs font-bold rounded mb-1">LAMPIRAN E
     </div>
     <div class="text-base font-semibold text-gray-800">Dokumentasi Foto Pertemuan Guru Wali</div>
     <div class="text-xs text-gray-500 mt-1">2 Pertemuan per Bulan —
         {{ request('semester', 'Semester Genap 2025/2026') }}</div>
 </div>
-<div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-700">
+<div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-700 print:hidden">
     <div><span class="font-semibold">Guru Wali</span> : {{ $guru->user->name }}</div>
     <div><span class="font-semibold">Kelas</span> : {{ $guru->unit_kerja }}</div>
     <div><span class="font-semibold">Tahun Ajaran</span> : {{ $tahunAjaran }}</div>
