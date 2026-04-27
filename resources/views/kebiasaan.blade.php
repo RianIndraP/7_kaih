@@ -249,6 +249,15 @@
             background: #eff6ff;
         }
 
+        .makan-row:has(input[type=checkbox]:checked) .custom-checkbox {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            border-color: transparent;
+        }
+
+        .makan-row:has(input[type=checkbox]:checked) .custom-checkbox svg {
+            opacity: 1;
+        }
+
         .custom-checkbox {
             width: 18px;
             height: 18px;
@@ -276,6 +285,7 @@
         .sholat-row:has(input[type=checkbox]:checked) .custom-checkbox svg {
             opacity: 1;
         }
+
 
         /* ── Makan sehat checklist ───────────────────────────── */
         .makan-row {
@@ -660,8 +670,9 @@
             <div class="tab-pill-bar">
                 @foreach ($tabs as $i => $tab)
                     @php $isDone = !empty($checklist[$tab['id']]); @endphp
+
                     <button onclick="switchTab('{{ $tab['id'] }}')" id="tab_{{ $tab['id'] }}"
-                        class="tab-pill {{ $i === 0 ? 'active' : '' }} {{ $isDone && $i !== 0 ? 'done-pill' : '' }}">
+                        class="tab-pill {{ $i === 0 ? 'active' : '' }} {{ $isDone ? 'done-pill' : '' }}">
                         <div class="pill-check">
                             @if ($isDone)
                                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -673,6 +684,14 @@
                             @endif
                         </div>
                         {{ $tab['label'] }}
+                        @if ($tab['id'] === 'bangun_pagi')
+                            <svg id="bangun-lock-icon" class="w-3 h-3 hidden text-blue-500" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        @endif
                         @if ($tab['id'] === 'tidur_cepat')
                             <svg id="tidur-lock-icon" class="w-3 h-3 hidden" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
@@ -690,56 +709,77 @@
                  TAB 1 – BANGUN PAGI
             ============================================================ --}}
                 <div id="panel_bangun_pagi" class="tab-panel">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="quote-card self-start">
-                            <p>Bangun pagi dalam Islam sangat dianjurkan karena merupakan waktu penuh berkah, rezeki, dan
-                                doa khusus dari Rasulullah SAW.</p>
-                            <div class="hadith">"Ya Allah, berkahilah umatku di waktu paginya." <strong>(HR. Abu
-                                    Dawud)</strong></div>
-                        </div>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="field-label">Apakah kamu bangun pagi?</label>
-                                <div class="radio-group">
-                                    <label class="radio-pill">
-                                        <input type="radio" name="bp_status" value="iya"
-                                            {{ $kebiasaan->bangun_pagi === true ? 'checked' : '' }}
-                                            onchange="toggleShow('bp_jam_section', this.value === 'iya')" />
-                                        <span class="radio-pill-dot"></span> Iya
-                                    </label>
-                                    <label class="radio-pill">
-                                        <input type="radio" name="bp_status" value="tidak"
-                                            {{ $kebiasaan->bangun_pagi === false ? 'checked' : '' }}
-                                            onchange="toggleShow('bp_jam_section', this.value === 'iya')" />
-                                        <span class="radio-pill-dot"></span> Tidak
-                                    </label>
-                                </div>
-                            </div>
-                            <div id="bp_jam_section" class="{{ $kebiasaan->bangun_pagi === true ? '' : 'hidden-field' }}">
-                                <label class="field-label">Jam bangun</label>
-                                <div class="time-wrap">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <input type="time" id="bp_jam" name="bp_jam"
-                                        value="{{ $kebiasaan->jam_bangun ? \Carbon\Carbon::parse($kebiasaan->jam_bangun)->format('H:i') : '05:30' }}" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="field-label">Catatan</label>
-                                <textarea id="bp_catatan" rows="4" class="fancy-textarea" placeholder="Tuliskan catatan...">{{ $kebiasaan->bangun_catatan }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-end mt-5 pt-4 border-t border-indigo-100">
-                        <button onclick="kirimKebiasaan('bangun_pagi')" class="kirim-btn">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M5 13l4 4L19 7" />
+
+                    {{-- 1. Pesan Terkunci (Muncul jika sebelum jam 04:30) --}}
+                    <div id="bangun_locked_message" class="lock-overlay hidden mb-5">
+                        <div class="lock-icon-wrap" style="background: #e0f2fe;"> {{-- Warna biru muda subuh --}}
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
-                            Simpan & Lanjut
-                        </button>
+                        </div>
+                        <h3 class="text-[17px] font-extrabold text-blue-900 mb-2">Belum Waktunya Bangun?</h3>
+                        <p class="text-[13px] text-blue-700 mb-4">Form "Bangun Pagi" baru bisa diisi mulai <strong>jam 04:30
+                                subuh</strong>.</p>
+                    </div>
+
+                    {{-- 2. Konten Form (Akan diburamkan oleh JS jika terkunci) --}}
+                    <div id="bangun_form_content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="quote-card self-start">
+                                <p>Bangun pagi dalam Islam sangat dianjurkan karena merupakan waktu penuh berkah, rezeki,
+                                    dan
+                                    doa khusus dari Rasulullah SAW.</p>
+                                <div class="hadith">"Ya Allah, berkahilah umatku di waktu paginya." <strong>(HR. Abu
+                                        Dawud)</strong></div>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="field-label">Apakah kamu bangun pagi?</label>
+                                    <div class="radio-group">
+                                        <label class="radio-pill">
+                                            <input type="radio" name="bp_status" value="iya"
+                                                {{ $kebiasaan->bangun_pagi === true ? 'checked' : '' }}
+                                                onchange="toggleShow('bp_jam_section', this.value === 'iya')" />
+                                            <span class="radio-pill-dot"></span> Iya
+                                        </label>
+                                        <label class="radio-pill">
+                                            <input type="radio" name="bp_status" value="tidak"
+                                                {{ $kebiasaan->bangun_pagi === false ? 'checked' : '' }}
+                                                onchange="toggleShow('bp_jam_section', this.value === 'iya')" />
+                                            <span class="radio-pill-dot"></span> Tidak
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="bp_jam_section"
+                                    class="{{ $kebiasaan->bangun_pagi === true ? '' : 'hidden-field' }}">
+                                    <label class="field-label">Jam bangun</label>
+                                    <div class="time-wrap">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <input type="time" id="bp_jam" name="bp_jam" min="04:30"
+                                            max="06:00" step="60" oninput="cekBatasanJam(this)"
+                                            onchange="cekBatasanJam(this)"
+                                            value="{{ $kebiasaan->jam_bangun ? \Carbon\Carbon::parse($kebiasaan->jam_bangun)->format('H:i') : '05:30' }}" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="field-label">Catatan</label>
+                                    <textarea id="bp_catatan" rows="4" class="fancy-textarea" placeholder="Tuliskan catatan...">{{ $kebiasaan->bangun_catatan }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-5 pt-4 border-t border-indigo-100">
+                            <button onclick="kirimKebiasaan('bangun_pagi')" class="kirim-btn">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                                Simpan & Lanjut
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -793,11 +833,27 @@
                                         ];
                                     @endphp
                                     @foreach ($sholatList as $key => $s)
-                                        @php $isChecked = $kebiasaan->{$s['field']} ?? false; @endphp
-                                        <div class="sholat-row">
-                                            <label class="flex items-center gap-2.5 cursor-pointer flex-1">
-                                                <div class="custom-checkbox"
-                                                    onclick="this.previousElementSibling?.click()">
+                                        @php
+                                            $isChecked = $kebiasaan->{$s['field']} ?? false;
+                                            $now = \Carbon\Carbon::now();
+
+                                            // Definisikan Batas Waktu berdasarkan input Anda
+                                            $jadwal = [
+                                                'subuh' => ['start' => '05:10', 'end' => '06:24'],
+                                                'dzuhur' => ['start' => '12:40', 'end' => '15:55'],
+                                                'ashar' => ['start' => '15:55', 'end' => '18:49'],
+                                                'maghrib' => ['start' => '18:49', 'end' => '19:59'],
+                                                'isya' => ['start' => '19:59', 'end' => '23:59'], // Akhir hari
+                                            ];
+
+                                            $start = \Carbon\Carbon::createFromTimeString($jadwal[$key]['start']);
+                                            $isLocked = $now->lessThan($start);
+                                        @endphp
+                                        <div class="sholat-row {{ $isLocked ? 'opacity-50' : '' }}">
+                                            <label
+                                                class="flex items-center gap-2.5 {{ $isLocked ? 'cursor-not-allowed' : 'cursor-pointer' }} flex-1">
+                                                <div class="custom-checkbox {{ $isLocked ? 'bg-gray-200' : '' }}"
+                                                    onclick="{{ $isLocked ? "tampilkanToast('Waktu $s[label] belum masuk!', 'red')" : 'this.previousElementSibling?.click()' }}">
                                                     <svg class="w-2.5 h-2.5 text-white" fill="none"
                                                         stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -806,22 +862,23 @@
                                                 </div>
                                                 <input type="checkbox" name="sholat[]" value="{{ $key }}"
                                                     id="cb_sholat_{{ $key }}" {{ $isChecked ? 'checked' : '' }}
+                                                    {{ $isLocked ? 'disabled' : '' }}
                                                     onchange="toggleShow('jam_{{ $key }}_row', this.checked)"
                                                     class="hidden" />
                                                 <span
-                                                    class="text-[13px] font-semibold text-gray-700 w-16">{{ $s['label'] }}</span>
+                                                    class="text-[13px] font-semibold {{ $isLocked ? 'text-gray-400' : 'text-gray-700' }} w-16">
+                                                    {{ $s['label'] }}
+                                                </span>
                                             </label>
+
                                             <div id="jam_{{ $key }}_row"
                                                 class="{{ $isChecked ? '' : 'hidden-field' }}">
                                                 <div class="time-wrap" style="padding:5px 10px;">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
                                                     <input type="time" id="jam_{{ $key }}"
                                                         name="jam_{{ $key }}"
+                                                        min="{{ $jadwal[$key]['start'] }}"
+                                                        max="{{ $jadwal[$key]['end'] }}"
+                                                        onchange="validateSholatTime('{{ $key }}', this)"
                                                         value="{{ $kebiasaan->{$s['jam']} ? \Carbon\Carbon::parse($kebiasaan->{$s['jam']})->format('H:i') : $s['default'] }}"
                                                         style="font-size:12px;" />
                                                 </div>
@@ -1034,18 +1091,26 @@
                                 <div id="olahragaList" class="space-y-2">
                                     @php
                                         $jenisOlahraga = $kebiasaan->jenis_olahraga ?? [
-                                            ['jenis' => 'padel', 'catatan' => ''],
+                                            ['jenis' => 'badminton', 'catatan' => ''],
                                         ];
                                         $opsiOlahraga = [
-                                            'padel',
-                                            'lari',
-                                            'renang',
-                                            'sepak bola',
-                                            'basket',
-                                            'voli',
+                                            'atletik',
                                             'badminton',
-                                            'senam',
+                                            'basket',
                                             'bersepeda',
+                                            'futsal',
+                                            'jalan santai',
+                                            'jogging',
+                                            'kasti',
+                                            'lari',
+                                            'memanah',
+                                            'pencak silat',
+                                            'renang',
+                                            'senam',
+                                            'sepak bola',
+                                            'skipping',
+                                            'tenis meja',
+                                            'voli',
                                             'lainnya',
                                         ];
                                     @endphp
@@ -1061,7 +1126,7 @@
                                                     @foreach ($opsiOlahraga as $opsi)
                                                         <option value="{{ $opsi }}"
                                                             {{ $jenisFill === $opsi ? 'selected' : '' }}>
-                                                            {{ $opsi }}</option>
+                                                            {{ ucfirst($opsi) }}</option>
                                                     @endforeach
                                                 </select>
                                                 <button type="button" onclick="hapusOlahraga(this)"
@@ -1142,6 +1207,7 @@
                                 @foreach ([['key' => 'pagi', 'label' => 'Makan Pagi', 'val' => $kebiasaan->makan_pagi, 'done' => $kebiasaan->makan_pagi_done], ['key' => 'siang', 'label' => 'Makan Siang', 'val' => $kebiasaan->makan_siang, 'done' => $kebiasaan->makan_siang_done], ['key' => 'malam', 'label' => 'Makan Malam', 'val' => $kebiasaan->makan_malam, 'done' => $kebiasaan->makan_malam_done]] as $makan)
                                     <div class="makan-row">
                                         <label class="flex items-center gap-2.5 cursor-pointer mb-2">
+                                            {{-- Kotak Visual --}}
                                             <div class="custom-checkbox" id="cbox_vis_mk_{{ $makan['key'] }}"
                                                 onclick="document.getElementById('cb_mk_{{ $makan['key'] }}').click()">
                                                 <svg class="w-2.5 h-2.5 text-white {{ $makan['done'] ? 'opacity-100' : 'opacity-0' }}"
@@ -1150,11 +1216,14 @@
                                                         d="M5 13l4 4L19 7" />
                                                 </svg>
                                             </div>
+
+                                            {{-- Input Asli (Hidden) --}}
                                             <input type="checkbox" id="cb_mk_{{ $makan['key'] }}"
                                                 name="mk_{{ $makan['key'] }}_done" value="1"
                                                 {{ $makan['done'] ? 'checked' : '' }}
                                                 onchange="toggleMakanRow('{{ $makan['key'] }}', this.checked)"
                                                 class="hidden" />
+
                                             <span class="text-[13px] font-bold text-gray-800">{{ $makan['label'] }}</span>
                                         </label>
                                         <input type="text" id="inp_mk_{{ $makan['key'] }}"
@@ -1246,7 +1315,8 @@
                             <p>Kebiasaan membantu sesama dan memberi solusi bagi masalah sosial adalah amalan yang sangat
                                 mulia.</p>
                             <div class="hadith">"Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya."
-                                <strong>(HR. Ahmad)</strong></div>
+                                <strong>(HR. Ahmad)</strong>
+                            </div>
                         </div>
                         <div class="space-y-4">
                             <div>
@@ -1379,6 +1449,34 @@
             'tidur_cepat'
         ];
 
+        const JADWAL_SHOLAT = {
+            subuh: {
+                start: "05:10",
+                end: "06:24",
+                msg: "Subuh dimulai jam 05:10 dan berakhir saat terbit matahari (06:24)."
+            },
+            dzuhur: {
+                start: "12:40",
+                end: "15:55",
+                msg: "Dzuhur dimulai setelah matahari tergelincir (12:40)."
+            },
+            ashar: {
+                start: "15:55",
+                end: "18:49",
+                msg: "Ashar dimulai jam 15:55 hingga matahari terbenam."
+            },
+            maghrib: {
+                start: "18:49",
+                end: "19:59",
+                msg: "Maghrib sangat singkat, dari matahari terbenam sampai syafaq hilang."
+            },
+            isya: {
+                start: "19:59",
+                end: "23:59",
+                msg: "Isya dimulai setelah hilangnya cahaya kemerahan di ufuk barat."
+            }
+        };
+
         /* ── Tab switching ─────────────────────────────────────── */
         function switchTab(id) {
             TAB_IDS.forEach(tid => {
@@ -1411,16 +1509,20 @@
 
         function tambahOlahraga() {
             const list = document.getElementById('olahragaList');
-            const opsi = ['padel', 'lari', 'renang', 'sepak bola', 'basket', 'voli', 'badminton', 'senam', 'bersepeda',
-                'lainnya'
+            const opsi = [
+                'atletik', 'badminton', 'basket', 'bersepeda', 'futsal',
+                'jalan santai', 'jogging', 'kasti', 'lari', 'memanah',
+                'pencak silat', 'renang', 'senam', 'sepak bola', 'skipping',
+                'tenis meja', 'voli', 'lainnya'
             ];
+            const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
             const div = document.createElement('div');
             div.className = 'olahraga-item space-y-2';
             div.innerHTML =
-                `
-        <div class="flex items-center gap-2">
+                `<div class="flex items-center gap-2">
             <select name="ol_jenis[]" class="fancy-select flex-1" style="padding:8px 12px;">
-                ${opsi.map(o => `<option value="${o}">${o}</option>`).join('')}
+                ${opsi.map(o => `<option value="${o}">${capitalize(o)}</option>`).join('')}
             </select>
             <button type="button" onclick="hapusOlahraga(this)"
                 class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-400 hover:text-red-600 transition-colors">
@@ -1443,18 +1545,37 @@
             const inp = document.getElementById('inp_mk_' + key);
             const cbox = document.getElementById('cbox_vis_mk_' + key);
             if (!inp) return;
+
             inp.disabled = !enabled;
             inp.placeholder = enabled ? 'Contoh: nasi goreng, roti...' : 'Centang untuk mengisi...';
             if (!enabled) inp.value = '';
+
+            // Update Kotak Visual (Biru jika aktif)
+            if (cbox) {
+                if (enabled) {
+                    cbox.style.backgroundColor = '#2563eb';
+                    cbox.style.borderColor = '#2563eb';
+                } else {
+                    cbox.style.backgroundColor = 'white';
+                    cbox.style.borderColor = '#d1d5db';
+                }
+            }
+
+            // Update Centang (SVG)
             const svg = cbox?.querySelector('svg');
-            if (svg) svg.style.opacity = enabled ? '1' : '0';
-            // Sync makan-row border
+            if (svg) svg.classList.toggle('opacity-100', enabled);
+            if (svg) svg.classList.toggle('opacity-0', !enabled);
+
+            // Sync baris background & border
             const row = inp.closest('.makan-row');
             if (row) {
                 row.style.borderColor = enabled ? '#bfdbfe' : '#f1f5f9';
                 row.style.background = enabled ? '#eff6ff' : '#f8fafc';
             }
+
+            if (enabled) inp.focus();
         }
+
 
         /* ── Toast ─────────────────────────────────────────────── */
         function tampilkanToast(pesan, warna = 'green') {
@@ -1472,6 +1593,37 @@
             }, 3200);
         }
 
+        function cekBatasanJam(input) {
+            const jamInput = input.value; // Formatnya HH:mm (24 jam)
+            const min = "04:30";
+            const max = "06:00";
+
+            if (jamInput) {
+                if (jamInput < min) {
+                    tampilkanToast('Terlalu pagi! Minimal jam 04:30', 'red');
+                    input.value = min;
+                } else if (jamInput > max) {
+                    tampilkanToast('Maksimal jam 06:00 untuk bangun pagi!', 'red');
+                    input.value = max;
+                }
+            }
+        }
+
+        function validateSholatTime(sholat, input) {
+            const jam = input.value;
+            const batas = JADWAL_SHOLAT[sholat];
+
+            if (jam < batas.start) {
+                tampilkanToast(`Kenapa memilih jam ${jam}? Itu belum masuk waktu ${sholat}. ${batas.msg}`, 'red');
+                input.value = batas.start;
+            } else if (jam > batas.end && sholat !== 'isya') {
+                tampilkanToast(`Jam ${jam} sudah melewati waktu ${sholat}! Pastikan mengisi waktu sholat yang tepat.`,
+                    'red');
+                input.value = batas.end;
+            }
+        }
+
+
         /* ── Kirim kebiasaan ───────────────────────────────────── */
         function kirimKebiasaan(section) {
             const data = {
@@ -1484,6 +1636,20 @@
                     data.status = document.querySelector('input[name="bp_status"]:checked')?.value ?? null;
                     data.jam = document.getElementById('bp_jam')?.value || null;
                     data.catatan = document.getElementById('bp_catatan')?.value;
+
+                    if (data.status === 'iya' && data.jam) {
+                        // Memastikan jam dalam format 24 jam yang bersih
+                        const [hour, minute] = data.jam.split(':').map(Number);
+                        const totalMenit = (hour * 60) + minute;
+
+                        const menitMin = (4 * 60) + 30; // 04:30 = 270 menit
+                        const menitMax = (6 * 60) + 0; // 06:00 = 360 menit
+
+                        if (totalMenit < menitMin || totalMenit > menitMax) {
+                            tampilkanToast('Jam bangun harus antara 04:30 sampai 06:00!', 'red');
+                            return;
+                        }
+                    }
                     if (!data.catatan?.trim()) {
                         tampilkanToast('Catatan wajib diisi!', 'red');
                         document.getElementById('bp_catatan').focus();
@@ -1493,13 +1659,44 @@
 
                 case 'beribadah':
                     data.sholat = {};
+                    let isAllJamValid = true; // Jaring pengaman untuk validasi jam
+
                     ['subuh', 'dzuhur', 'ashar', 'maghrib', 'isya'].forEach(w => {
-                        data.sholat[w] = document.getElementById('cb_sholat_' + w)?.checked ? 1 : 0;
-                        data['jam_' + w] = document.getElementById('jam_' + w)?.value || null;
+                        const isChecked = document.getElementById('cb_sholat_' + w)?.checked;
+                        const jamValue = document.getElementById('jam_' + w)?.value;
+
+                        // Simpan status checkbox
+                        data.sholat[w] = isChecked ? 1 : 0;
+                        data['jam_' + w] = jamValue || null;
+
+                        // JIKA DICENTANG, CEK APAKAH JAMNYA MASUK AKAL
+                        if (isChecked && jamValue) {
+                            const batas = JADWAL_SHOLAT[w];
+                            // Khusus Isya, batas akhirnya bisa sampai lewat tengah malam (05:10 besok)
+                            if (w !== 'isya') {
+                                if (jamValue < batas.start || jamValue > batas.end) {
+                                    tampilkanToast(`Jam ${jamValue} bukan waktu ${w}! ${batas.msg}`, 'red');
+                                    document.getElementById('jam_' + w).focus();
+                                    isAllJamValid = false;
+                                }
+                            } else {
+                                // Logika Isya: Mulai 19:59 sampai 05:10 pagi
+                                if (jamValue < batas.start && jamValue > "05:10") {
+                                    tampilkanToast(`Jam ${jamValue} bukan waktu Isya! ${batas.msg}`, 'red');
+                                    document.getElementById('jam_' + w).focus();
+                                    isAllJamValid = false;
+                                }
+                            }
+                        }
                     });
+
+                    // Jika ada jam yang salah, berhenti di sini (tidak kirim ke database)
+                    if (!isAllJamValid) return;
+
                     data.quran = document.querySelector('input[name="quran_status"]:checked')?.value ?? null;
                     data.surah = document.querySelector('select[name="quran_surah"]')?.value || null;
                     data.catatan = document.getElementById('ib_catatan')?.value;
+
                     if (!data.catatan?.trim()) {
                         tampilkanToast('Catatan wajib diisi!', 'red');
                         document.getElementById('ib_catatan').focus();
@@ -1535,12 +1732,26 @@
 
                 case 'makan_sehat':
                     data.status = document.querySelector('input[name="mk_status"]:checked')?.value ?? null;
-                    data.pagi = document.querySelector('input[name="mk_pagi"]')?.value || null;
-                    data.pagi_done = document.getElementById('cb_mk_pagi')?.checked ? 1 : 0;
-                    data.siang = document.querySelector('input[name="mk_siang"]')?.value || null;
-                    data.siang_done = document.getElementById('cb_mk_siang')?.checked ? 1 : 0;
-                    data.malam = document.querySelector('input[name="mk_malam"]')?.value || null;
-                    data.malam_done = document.getElementById('cb_mk_malam')?.checked ? 1 : 0;
+
+                    if (data.status === 'iya') {
+                        let isMakanValid = true;
+                        ['pagi', 'siang', 'malam'].forEach(k => {
+                            const isDone = document.getElementById('cb_mk_' + k)?.checked;
+                            const val = document.getElementById('inp_mk_' + k)?.value;
+
+                            data[k] = val || null;
+                            data[k + '_done'] = isDone ? 1 : 0;
+
+                            // Jika dicentang tapi teks kosong, beri peringatan
+                            if (isDone && !val?.trim()) {
+                                tampilkanToast(`Isi menu makan ${k} kamu!`, 'red');
+                                document.getElementById('inp_mk_' + k).focus();
+                                isMakanValid = false;
+                            }
+                        });
+                        if (!isMakanValid) return;
+                    }
+
                     data.catatan = document.getElementById('mk_catatan')?.value;
                     if (!data.catatan?.trim()) {
                         tampilkanToast('Catatan wajib diisi!', 'red');
@@ -1621,6 +1832,30 @@
                 .catch(() => tampilkanToast('Gagal terhubung ke server.', 'red'));
         }
 
+        /* ── Bangun Pagi Time Lock (04:30) ───────────────────────── */
+        function checkBangunLock() {
+            const now = new Date();
+            const totalMinutesNow = (now.getHours() * 60) + now.getMinutes();
+            const unlockTime = (4 * 60) + 30; // 04:30 = 270 menit
+
+            const isUnlocked = totalMinutesNow >= unlockTime;
+
+            const lockedMsg = document.getElementById('bangun_locked_message');
+            const form = document.getElementById('bangun_form_content');
+            const tabBtn = document.getElementById('tab_bangun_pagi');
+
+            if (isUnlocked) {
+                lockedMsg?.classList.add('hidden');
+                form?.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                // Hanya tampilkan pesan kunci jika tab Bangun Pagi sedang aktif
+                if (!document.getElementById('panel_bangun_pagi')?.classList.contains('hidden')) {
+                    lockedMsg?.classList.remove('hidden');
+                }
+                form?.classList.add('opacity-50', 'pointer-events-none');
+            }
+        }
+
         /* ── Tidur Cepat Time Lock ─────────────────────────────── */
         function checkTidurLock() {
             const hour = new Date().getHours();
@@ -1648,12 +1883,18 @@
         const _origSwitchTab = switchTab;
         window.switchTab = function(id) {
             _origSwitchTab(id);
+            if (id === 'bangun_pagi') checkBangunLock();
             if (id === 'tidur_cepat') checkTidurLock();
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            checkBangunLock();
             checkTidurLock();
-            setInterval(checkTidurLock, 60000);
+
+            setInterval(() => {
+                checkTidurLock();
+                checkBangunLock();
+            }, 60000);
         });
     </script>
 
