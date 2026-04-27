@@ -3,9 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    @if (str_contains(request()->header('host'), 'ngrok-free.dev') || str_contains(request()->header('host'), 'ngrok.io'))
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    @endif
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SMK N 5 Telkom Banda Aceh | Dashboard')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
