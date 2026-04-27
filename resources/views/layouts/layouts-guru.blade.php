@@ -3,9 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    @if (str_contains(request()->header('host'), 'ngrok-free.dev') || str_contains(request()->header('host'), 'ngrok.io'))
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    @endif
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
@@ -57,8 +55,10 @@
 
                 {{-- Brand --}}
                 <div class="flex flex-col items-center mb-8">
-                    <div class="size-20 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 border border-white/20">
-                        <img src="{{ asset('img/logo-1.png') }}" alt="Logo SMK Negeri 5" class="size-[76px] object-contain">
+                    <div
+                        class="size-20 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center mb-3 border border-white/20">
+                        <img src="{{ asset('img/logo-1.png') }}" alt="Logo SMK Negeri 5"
+                            class="size-[76px] object-contain">
                     </div>
                     <h2 class="text-sm font-bold text-white text-center leading-tight">SMK NEGERI 5</h2>
                     <p class="text-xs text-white/70 text-center">TELKOM BANDA ACEH</p>
@@ -173,12 +173,10 @@
                     {{-- Kanan: ikon aksi --}}
                     <div class="flex items-center gap-1 flex-shrink-0">
                         {{-- ⚙️ Gear → Ganti Password --}}
-                        <a href="{{ route('guru.ganti-password') }}"
-                           title="Ganti Password"
-                           class="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
+                        <a href="{{ route('guru.ganti-password') }}" title="Ganti Password"
+                            class="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0
                                          a1.724 1.724 0 002.573 1.066
                                          c1.543-.94 3.31.826 2.37 2.37
                                          a1.724 1.724 0 001.065 2.572
@@ -193,24 +191,22 @@
                                          c-1.756-.426-1.756-2.924 0-3.35
                                          a1.724 1.724 0 001.066-2.573
                                          c-.94-1.543.826-3.31 2.37-2.37
-                                         .996.608 2.296.07 2.572-1.065z"/>
+                                         .996.608 2.296.07 2.572-1.065z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </a>
 
                         {{-- ❓ Tanda Tanya → Kirim Pesan Bantuan --}}
-                        <a href="{{ route('guru.kirim-pesan-bantuan') }}"
-                           title="Kirim Pesan Bantuan"
-                           class="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
+                        <a href="{{ route('guru.kirim-pesan-bantuan') }}" title="Kirim Pesan Bantuan"
+                            class="p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M8.228 9c.549-1.165 2.03-2 3.772-2
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2
                                          2.21 0 4 1.343 4 3
                                          0 1.4-1.278 2.575-3.006 2.907
                                          -.542.104-.994.54-.994 1.093
                                          m0 3h.01
-                                         M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                         M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </a>
                     </div>
@@ -224,7 +220,7 @@
 
         </div>{{-- end main --}}
     </div>
-    
+
     @stack('scripts')
 
     <script>
