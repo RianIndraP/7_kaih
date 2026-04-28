@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -104,8 +105,34 @@ class AuthController extends Controller
             ->first();
 
         if ($user) {
-            // Store user info in session for next steps
+            // Check if user has email
+            if (empty($user->email)) {
+                return back()->withErrors([
+                    'identifier' => 'Akun ini tidak memiliki email. Silakan hubungi admin untuk reset password.',
+                ]);
+            }
+
+            // Generate 6-digit OTP
+            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            
+            // Store user and OTP in session
             session(['forgot_user' => $user]);
+            session(['forgot_otp' => $otp]);
+            session(['forgot_otp_expires_at' => now()->addMinutes(10)]);
+
+            // Send OTP via email
+            try {
+                Mail::html("<h1>Kode OTP untuk reset password Anda</h1><p style='font-size: 18px;'>Kode OTP Anda adalah:</p><p style='font-size: 32px; font-weight: bold; color: #1e40af;'>{$otp}</p><p style='font-size: 16px;'>Kode ini berlaku selama 10 menit. Jangan berikan kode ini kepada siapapun.</p><hr><p style='font-size: 14px; color: #666;'>7 Kebiasaan Anak Indonesia Hebat<br>SMK Negeri 5 Telkom Banda Aceh</p>", function($message) use ($user) {
+                    $message->to($user->email)
+                        ->subject('Kode OTP Reset Password - 7 Kebiasaan Anak Indonesia Hebat');
+                });
+            } catch (\Exception $e) {
+                // If email fails, still proceed but show warning
+                return back()->withErrors([
+                    'identifier' => 'Gagal mengirim email OTP. Silakan coba lagi atau hubungi admin.',
+                ]);
+            }
+
             return redirect()->route('verify-data');
         }
 
@@ -121,32 +148,77 @@ class AuthController extends Controller
             return redirect()->route('forgot-password');
         }
 
-        // Jika admin tanpa birth_date, skip verifikasi langsung ke reset password
-        if (empty($user->birth_date) && $user->isAdmin()) {
-            return redirect()->route('create-new-password');
-        }
-
         return view('auth.verify-data', ['user' => $user]);
     }
 
     public function verifyData(Request $request)
     {
         $request->validate([
-            'birth_date' => 'required|date',
+            'otp' => 'required|string|size:6',
         ]);
 
+        $user = session('forgot_user');
+        $otp = session('forgot_otp');
+        $expiresAt = session('forgot_otp_expires_at');
+
+        if (!$user || !$otp) {
+            return redirect()->route('forgot-password');
+        }
+
+        // Check if OTP expired
+        if (now()->gt($expiresAt)) {
+            return back()->withErrors([
+                'otp' => 'Kode OTP telah kadaluarsa. Silakan minta kode baru.',
+            ]);
+        }
+
+        // Verify OTP
+        if ($request->otp === $otp) {
+            // Clear OTP from session
+            session()->forget('forgot_otp');
+            session()->forget('forgot_otp_expires_at');
+            return redirect()->route('create-new-password');
+        }
+
+        return back()->withErrors([
+            'otp' => 'Kode OTP tidak valid.',
+        ]);
+    }
+
+    public function resendOTP(Request $request)
+    {
         $user = session('forgot_user');
         if (!$user) {
             return redirect()->route('forgot-password');
         }
 
-        if ($user->birth_date && \Carbon\Carbon::parse($user->birth_date)->format('m/d/Y') === $request->birth_date) {
-            return redirect()->route('create-new-password');
+        // Check if user has email
+        if (empty($user->email)) {
+            return back()->withErrors([
+                'identifier' => 'Akun ini tidak memiliki email. Silakan hubungi admin untuk reset password.',
+            ]);
         }
 
-        return back()->withErrors([
-            'birth_date' => 'Tanggal lahir tidak cocok.',
-        ]);
+        // Generate new 6-digit OTP
+        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        
+        // Update OTP in session
+        session(['forgot_otp' => $otp]);
+        session(['forgot_otp_expires_at' => now()->addMinutes(10)]);
+
+        // Send OTP via email
+        try {
+            Mail::html("<h1>Kode OTP untuk reset password Anda</h1><p style='font-size: 18px;'>Kode OTP Anda adalah:</p><p style='font-size: 32px; font-weight: bold; color: #1e40af;'>{$otp}</p><p style='font-size: 16px;'>Kode ini berlaku selama 10 menit. Jangan berikan kode ini kepada siapapun.</p><hr><p style='font-size: 14px; color: #666;'>7 Kebiasaan Anak Indonesia Hebat<br>SMK Negeri 5 Telkom Banda Aceh</p>", function($message) use ($user) {
+                $message->to($user->email)
+                    ->subject('Kode OTP Reset Password - 7 Kebiasaan Anak Indonesia Hebat');
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'otp' => 'Gagal mengirim email OTP. Silakan coba lagi.',
+            ]);
+        }
+
+        return back()->with('success', 'Kode OTP baru telah dikirim ke email Anda.');
     }
 
     public function showCreateNewPassword()

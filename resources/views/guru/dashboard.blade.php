@@ -44,6 +44,29 @@
         </div>
 
         {{-- ═══════════════════════════════════════════
+             ALERT: PROFIL BELUM LENGKAP
+        ════════════════════════════════════════════ --}}
+        @if (empty(auth()->user()->email) || empty(auth()->user()->no_telepon))
+            <div class="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-4 py-3 anim-fade-up-1">
+                <div class="flex items-center justify-center w-[34px] h-[34px] rounded-[9px] bg-red-600 shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-[13px] font-bold text-gray-900">Profil Belum Lengkap</p>
+                    <p class="text-[12px] text-gray-500 mt-0.5">Silakan lengkapi email dan nomor telepon untuk mengakses semua fitur.</p>
+                </div>
+                <a href="{{ route('guru.profil') }}"
+                    class="text-[12px] font-bold text-red-600 no-underline whitespace-nowrap
+                      hover:text-red-800 hover:underline transition-colors shrink-0">
+                    Lengkapi Sekarang →
+                </a>
+            </div>
+        @endif
+
+        {{-- ═══════════════════════════════════════════
              ALERT: ADA SISWA BELUM MENGISI
         ════════════════════════════════════════════ --}}
         @if ($siswaBlumMengisi->count() > 0)

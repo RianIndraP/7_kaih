@@ -51,37 +51,79 @@
     </a>
 
     {{-- List Murid --}}
-    <a href="{{ route('guru.list-murid') }}"
-        class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
-              no-underline transition-all duration-200
-              {{ request()->routeIs('guru.list-murid*')
-                  ? 'bg-white/22 text-white font-bold nav-active-accent'
-                  : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
-        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">👥</span>
-        <span class="flex-1">List Murid</span>
-    </a>
+    @if (!empty(auth()->user()->email) && !empty(auth()->user()->no_telepon))
+        <a href="{{ route('guru.list-murid') }}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
+                  no-underline transition-all duration-200
+                  {{ request()->routeIs('guru.list-murid*')
+                      ? 'bg-white/22 text-white font-bold nav-active-accent'
+                      : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">👥</span>
+            <span class="flex-1">List Murid</span>
+        </a>
+    @else
+        <div
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
+                    opacity-45 cursor-not-allowed text-white/72 bg-white/5">
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">👥</span>
+            <span class="flex-1">List Murid</span>
+            <svg class="w-3.5 h-3.5 shrink-0 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd" />
+            </svg>
+        </div>
+    @endif
 
     {{-- Absensi Murid --}}
-    <a href="{{ route('guru.absensi-murid') }}"
-        class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
-              no-underline transition-all duration-200
-              {{ request()->routeIs('guru.absensi-murid*')
-                  ? 'bg-white/22 text-white font-bold nav-active-accent'
-                  : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
-        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">✅</span>
-        <span class="flex-1">Absensi Murid</span>
-    </a>
+    @if (!empty(auth()->user()->email) && !empty(auth()->user()->no_telepon))
+        <a href="{{ route('guru.absensi-murid') }}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
+                  no-underline transition-all duration-200
+                  {{ request()->routeIs('guru.absensi-murid*')
+                      ? 'bg-white/22 text-white font-bold nav-active-accent'
+                      : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">✅</span>
+            <span class="flex-1">Absensi Murid</span>
+        </a>
+    @else
+        <div
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
+                    opacity-45 cursor-not-allowed text-white/72 bg-white/5">
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">✅</span>
+            <span class="flex-1">Absensi Murid</span>
+            <svg class="w-3.5 h-3.5 shrink-0 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd" />
+            </svg>
+        </div>
+    @endif
 
     {{-- Pelaporan --}}
-    <a href="{{ route('guru.pelaporan') }}"
-        class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
-              no-underline transition-all duration-200
-              {{ request()->routeIs('guru.pelaporan*')
-                  ? 'bg-white/22 text-white font-bold nav-active-accent'
-                  : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
-        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">📊</span>
-        <span class="flex-1">Pelaporan</span>
-    </a>
+    @if (!empty(auth()->user()->email) && !empty(auth()->user()->no_telepon))
+        <a href="{{ route('guru.pelaporan') }}"
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
+                  no-underline transition-all duration-200
+                  {{ request()->routeIs('guru.pelaporan*')
+                      ? 'bg-white/22 text-white font-bold nav-active-accent'
+                      : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">📊</span>
+            <span class="flex-1">Pelaporan</span>
+        </a>
+    @else
+        <div
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
+                    opacity-45 cursor-not-allowed text-white/72 bg-white/5">
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">📊</span>
+            <span class="flex-1">Pelaporan</span>
+            <svg class="w-3.5 h-3.5 shrink-0 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd" />
+            </svg>
+        </div>
+    @endif
 
 </nav>
 

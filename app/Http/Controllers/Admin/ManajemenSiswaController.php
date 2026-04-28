@@ -70,7 +70,7 @@ class ManajemenSiswaController extends Controller
             'birth_date' => $validated['birth_date'],
             'guru_wali_id' => $validated['guru_wali_id'],
             'gender' => $validated['gender'],
-            'email' => $validated['nisn'] . '@student.7kaih.sch.id',
+            'email' => null,
             'password' => Hash::make('siswa'),
         ]);
 
@@ -356,7 +356,7 @@ class ManajemenSiswaController extends Controller
                             'tempat_lahir' => $birthPlace ?: null,
                             'gender' => $normalizedGender,
                             'guru_wali_id' => $guruWali?->id,
-                            'email' => $nisn . '@student.7kaih.sch.id',
+                            'email' => null,
                             // Only set password for new users
                             'password' => $isUpdate ? $existingUser->password : Hash::make('siswa'),
                         ]

@@ -57,6 +57,29 @@ class User extends Authenticatable
     ];
 
     /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($user) {
+            // Convert empty strings to NULL for nisn, nip, nik, and username
+            $user->nisn = empty($user->nisn) ? null : $user->nisn;
+            $user->nip = empty($user->nip) ? null : $user->nip;
+            $user->nik = empty($user->nik) ? null : $user->nik;
+            $user->username = empty($user->username) ? null : $user->username;
+
+            // If user is an admin (has username), ensure they cannot have nisn, nip, or nik
+            if ($user->isAdmin()) {
+                $user->nisn = null;
+                $user->nip = null;
+                $user->nik = null;
+            }
+        });
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
@@ -150,11 +173,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is an admin (no nip, nik, or nisn)
+     * Check if user is an admin (has username)
      */
     public function isAdmin(): bool
     {
-        return empty($this->nisn) && empty($this->nip) && empty($this->nik);
+        return !empty($this->username);
     }
 
     /**

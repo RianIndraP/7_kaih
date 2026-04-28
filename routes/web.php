@@ -71,6 +71,7 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 
 Route::get('/verify-data', [AuthController::class, 'showVerifyData'])->name('verify-data');
 Route::post('/verify-data', [AuthController::class, 'verifyData']);
+Route::post('/resend-otp', [AuthController::class, 'resendOTP'])->name('resend-otp');
 
 Route::get('/create-new-password', [AuthController::class, 'showCreateNewPassword'])->name('create-new-password');
 Route::post('/create-new-password', [AuthController::class, 'createNewPassword']);

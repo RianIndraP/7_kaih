@@ -42,21 +42,10 @@ class ManajemenGuruController extends Controller
             'name' => 'required|string|max:255',
             'gender' => 'required|in:Laki-laki,Perempuan',
             'birth_date' => 'nullable|date',
-            'no_telepon' => 'nullable|string',
-            'email' => 'nullable|email|unique:users,email',
             // Guru specific fields
             'status_pegawai' => 'nullable|string',
             'unit_kerja' => 'nullable|string',
         ]);
-
-        // Check if email already exists (only if email is provided)
-        $email = $validated['email'] ?? null;
-        if (!empty($email)) {
-            $emailExists = User::where('email', $email)->first();
-            if ($emailExists) {
-                return redirect()->route('admin.guru')->with('error', 'Email ' . $email . ' sudah digunakan');
-            }
-        }
 
         // Create user account for guru
         $user = User::create([
@@ -65,8 +54,8 @@ class ManajemenGuruController extends Controller
             'nik' => $validated['nik'] ?? null,
             'gender' => $validated['gender'],
             'birth_date' => $validated['birth_date'] ?? null,
-            'no_telepon' => $validated['no_telepon'] ?? null,
-            'email' => $email,
+            'no_telepon' => null,
+            'email' => null,
             'password' => Hash::make('guru'),
         ]);
 
@@ -357,23 +346,8 @@ class ManajemenGuruController extends Controller
                     }
                 }
 
-                // Generate email from NIP or NIK or random
+                // Email is not auto-generated - leave empty for new accounts
                 $email = null;
-                if (!empty($nip)) {
-                    $email = $nip . '@guru.7kaih.sch.id';
-                } elseif (!empty($nik)) {
-                    $email = $nik . '@guru.7kaih.sch.id';
-                } else {
-                    // Generate random email based on name
-                    $emailSlug = strtolower(str_replace(' ', '.', preg_replace('/[^a-zA-Z0-9\s]/', '', $name)));
-                    $email = $emailSlug . rand(100, 999) . '@guru.7kaih.sch.id';
-                }
-
-                // Check if email already exists
-                $emailExists = User::where('email', $email)->first();
-                if ($emailExists) {
-                    $email = 'guru.' . time() . rand(1000, 9999) . '@guru.7kaih.sch.id';
-                }
 
                 // Create user and guru
                 try {

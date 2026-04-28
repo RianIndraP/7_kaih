@@ -56,7 +56,7 @@
         </div>
         
         <p class="text-sm text-gray-600 text-center mb-6 leading-relaxed font-medium">
-            Jawab Pertanyaan Berikut Untuk Verifikasi Akun Anda
+            Masukkan kode OTP yang telah dikirim ke email Anda
         </p>
         
         <form class="space-y-5" method="POST" action="{{ route('verify-data') }}">
@@ -75,17 +75,18 @@
             <div class="space-y-2">
                 <label class="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                     </svg>
-                    Tanggal Lahir
+                    Kode OTP
                 </label>
                 <input
                     type="text"
-                    name="birth_date"
-                    value="{{ old('birth_date') }}"
-                    placeholder="Bulan/Tanggal/Tahun"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-indigo-50/30">
-                <p class="text-xs text-gray-500 font-medium">Format: Bulan/Tanggal/Tahun</p>
+                    name="otp"
+                    value="{{ old('otp') }}"
+                    placeholder="Masukkan 6 digit kode OTP"
+                    maxlength="6"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-indigo-50/30 text-center text-2xl font-bold tracking-widest">
+                <p class="text-xs text-gray-500 font-medium">Kode OTP telah dikirim ke: {{ $user->email ?? 'Email Anda' }}</p>
             </div>
             
             <button
@@ -97,6 +98,16 @@
                 </svg>
             </button>
         </form>
+        
+        <!-- Resend OTP -->
+        <div class="mt-4 text-center">
+            <form method="POST" action="{{ route('resend-otp') }}" style="display: inline;">
+                @csrf
+                <button type="submit" class="text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors bg-transparent border-none cursor-pointer">
+                    Kirim ulang kode OTP
+                </button>
+            </form>
+        </div>
         
         <!-- Back -->
         <div class="mt-6 text-center">
