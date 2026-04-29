@@ -320,7 +320,7 @@
             </div>
 
             {{-- Tab Switcher - hanya muncul jika periode harian --}}
-            <div id="detailTabSwitcher" class="hidden flex border-b border-gray-200">
+            <div id="detailTabSwitcher" class="hidden border-b border-gray-200 flex">
                 <button id="tabPenyelesaian" onclick="switchDetailTab('penyelesaian')"
                     class="flex-1 py-3 text-sm font-medium border-b-2 border-blue-600
                            text-blue-700 bg-blue-50 transition-colors">
@@ -332,6 +332,7 @@
                     Detail Form
                 </button>
             </div>
+
 
             {{-- Panel Penyelesaian Form --}}
             <div id="panelPenyelesaian" class="p-6">
@@ -578,6 +579,17 @@
                                 <p id="detailTidurCepatCatatan" class="font-semibold text-gray-800">-</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Panel Statistik --}}
+            <div id="panelStats" class="hidden p-6">
+                <div class="border border-gray-200 rounded-xl p-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-4">Statistik Kebiasaan</h4>
+                    <p class="text-xs text-gray-500 mb-4" id="statsPeriod">-</p>
+                    <div class="space-y-4" id="statsContent">
+                        {{-- Statistik akan diisi oleh JS --}}
                     </div>
                 </div>
             </div>
@@ -1070,14 +1082,27 @@
 
             // Show/hide tab switcher based on periode
             var tabSwitcher = document.getElementById('detailTabSwitcher');
+            var panelStats = document.getElementById('panelStats');
+
             if (periode === 'harian') {
                 tabSwitcher.classList.remove('hidden');
                 tabSwitcher.classList.add('flex');
+                panelStats.classList.add('hidden');
                 // Reset to penyelesaian tab
                 switchDetailTab('penyelesaian');
+            } else if (periode === 'mingguan' || periode === 'pertemuan' || periode === 'bulanan') {
+                tabSwitcher.classList.add('hidden');
+                tabSwitcher.classList.remove('flex');
+                panelStats.classList.remove('hidden');
+                // Show penyelesaian panel alongside stats
+                document.getElementById('panelPenyelesaian').classList.remove('hidden');
+                document.getElementById('panelDetail').classList.add('hidden');
+                // Load stats based on periode
+                loadStats(siswa.id, periode);
             } else {
                 tabSwitcher.classList.add('hidden');
                 tabSwitcher.classList.remove('flex');
+                panelStats.classList.add('hidden');
                 // Hide detail panel, show penyelesaian panel
                 document.getElementById('panelPenyelesaian').classList.remove('hidden');
                 document.getElementById('panelDetail').classList.add('hidden');
@@ -1088,6 +1113,96 @@
             window.currentDetailPeriode = periode;
 
             bukaModal('modalDetail');
+        }
+
+        /* ── Load Stats (Generic for all periods) ────────────────── */
+        function loadStats(siswaId, periode) {
+            var filter = '';
+            var endpoint = '';
+
+            if (periode === 'mingguan') {
+                filter = document.getElementById('select_minggu').value;
+                endpoint = '/guru/list-murid/weekly-stats';
+            } else if (periode === 'pertemuan') {
+                filter = document.getElementById('select_pertemuan').value;
+                endpoint = '/guru/list-murid/meeting-stats';
+            } else if (periode === 'bulanan') {
+                filter = document.getElementById('select_bulan').value;
+                endpoint = '/guru/list-murid/monthly-stats';
+            }
+
+            if (!filter) {
+                document.getElementById('statsContent').innerHTML = '<p class="text-gray-500 text-sm">Silakan pilih filter terlebih dahulu.</p>';
+                return;
+            }
+
+            fetch(endpoint + '?siswa_id=' + siswaId + '&filter=' + filter)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayStats(data.data, periode);
+                    } else {
+                        document.getElementById('statsContent').innerHTML = '<p class="text-red-500 text-sm">' + data.message + '</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading stats:', error);
+                    document.getElementById('statsContent').innerHTML = '<p class="text-red-500 text-sm">Gagal memuat statistik.</p>';
+                });
+        }
+
+        /* ── Display Stats (Generic for all periods) ─────────────── */
+        function displayStats(data, periode) {
+            var periodText = '';
+            if (periode === 'mingguan') {
+                periodText = 'Minggu: ' + data.periode + ' (' + data.rentang.mulai + ' s/d ' + data.rentang.selesai + ') - Total ' + data.total_hari + ' hari';
+            } else if (periode === 'pertemuan') {
+                periodText = 'Pertemuan: ' + data.periode + ' (' + data.rentang.mulai + ' s/d ' + data.rentang.selesai + ') - Total ' + data.total_hari + ' hari';
+            } else if (periode === 'bulanan') {
+                periodText = 'Bulan: ' + data.periode + ' (' + data.rentang.mulai + ' s/d ' + data.rentang.selesai + ') - Total ' + data.total_hari + ' hari';
+            }
+            document.getElementById('statsPeriod').textContent = periodText;
+
+            var labelMap = {
+                'bangun_pagi': 'Bangun Pagi',
+                'beribadah': 'Beribadah',
+                'berolahraga': 'Berolahraga',
+                'makan_sehat': 'Makan Sehat',
+                'gemar_belajar': 'Gemar Belajar',
+                'bermasyarakat': 'Bermasyarakat',
+                'tidur_cepat': 'Tidur Cepat'
+            };
+
+            var html = '';
+            for (var key in data.statistik) {
+                var stats = data.statistik[key];
+                var label = labelMap[key] || key;
+                html += '<div class="border border-gray-200 rounded-lg p-3">' +
+                    '<h5 class="text-sm font-semibold text-gray-800 mb-2">' + label + '</h5>' +
+                    '<div class="grid grid-cols-3 gap-2 text-xs">' +
+                    '<div class="bg-green-50 rounded p-2">' +
+                    '<p class="text-green-600 font-semibold">Ya</p>' +
+                    '<p class="text-green-800 font-bold">' + stats.ya + '</p>' +
+                    '</div>' +
+                    '<div class="bg-red-50 rounded p-2">' +
+                    '<p class="text-red-600 font-semibold">Tidak</p>' +
+                    '<p class="text-red-800 font-bold">' + stats.tidak + '</p>' +
+                    '</div>' +
+                    '<div class="bg-gray-50 rounded p-2">' +
+                    '<p class="text-gray-600 font-semibold">Tidak Mengisi</p>' +
+                    '<p class="text-gray-800 font-bold">' + stats.tidak_mengisi + '</p>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            }
+
+            document.getElementById('statsContent').innerHTML = html;
+        }
+
+        /* ── Switch Stats Tab ─────────────────────────────────── */
+        function switchStatsTab(tab) {
+            // Currently only one tab for stats
+            // Can be expanded if needed
         }
 
         /* ── Switch Detail Tab ───────────────────────────────── */

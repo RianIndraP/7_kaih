@@ -125,6 +125,9 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     Route::get('/list-murid', [ListMuridController::class, 'index'])->name('list-murid');
     Route::get('/list-murid/get-siswa', [ListMuridController::class, 'getSiswa'])->name('list-murid.get-siswa');
     Route::get('/list-murid/get-minggu-options', [ListMuridController::class, 'getMingguOptions'])->name('list-murid.get-minggu-options');
+    Route::get('/list-murid/weekly-stats', [ListMuridController::class, 'getWeeklyStats'])->name('list-murid.weekly-stats');
+    Route::get('/list-murid/meeting-stats', [ListMuridController::class, 'getMeetingStats'])->name('list-murid.meeting-stats');
+    Route::get('/list-murid/monthly-stats', [ListMuridController::class, 'getMonthlyStats'])->name('list-murid.monthly-stats');
     Route::post('/list-murid/kirim-pesan', [ListMuridController::class, 'kirimPesan'])->name('list-murid.kirim-pesan');
     Route::post('/list-murid/hapus-umpan-balik', [ListMuridController::class, 'hapusUmpanBalik'])->name('list-murid.hapus-umpan-balik');
     Route::get('/list-murid/siswa-profile/{siswaId}', [ListMuridController::class, 'getSiswaProfile'])->name('list-murid.siswa-profile');

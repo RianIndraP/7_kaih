@@ -619,4 +619,331 @@ class ListMuridController extends Controller
         ]);
     }
 
+    // ── AJAX: ambil statistik kebiasaan per minggu ─────────────────────────────
+
+    public function getWeeklyStats(Request $request): JsonResponse
+    {
+        $request->validate([
+            'siswa_id' => ['required', 'integer', 'exists:users,id'],
+            'filter'   => ['required', 'string'], // Format: "2026-03-W2"
+        ]);
+
+        $guruId = $this->getGuruId();
+        $siswa = User::where('id', $request->siswa_id)
+            ->where('guru_wali_id', $guruId)
+            ->first();
+
+        if (!$siswa) {
+            return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan atau bukan murid bimbingan Anda.']);
+        }
+
+        // Parse filter untuk mendapatkan rentang tanggal mingguan
+        $filter = $request->filter;
+        [$mulai, $selesai] = $this->rentangTanggal('mingguan', $filter);
+
+        // Hitung jumlah hari yang seharusnya ada dalam periode
+        $mulaiCarbon = Carbon::parse($mulai);
+        $selesaiCarbon = Carbon::parse($selesai);
+        $totalHari = $mulaiCarbon->diffInDays($selesaiCarbon) + 1;
+
+        // Ambil semua kebiasaan dalam rentang minggu tersebut
+        $kebiasaanList = KebiasaanHarian::where('user_id', $siswa->id)
+            ->whereBetween('tanggal', [$mulai, $selesai])
+            ->get();
+
+        // Buat array tanggal yang ada untuk pencarian cepat
+        $tanggalYangAda = $kebiasaanList->pluck('tanggal')->map(function ($date) {
+            return $date->format('Y-m-d');
+        })->toArray();
+
+        // Buat array kebiasaan berdasarkan tanggal untuk akses cepat
+        $kebiasaanByTanggal = [];
+        foreach ($kebiasaanList as $k) {
+            $key = $k->tanggal->format('Y-m-d');
+            $kebiasaanByTanggal[$key] = $k;
+        }
+
+        // Hitung statistik untuk setiap kebiasaan
+        $aspekMap = [
+            'bangun_pagi'   => 'bangun_pagi',
+            'beribadah'     => 'baca_quran',
+            'berolahraga'   => 'berolahraga',
+            'makan_sehat'   => 'makan_sehat',
+            'gemar_belajar' => 'gemar_belajar',
+            'bermasyarakat' => 'bersama',
+            'tidur_cepat'   => 'tidur_cepat',
+        ];
+
+        $statistik = [];
+        foreach ($aspekMap as $label => $field) {
+            $ya = 0;
+            $tidak = 0;
+            $tidakMengisi = 0;
+
+            // Iterasi semua tanggal dalam periode
+            $currentDate = $mulaiCarbon->copy();
+            while ($currentDate->lte($selesaiCarbon)) {
+                $dateStr = $currentDate->format('Y-m-d');
+
+                if (!in_array($dateStr, $tanggalYangAda)) {
+                    // Tidak ada record untuk tanggal ini = tidak mengisi
+                    $tidakMengisi++;
+                } else {
+                    // Ada record, cek nilainya
+                    $kebiasaan = $kebiasaanByTanggal[$dateStr];
+                    if (is_null($kebiasaan->$field)) {
+                        $tidakMengisi++;
+                    } elseif ($kebiasaan->$field === true || $kebiasaan->$field === 1) {
+                        $ya++;
+                    } else {
+                        $tidak++;
+                    }
+                }
+
+                $currentDate->addDay();
+            }
+
+            $statistik[$label] = [
+                'ya' => $ya,
+                'tidak' => $tidak,
+                'tidak_mengisi' => $tidakMengisi,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'siswa' => [
+                    'nama' => $siswa->name,
+                    'nisn' => $siswa->nisn ?? '-',
+                ],
+                'periode' => $filter,
+                'rentang' => [
+                    'mulai' => $mulai,
+                    'selesai' => $selesai,
+                ],
+                'total_hari' => $totalHari,
+                'statistik' => $statistik,
+            ],
+        ]);
+    }
+
+    // ── AJAX: ambil statistik kebiasaan per pertemuan ─────────────────────────
+
+    public function getMeetingStats(Request $request): JsonResponse
+    {
+        $request->validate([
+            'siswa_id' => ['required', 'integer', 'exists:users,id'],
+            'filter'   => ['required', 'string'], // Format: "2026-P3"
+        ]);
+
+        $guruId = $this->getGuruId();
+        $siswa = User::where('id', $request->siswa_id)
+            ->where('guru_wali_id', $guruId)
+            ->first();
+
+        if (!$siswa) {
+            return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan atau bukan murid bimbingan Anda.']);
+        }
+
+        // Parse filter untuk mendapatkan rentang tanggal pertemuan
+        $filter = $request->filter;
+        [$mulai, $selesai] = $this->rentangTanggal('pertemuan', $filter);
+
+        // Hitung jumlah hari yang seharusnya ada dalam periode
+        $mulaiCarbon = Carbon::parse($mulai);
+        $selesaiCarbon = Carbon::parse($selesai);
+        $totalHari = $mulaiCarbon->diffInDays($selesaiCarbon) + 1;
+
+        // Ambil semua kebiasaan dalam rentang pertemuan tersebut
+        $kebiasaanList = KebiasaanHarian::where('user_id', $siswa->id)
+            ->whereBetween('tanggal', [$mulai, $selesai])
+            ->get();
+
+        // Buat array tanggal yang ada untuk pencarian cepat
+        $tanggalYangAda = $kebiasaanList->pluck('tanggal')->map(function ($date) {
+            return $date->format('Y-m-d');
+        })->toArray();
+
+        // Buat array kebiasaan berdasarkan tanggal untuk akses cepat
+        $kebiasaanByTanggal = [];
+        foreach ($kebiasaanList as $k) {
+            $key = $k->tanggal->format('Y-m-d');
+            $kebiasaanByTanggal[$key] = $k;
+        }
+
+        // Hitung statistik untuk setiap kebiasaan
+        $aspekMap = [
+            'bangun_pagi'   => 'bangun_pagi',
+            'beribadah'     => 'baca_quran',
+            'berolahraga'   => 'berolahraga',
+            'makan_sehat'   => 'makan_sehat',
+            'gemar_belajar' => 'gemar_belajar',
+            'bermasyarakat' => 'bersama',
+            'tidur_cepat'   => 'tidur_cepat',
+        ];
+
+        $statistik = [];
+        foreach ($aspekMap as $label => $field) {
+            $ya = 0;
+            $tidak = 0;
+            $tidakMengisi = 0;
+
+            // Iterasi semua tanggal dalam periode
+            $currentDate = $mulaiCarbon->copy();
+            while ($currentDate->lte($selesaiCarbon)) {
+                $dateStr = $currentDate->format('Y-m-d');
+
+                if (!in_array($dateStr, $tanggalYangAda)) {
+                    // Tidak ada record untuk tanggal ini = tidak mengisi
+                    $tidakMengisi++;
+                } else {
+                    // Ada record, cek nilainya
+                    $kebiasaan = $kebiasaanByTanggal[$dateStr];
+                    if (is_null($kebiasaan->$field)) {
+                        $tidakMengisi++;
+                    } elseif ($kebiasaan->$field === true || $kebiasaan->$field === 1) {
+                        $ya++;
+                    } else {
+                        $tidak++;
+                    }
+                }
+
+                $currentDate->addDay();
+            }
+
+            $statistik[$label] = [
+                'ya' => $ya,
+                'tidak' => $tidak,
+                'tidak_mengisi' => $tidakMengisi,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'siswa' => [
+                    'nama' => $siswa->name,
+                    'nisn' => $siswa->nisn ?? '-',
+                ],
+                'periode' => $filter,
+                'rentang' => [
+                    'mulai' => $mulai,
+                    'selesai' => $selesai,
+                ],
+                'total_hari' => $totalHari,
+                'statistik' => $statistik,
+            ],
+        ]);
+    }
+
+    // ── AJAX: ambil statistik kebiasaan per bulan ─────────────────────────────
+
+    public function getMonthlyStats(Request $request): JsonResponse
+    {
+        $request->validate([
+            'siswa_id' => ['required', 'integer', 'exists:users,id'],
+            'filter'   => ['required', 'string'], // Format: "3|2026" atau "3"
+        ]);
+
+        $guruId = $this->getGuruId();
+        $siswa = User::where('id', $request->siswa_id)
+            ->where('guru_wali_id', $guruId)
+            ->first();
+
+        if (!$siswa) {
+            return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan atau bukan murid bimbingan Anda.']);
+        }
+
+        // Parse filter untuk mendapatkan rentang tanggal bulanan
+        $filter = $request->filter;
+        [$mulai, $selesai] = $this->rentangTanggal('bulanan', $filter);
+
+        // Hitung jumlah hari yang seharusnya ada dalam periode
+        $mulaiCarbon = Carbon::parse($mulai);
+        $selesaiCarbon = Carbon::parse($selesai);
+        $totalHari = $mulaiCarbon->diffInDays($selesaiCarbon) + 1;
+
+        // Ambil semua kebiasaan dalam rentang bulan tersebut
+        $kebiasaanList = KebiasaanHarian::where('user_id', $siswa->id)
+            ->whereBetween('tanggal', [$mulai, $selesai])
+            ->get();
+
+        // Buat array tanggal yang ada untuk pencarian cepat
+        $tanggalYangAda = $kebiasaanList->pluck('tanggal')->map(function ($date) {
+            return $date->format('Y-m-d');
+        })->toArray();
+
+        // Buat array kebiasaan berdasarkan tanggal untuk akses cepat
+        $kebiasaanByTanggal = [];
+        foreach ($kebiasaanList as $k) {
+            $key = $k->tanggal->format('Y-m-d');
+            $kebiasaanByTanggal[$key] = $k;
+        }
+
+        // Hitung statistik untuk setiap kebiasaan
+        $aspekMap = [
+            'bangun_pagi'   => 'bangun_pagi',
+            'beribadah'     => 'baca_quran',
+            'berolahraga'   => 'berolahraga',
+            'makan_sehat'   => 'makan_sehat',
+            'gemar_belajar' => 'gemar_belajar',
+            'bermasyarakat' => 'bersama',
+            'tidur_cepat'   => 'tidur_cepat',
+        ];
+
+        $statistik = [];
+        foreach ($aspekMap as $label => $field) {
+            $ya = 0;
+            $tidak = 0;
+            $tidakMengisi = 0;
+
+            // Iterasi semua tanggal dalam periode
+            $currentDate = $mulaiCarbon->copy();
+            while ($currentDate->lte($selesaiCarbon)) {
+                $dateStr = $currentDate->format('Y-m-d');
+
+                if (!in_array($dateStr, $tanggalYangAda)) {
+                    // Tidak ada record untuk tanggal ini = tidak mengisi
+                    $tidakMengisi++;
+                } else {
+                    // Ada record, cek nilainya
+                    $kebiasaan = $kebiasaanByTanggal[$dateStr];
+                    if (is_null($kebiasaan->$field)) {
+                        $tidakMengisi++;
+                    } elseif ($kebiasaan->$field === true || $kebiasaan->$field === 1) {
+                        $ya++;
+                    } else {
+                        $tidak++;
+                    }
+                }
+
+                $currentDate->addDay();
+            }
+
+            $statistik[$label] = [
+                'ya' => $ya,
+                'tidak' => $tidak,
+                'tidak_mengisi' => $tidakMengisi,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'siswa' => [
+                    'nama' => $siswa->name,
+                    'nisn' => $siswa->nisn ?? '-',
+                ],
+                'periode' => $filter,
+                'rentang' => [
+                    'mulai' => $mulai,
+                    'selesai' => $selesai,
+                ],
+                'total_hari' => $totalHari,
+                'statistik' => $statistik,
+            ],
+        ]);
+    }
+
 }
