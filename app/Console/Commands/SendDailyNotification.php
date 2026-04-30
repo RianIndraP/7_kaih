@@ -35,30 +35,28 @@ class SendDailyNotification extends Command
         $field = null;
         $namaSholat = null;
 
-        if ($now >= '05:30' && $now < '06:30') {
-            $field = 'sholat_subuh';
-            $namaSholat = 'Subuh';
-        } elseif (date('l', strtotime($now)) === 'Friday' && $now >= '13:00' && $now < '15:00') {
-            $field = 'sholat_jumat';
-            $namaSholat = 'Jumat';
-        } elseif ($now >= '13:00' && $now < '14:00') {
-            $field = 'sholat_dzuhur';
-            $namaSholat = 'Dzuhur';
-        } elseif ($now >= '16:00' && $now < '17:00') {
-            $field = 'sholat_ashar';
-            $namaSholat = 'Ashar';
-        } elseif ($now >= '19:00' && $now < '20:00') {
-            $field = 'sholat_maghrib';
-            $namaSholat = 'Maghrib';
-        } elseif ($now >= '20:00' && $now < '21:00') {
-            $field = 'sholat_isya';
-            $namaSholat = 'Isya';
-        }
+        // if ($now >= '05:30' && $now < '06:30') {
+        //     $field = 'sholat_subuh';
+        //     $namaSholat = 'Subuh';
+        // } elseif (date('l', strtotime($now)) === 'Friday' && $now >= '13:00' && $now < '15:00') {
+        //     $field = 'sholat_jumat';
+        //     $namaSholat = 'Jumat';
+        // } elseif ($now >= '13:00' && $now < '14:00') {
+        //     $field = 'sholat_dzuhur';
+        //     $namaSholat = 'Dzuhur';
+        // } elseif ($now >= '16:00' && $now < '17:00') {
+        //     $field = 'sholat_ashar';
+        //     $namaSholat = 'Ashar';
+        // } elseif ($now >= '19:00' && $now < '20:00') {
+        //     $field = 'sholat_maghrib';
+        //     $namaSholat = 'Maghrib';
+        // } elseif ($now >= '20:00' && $now < '21:00') {
+        //     $field = 'sholat_isya';
+        //     $namaSholat = 'Isya';
+        // }
 
-        if ($now >= '07:50' && $now < '08:10') {
-            $field = 'sholat_subuh'; // pinjam field subuh untuk tes
-            $namaSholat = 'Testing';
-        }
+        $field = 'sholat_subuh';
+        $namaSholat = 'Subuh';
 
         // kalau bukan jam notif → stop
         if (!$field) {
