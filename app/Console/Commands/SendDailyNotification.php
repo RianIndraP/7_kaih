@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -97,6 +96,10 @@ class SendDailyNotification extends Command
                         'url'   => '/student/dashboard'
                     ],
                 ]);
+            } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                // Hapus token dari database jika sudah tidak ditemukan/unregistered
+                DB::table('fcm_tokens')->where('token', $token)->delete();
+                Log::warning("Token dihapus karena sudah tidak aktif: $token");
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }
