@@ -16,20 +16,9 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 // Handle notifikasi saat background
-messaging.onBackgroundMessage(function (payload) {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
-
-    const notificationTitle = payload.data.title;
-    const notificationOptions = {
-        body: payload.data.body,
-        icon: '/img/logo-1.png',
-        data: {
-            url: payload.data.url
-        }
-    };
-
-    self.registration.showNotification(notificationTitle, notificationOptions);
-});
+// messaging.onBackgroundMessage(function (payload) {
+//     console.log('Pesan diterima di background, ditangani otomatis oleh Firebase.');
+// });
 
 self.addEventListener('notificationclick', function (event) {
     event.notification.close();
