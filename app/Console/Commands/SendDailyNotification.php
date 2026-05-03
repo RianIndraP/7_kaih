@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -36,28 +35,25 @@ class SendDailyNotification extends Command
         $field = null;
         $namaSholat = null;
 
-        // if ($now >= '05:30' && $now < '06:30') {
-        //     $field = 'sholat_subuh';
-        //     $namaSholat = 'Subuh';
-        // } elseif (date('l', strtotime($now)) === 'Friday' && $now >= '13:00' && $now < '15:00') {
-        //     $field = 'sholat_jumat';
-        //     $namaSholat = 'Jumat';
-        // } elseif ($now >= '13:00' && $now < '14:00') {
-        //     $field = 'sholat_dzuhur';
-        //     $namaSholat = 'Dzuhur';
-        // } elseif ($now >= '16:00' && $now < '17:00') {
-        //     $field = 'sholat_ashar';
-        //     $namaSholat = 'Ashar';
-        // } elseif ($now >= '19:00' && $now < '20:00') {
-        //     $field = 'sholat_maghrib';
-        //     $namaSholat = 'Maghrib';
-        // } elseif ($now >= '20:00' && $now < '21:00') {
-        //     $field = 'sholat_isya';
-        //     $namaSholat = 'Isya';
-        // }
-
-        $field = 'sholat_dzuhur';
-        $namaSholat = 'Dzuhur';
+        if ($now >= '05:30' && $now < '06:30') {
+            $field = 'sholat_subuh';
+            $namaSholat = 'Subuh';
+        } elseif (date('l', strtotime($now)) === 'Friday' && $now >= '13:00' && $now < '15:00') {
+            $field = 'sholat_jumat';
+            $namaSholat = 'Jumat';
+        } elseif ($now >= '13:00' && $now < '14:00') {
+            $field = 'sholat_dzuhur';
+            $namaSholat = 'Dzuhur';
+        } elseif ($now >= '16:00' && $now < '17:00') {
+            $field = 'sholat_ashar';
+            $namaSholat = 'Ashar';
+        } elseif ($now >= '19:00' && $now < '20:00') {
+            $field = 'sholat_maghrib';
+            $namaSholat = 'Maghrib';
+        } elseif ($now >= '20:00' && $now < '21:00') {
+            $field = 'sholat_isya';
+            $namaSholat = 'Isya';
+        }
 
         // kalau bukan jam notif → stop
         if (!$field) {
@@ -114,7 +110,9 @@ class SendDailyNotification extends Command
                     ],
                 ]);
             } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                // Hapus token dari database jika sudah tidak ditemukan/unregistered
                 DB::table('fcm_tokens')->where('token', $token)->delete();
+                Log::warning("Token dihapus karena sudah tidak aktif: $token");
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }
