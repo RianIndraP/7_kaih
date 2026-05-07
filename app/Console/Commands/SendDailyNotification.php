@@ -95,6 +95,8 @@ class SendDailyNotification extends Command
                     ],
 
                     'data' => [
+                        'title' => "⏰ Waktu $namaSholat Telah Tiba!",
+                        'body'  => "Assalamu'alaikum, yuk catat ibadah $namaSholat kamu hari ini! ✨",
                         'url'   => '/student/dashboard',
                     ],
 
