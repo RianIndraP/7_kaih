@@ -106,7 +106,7 @@ Route::middleware(['auth', 'siswa', 'profile.complete'])->prefix('student')->nam
 
     // Kirim Pesan Bantuan (ikon ?)
     Route::get('/kirim-pesan-bantuan', [PesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
-    Route::post('/kirim-pesan-bantuan', [PesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store');
+    Route::post('/kirim-pesan-bantuan', [PesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store')->middleware('throttle:1,5');
 });
 
 // ── Guru (protected) ──────────────────────────────────────────────────────────

@@ -372,7 +372,7 @@
                 <div class="hero-icon-wrap">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21
-                               12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                                               12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </div>
                 <div>
@@ -403,6 +403,22 @@
 
                 <div class="p-5">
 
+                    {{-- Alert Error (Penting untuk pesan 5 menit) --}}
+                    @if (session('error'))
+                        <div class="alert-error mb-5"
+                            style="display: flex; align-items: center; gap: 12px; background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 12px;">
+                            <div class="alert-icon bg-red-500"
+                                style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <p class="text-[12.5px] font-semibold text-red-800">{{ session('error') }}</p>
+                        </div>
+                    @endif
+
                     {{-- Alert sukses --}}
                     @if (session('success'))
                         <div class="alert-success mb-5">
@@ -423,12 +439,15 @@
                         {{-- Nama Pengirim --}}
                         <div>
                             <label class="field-label">Nama Pengirim</label>
-                            <input type="text" name="nama_pengirim" value="{{ old('nama_pengirim', $user->name ?? '') }}"
-                                placeholder="Masukkan nama kamu..."
-                                class="fancy-input @error('nama_pengirim') error @enderror" />
-                            @error('nama_pengirim')
-                                <p class="text-[11.5px] text-red-500 mt-1.5 font-semibold">{{ $message }}</p>
-                            @enderror
+                            <div
+                                class="bg-gray-100 px-4 py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-[13px] flex items-center gap-2">
+                                <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                                </svg>
+                                {{ auth()->user()->name }}
+                            </div>
+                            {{-- Input hidden tetap perlu jika Controller Anda masih membaca dari $request --}}
+                            <input type="hidden" name="nama_pengirim" value="{{ auth()->user()->name }}">
                         </div>
 
                         {{-- Kategori Pesan (pill selector) --}}
