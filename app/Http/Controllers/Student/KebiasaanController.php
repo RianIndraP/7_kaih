@@ -52,11 +52,15 @@ class KebiasaanController extends Controller
 
         $kebiasaan->save();
 
+        // Update streak setelah menyimpan kebiasaan
+        $user->updateStreak();
+
         return response()->json([
             'success'   => true,
             'message'   => 'Data ' . str_replace('_', ' ', $section) . ' berhasil disimpan.',
             'persen'    => $kebiasaan->persentaseSelesai(),
             'checklist' => $kebiasaan->statusChecklist(),
+            'streak'    => $user->getStreakDisplay(),
         ]);
     }
 

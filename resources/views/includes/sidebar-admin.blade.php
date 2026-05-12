@@ -105,6 +105,17 @@
         <span class="flex-1">Pesan Bantuan</span>
     </a>
 
+    {{-- Manajemen Website --}}
+    <a href="{{ route('admin.manajemen-website') }}"
+        class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[13px] font-medium
+              no-underline transition-all duration-200
+              {{ request()->routeIs('admin.manajemen-website*')
+                  ? 'bg-white/22 text-white font-bold nav-active-accent'
+                  : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
+        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">⚙️</span>
+        <span class="flex-1">Manajemen Website</span>
+    </a>
+
 </nav>
 
 {{-- ── LOGOUT ── --}}

@@ -36,6 +36,7 @@
             box-shadow: 0 2px 18px rgba(37, 99, 235, 0.22);
         }
     </style>
+    @yield('head')
 </head>
 
 <body class="page-bg min-h-screen font-sans">

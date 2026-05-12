@@ -16,6 +16,9 @@ class DashboardController extends Controller
         $user    = Auth::user();
         $tanggal = now('Asia/Jakarta')->toDateString();
 
+        // Update streak status (check if streak should freeze or break)
+        $user->updateStreak();
+
         // Cek apakah ada record kebiasaan hari ini
         $kebiasaan = KebiasaanHarian::where('user_id', $user->id)
             ->where('tanggal', $tanggal)
@@ -40,13 +43,39 @@ class DashboardController extends Controller
         // Persentase kelengkapan
         $persen = $kebiasaan ? $kebiasaan->persentaseSelesai() : 0;
 
+        // Streak display
+        $streakDisplay = $user->getStreakDisplay();
+        $streakCount = $user->streak_count ?? 0;
+        $canRecoverStreak = $user->canRecoverStreak();
+        $recoveryCount = $user->streak_recovery_count ?? 0;
+        $maxRecoveryPerWeek = 2;
+
+        // Debug info for streak
+        $today = now('Asia/Jakarta');
+        $lastStreakDate = $user->last_streak_date;
+        $daysSinceLastStreak = $lastStreakDate ? $lastStreakDate->diffInDays($today, false) : null;
+        $lastKebiasaan = KebiasaanHarian::where('user_id', $user->id)->orderBy('tanggal', 'desc')->first();
+        $debugInfo = [
+            'today' => $today->toDateString(),
+            'last_streak_date' => $lastStreakDate ? $lastStreakDate->toDateString() : null,
+            'days_since_last_streak' => $daysSinceLastStreak,
+            'last_kebiasaan_tanggal' => $lastKebiasaan ? $lastKebiasaan->tanggal : null,
+            'streak_count' => $streakCount,
+        ];
+
         return view('dashboard.student', compact(
             'user',
             'kebiasaan',
             'kebiasaanHariIni',
             'kebiasaanData',
             'persen',
-            'tanggal' // Tambahkan tanggal ke view
+            'tanggal',
+            'streakDisplay',
+            'streakCount',
+            'canRecoverStreak',
+            'recoveryCount',
+            'maxRecoveryPerWeek',
+            'debugInfo'
         ));
     }
 }

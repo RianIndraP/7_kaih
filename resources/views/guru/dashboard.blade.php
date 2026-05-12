@@ -43,6 +43,12 @@
             </div>
         </div>
 
+        {{-- Update Message Notification --}}
+        @php
+            $updateMessage = \App\Models\WebsiteManagement::getUpdateMessage('guru');
+        @endphp
+        @include('guru._update_message', ['updateMessage' => $updateMessage])
+
         {{-- ═══════════════════════════════════════════
              ALERT: PROFIL BELUM LENGKAP
         ════════════════════════════════════════════ --}}

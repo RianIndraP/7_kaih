@@ -7,20 +7,43 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use App\Models\WebsiteManagement;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
-        // If already logged in, redirect to appropriate dashboard
+        // If already logged in, check if website is locked
         if (Auth::check()) {
-            return $this->redirectToDashboard(Auth::user());
+            $user = Auth::user();
+            
+            // Check if website is locked (except for admin)
+            if (!$user->isAdmin() && WebsiteManagement::isWebsiteLocked()) {
+                Auth::logout(); // Force logout non-admin users
+                return redirect()->route('website.locked');
+            }
+            
+            return $this->redirectToDashboard($user);
         }
         return view('auth.login');
     }
 
+    public function showWebsiteLocked()
+    {
+        $lockMessage = WebsiteManagement::getLockMessage() ?: 'Website sedang dalam masa perbaikan. Silakan coba lagi nanti.';
+        return view('auth.website-locked', [
+            'message' => $lockMessage
+        ]);
+    }
+
     private function redirectToDashboard($user)
     {
+        // Check if website is locked (except for admin)
+        if (!$user->isAdmin() && WebsiteManagement::isWebsiteLocked()) {
+            Auth::logout(); // Force logout non-admin users
+            return redirect()->route('website.locked');
+        }
+        
         if ($user->isSiswa()) {
             return redirect()->route('student.dashboard');
         } else if ($user->isKepalaSekolah()) {
@@ -59,6 +82,15 @@ class AuthController extends Controller
         }
 
         if ($passwordValid) {
+            // Check if website is locked (except for admin)
+            if (!$user->isAdmin() && WebsiteManagement::isWebsiteLocked()) {
+                $lockMessage = WebsiteManagement::getLockMessage() ?: 'Website sedang dalam masa perbaikan. Silakan coba lagi nanti.';
+                
+                return view('auth.website-locked', [
+                    'message' => $lockMessage
+                ]);
+            }
+            
             Auth::login($user);
             
             // Redirect based on user type

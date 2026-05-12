@@ -266,7 +266,17 @@
 
                 <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Lahir</label><input type="date" name="birth_date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
 
-                <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Status Pegawai</label><input type="text" name="status_pegawai" placeholder="PNS, Honorer" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Status Pegawai</label><input type="text" name="status_pegawai" placeholder="PNS, Honorer, Kepala Sekolah" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
+
+                {{-- Info untuk Kepala Sekolah --}}
+                <div class="sm:col-span-2 bg-blue-50 border border-blue-200 rounded-lg p-2">
+                    <div class="flex items-start gap-1.5">
+                        <svg class="w-4 h-4 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div class="text-xs text-blue-700 leading-relaxed">
+                            Status <strong>"Kepala Sekolah"</strong> akan login ke <strong>Dashboard Kepala Sekolah</strong>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1.5">Unit Kerja</label><input type="text" name="unit_kerja" placeholder="Matematika, Bahasa Indonesia" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
 
@@ -322,7 +332,17 @@
 
                 <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Lahir</label><input type="date" name="birth_date" id="editBirthDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
 
-                <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Status Pegawai</label><input type="text" name="status_pegawai" id="editStatusPegawai" placeholder="PNS, Honorer" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Status Pegawai</label><input type="text" name="status_pegawai" id="editStatusPegawai" placeholder="PNS, Honorer, Kepala Sekolah" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
+
+                {{-- Info untuk Kepala Sekolah --}}
+                <div class="sm:col-span-2 bg-blue-50 border border-blue-200 rounded-lg p-2">
+                    <div class="flex items-start gap-1.5">
+                        <svg class="w-4 h-4 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div class="text-xs text-blue-700 leading-relaxed">
+                            Status <strong>"Kepala Sekolah"</strong> akan login ke <strong>Dashboard Kepala Sekolah</strong>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1.5">Unit Kerja</label><input type="text" name="unit_kerja" id="editUnitKerja" placeholder="Matematika, Bahasa Indonesia" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"></div>
 

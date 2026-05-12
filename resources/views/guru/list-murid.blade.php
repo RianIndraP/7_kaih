@@ -158,6 +158,7 @@
                             <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Nama</th>
                             <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Kelas</th>
                             <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">NISN</th>
+                            <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Streak</th>
                             <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Penyelesaian Form</th>
                             <th class="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Umpan balik</th>
                             <th class="px-5 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-32">Aksi</th>
@@ -166,7 +167,7 @@
                     <tbody id="tabelBody" class="divide-y divide-gray-100">
                         {{-- Diisi oleh JS setelah search --}}
                         <tr id="emptyRow">
-                            <td colspan="7" class="px-5 py-16 text-center">
+                            <td colspan="8" class="px-5 py-16 text-center">
                                 <div class="flex flex-col items-center">
                                     <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
                                         <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -989,6 +990,7 @@
                     '<td class="px-4 py-3 font-medium text-gray-800">' + s.nama + '</td>' +
                     '<td class="px-4 py-3 text-gray-600">' + s.kelas + '</td>' +
                     '<td class="px-4 py-3 text-gray-600">' + s.nisn + '</td>' +
+                    '<td class="px-4 py-3 text-lg font-bold text-orange-500">' + '🔥 ' + (s.streak_count || 0) + '</td>' +
                     '<td class="px-4 py-3 w-32">' +
                     '<div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">' +
                     '<div class="h-3 rounded-full ' + barColor + '" style="width:' + persen + '%"></div>' +

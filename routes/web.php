@@ -21,6 +21,7 @@ use App\Http\Controllers\Student\GantiPasswordController;
 use App\Http\Controllers\Student\KebiasaanController;
 use App\Http\Controllers\Student\PesanBantuanController;
 use App\Http\Controllers\Student\PesanController;
+use App\Http\Controllers\Student\VirtualPetController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -64,6 +65,7 @@ Route::post('/save-token', [NotifController::class, 'saveToken'])->middleware('a
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/website-locked', [AuthController::class, 'showWebsiteLocked'])->name('website.locked');
 
 // ── Forgot Password ───────────────────────────────────────────────────────────
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('forgot-password');
@@ -79,7 +81,7 @@ Route::post('/create-new-password', [AuthController::class, 'createNewPassword']
 Route::get('/password-success', [AuthController::class, 'showPasswordSuccess'])->name('password-success');
 
 // ── Student (protected) ───────────────────────────────────────────────────────
-Route::middleware(['auth', 'siswa', 'profile.complete'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'siswa', 'profile.complete', 'website.lock'])->prefix('student')->name('student.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -107,10 +109,16 @@ Route::middleware(['auth', 'siswa', 'profile.complete'])->prefix('student')->nam
     // Kirim Pesan Bantuan (ikon ?)
     Route::get('/kirim-pesan-bantuan', [PesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
     Route::post('/kirim-pesan-bantuan', [PesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store');
+
+    // Virtual Pet API
+    Route::post('/api/pet/change-form', [VirtualPetController::class, 'changeForm'])->name('pet.change-form');
+    
+    // Streak API
+    Route::post('/api/streak/recover', [\App\Http\Controllers\Api\StreakController::class, 'recover'])->name('streak.recover');
 });
 
 // ── Guru (protected) ──────────────────────────────────────────────────────────
-Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(function () {
+Route::middleware(['auth', 'guru', 'website.lock'])->prefix('guru')->name('guru.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
@@ -169,7 +177,7 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
 });
 
 // ── Kepala Sekolah (protected) ─────────────────────────────────────────────────────
-Route::middleware(['auth'])->prefix('kepala-sekolah')->name('kepala-sekolah.')->group(function () {
+Route::middleware(['auth', 'website.lock'])->prefix('kepala-sekolah')->name('kepala-sekolah.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [KepalaSekolahDashboardController::class, 'index'])->name('dashboard');
@@ -259,4 +267,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/kelas', [ManajemenKelasController::class, 'store'])->name('kelas.store');
     Route::put('/kelas/{id}', [ManajemenKelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{id}', [ManajemenKelasController::class, 'destroy'])->name('kelas.destroy');
+
+    // Manajemen Website
+    Route::get('/manajemen-website', [App\Http\Controllers\Admin\WebsiteManagementController::class, 'index'])->name('manajemen-website');
+    Route::post('/manajemen-website', [App\Http\Controllers\Admin\WebsiteManagementController::class, 'update'])->name('manajemen-website.update');
 });

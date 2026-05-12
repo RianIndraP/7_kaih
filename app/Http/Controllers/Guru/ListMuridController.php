@@ -76,6 +76,7 @@ class ListMuridController extends Controller
                     'tanggal_lahir'  => $siswa->birth_date
                         ? Carbon::parse($siswa->birth_date)->format('d - m - Y') : '-',
                     'persen'         => $persen,
+                    'streak_count'   => $siswa->streak_count ?? 0,
                     'detail'         => null,
                     'umpan_balik'    => null,
                     'has_umpan_balik'=> false,
@@ -237,6 +238,7 @@ class ListMuridController extends Controller
                 'tanggal_lahir'  => $siswa->birth_date
                     ? Carbon::parse($siswa->birth_date)->format('d - m - Y') : '-',
                 'persen'         => $persen,
+                'streak_count'   => $siswa->streak_count ?? 0,
                 'detail'         => $detail,
                 'umpan_balik'    => $pesan?->isi,
                 'umpan_balik_id' => $pesan?->id,

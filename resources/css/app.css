@@ -144,3 +144,29 @@
 .sb-scroll::-webkit-scrollbar-track {
     background: transparent;
 }
+
+/* ── Virtual Pet Popup Mobile Styles ─── */
+@media (max-width: 640px) {
+    #virtualPetCard {
+        width: 160px !important;
+        max-width: calc(100vw - 20px) !important;
+        /* right and top removed !important to allow JS control */
+    }
+}
+
+/* Ensure pet popup is always on top and draggable */
+#virtualPetCard {
+    z-index: 9999 !important;
+    touch-action: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    overscroll-behavior: none !important;
+}
+
+#virtualPetCard * {
+    touch-action: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+}

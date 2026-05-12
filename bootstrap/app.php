@@ -17,6 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'guru'              => App\Http\Middleware\GuruMiddleware::class,
             'siswa'             => App\Http\Middleware\SiswaMiddleware::class,
             'profile.complete'  => App\Http\Middleware\ProfileComplete::class,
+            'website.lock'      => App\Http\Middleware\CheckWebsiteLock::class,
+        ]);
+
+        // Apply website lock check globally for web routes
+        $middleware->web(append: [
+            App\Http\Middleware\CheckWebsiteLock::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -662,6 +662,12 @@
 </style>
 
 <div class="dashboard-content">
+    {{-- Update Message Notification --}}
+    @php
+        $updateMessage = \App\Models\WebsiteManagement::getUpdateMessage('kepala_sekolah');
+    @endphp
+    @include('kepala-sekolah._update_message', ['updateMessage' => $updateMessage])
+
             <!-- Dashboard Header -->
             <div class="dashboard-header">
                 <div class="header-content">

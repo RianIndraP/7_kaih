@@ -54,6 +54,10 @@ class User extends Authenticatable
         'fcm_token',
         'last_login_at',
         'teman_terbaik_json',
+        'streak_count',
+        'streak_recovery_count',
+        'streak_recovery_reset_date',
+        'last_streak_date',
     ];
 
     /**
@@ -103,6 +107,8 @@ class User extends Authenticatable
             'is_alumni' => 'boolean',
             'password' => 'hashed',
             'teman_terbaik_json' => 'array',
+            'streak_recovery_reset_date' => 'date',
+            'last_streak_date' => 'date',
         ];
     }
 
@@ -254,5 +260,231 @@ class User extends Authenticatable
         }
 
         return $hasValidEntry;
+    }
+
+    /**
+     * Update streak based on daily habit completion
+     * Streak freezes if not completed today (beku), breaks after 2 days
+     */
+    public function updateStreak(): void
+    {
+        // Use now() with timezone and start of day for consistency
+        $today = Carbon::now('Asia/Jakarta')->startOfDay();
+        $yesterday = $today->copy()->subDay();
+
+        // Get today's habits
+        $kebiasaanHariIni = KebiasaanHarian::where('user_id', $this->id)
+            ->where('tanggal', $today->toDateString())
+            ->first();
+
+        // Check if all habits are completed today
+        $todayCompleted = false;
+        if ($kebiasaanHariIni) {
+            $status = $kebiasaanHariIni->statusChecklist();
+            $todayCompleted = collect($status)->every(fn($completed) => $completed === true);
+        }
+
+        if ($todayCompleted) {
+            // All habits completed today - streak continues
+            if ($this->last_streak_date && $this->last_streak_date->eq($yesterday)) {
+                // Yesterday was completed, increment streak
+                $this->streak_count++;
+            } elseif (!$this->last_streak_date || $this->last_streak_date->lt($yesterday)) {
+                // Streak was broken or first time, reset to 1
+                $this->streak_count = 1;
+            }
+            $this->last_streak_date = $today;
+        } else {
+            // Not completed today - check if streak should freeze or break
+            $referenceDate = $this->last_streak_date;
+            
+            // If last_streak_date is null but streak_count > 0, 
+            // use the last kebiasaan date as reference
+            if (!$referenceDate && $this->streak_count > 0) {
+                $lastKebiasaan = KebiasaanHarian::where('user_id', $this->id)
+                    ->orderBy('tanggal', 'desc')
+                    ->first();
+                if ($lastKebiasaan) {
+                    $referenceDate = Carbon::parse($lastKebiasaan->tanggal);
+                }
+            }
+            
+            if ($referenceDate) {
+                // Calculate days since last streak
+                $daysSinceLastStreak = (int) $referenceDate->diffInDays($today, false);
+                
+                // DEBUG: Log the calculation
+                \Log::debug('Streak Debug', [
+                    'user_id' => $this->id,
+                    'today' => $today->toDateString(),
+                    'last_streak_date' => $this->last_streak_date ? $this->last_streak_date->toDateString() : 'null',
+                    'reference_date' => $referenceDate->toDateString(),
+                    'daysSinceLastStreak' => $daysSinceLastStreak,
+                    'current_streak_count' => $this->streak_count,
+                ]);
+                
+                if ($daysSinceLastStreak === 1) {
+                    // Yesterday completed, today not - STREAK BEKU (freeze)
+                    // Set last_streak_date to yesterday to track the freeze
+                    if (!$this->last_streak_date) {
+                        $this->last_streak_date = $referenceDate;
+                    }
+                } elseif ($daysSinceLastStreak >= 2) {
+                    // 2+ days ago - STREAK BREAKS
+                    $this->streak_count = 0;
+                    $this->last_streak_date = null;
+                    \Log::debug('Streak BREAK triggered', ['daysSinceLastStreak' => $daysSinceLastStreak]);
+                }
+                // If daysSinceLastStreak <= 0 (today), nothing changes
+            }
+        }
+
+        $this->save();
+
+        // Update virtual pet (pet will be sad if not completed today)
+        $this->updateVirtualPet();
+    }
+
+    /**
+     * Check if user can recover streak (only if last streak was yesterday)
+     */
+    public function canRecoverStreak(): bool
+    {
+        if ($this->streak_count > 0) {
+            return false; // Streak is active, no need to recover
+        }
+
+        $today = Carbon::today('Asia/Jakarta');
+        $yesterday = $today->copy()->subDay();
+        $resetDate = $this->streak_recovery_reset_date;
+
+        // Check if we need to reset the recovery count (new week)
+        if ($resetDate && $resetDate->lt($today->copy()->startOfWeek())) {
+            $this->streak_recovery_count = 0;
+            $this->streak_recovery_reset_date = $today->copy()->startOfWeek();
+            $this->save();
+        }
+
+        // Get last streak date or last kebiasaan date
+        $lastStreakDate = $this->last_streak_date;
+        if (!$lastStreakDate) {
+            // Try to get last kebiasaan date
+            $lastKebiasaan = KebiasaanHarian::where('user_id', $this->id)
+                ->orderBy('tanggal', 'desc')
+                ->first();
+            if ($lastKebiasaan) {
+                $lastStreakDate = Carbon::parse($lastKebiasaan->tanggal);
+            }
+        }
+
+        // Can only recover if last streak was yesterday (1 day ago)
+        if ($lastStreakDate) {
+            $daysSince = $lastStreakDate->diffInDays($today, false);
+            
+            // Only allow recovery if exactly 1 day ago (yesterday)
+            if ($daysSince === 1) {
+                // Also check weekly limit
+                return $this->streak_recovery_count < 2;
+            }
+        }
+
+        return false; // Too late to recover (2+ days ago)
+    }
+
+    /**
+     * Recover streak (use one of the 2 weekly recovery chances)
+     */
+    public function recoverStreak(): bool
+    {
+        if (!$this->canRecoverStreak()) {
+            return false;
+        }
+
+        $today = Carbon::today();
+
+        // Set recovery reset date if not set
+        if (!$this->streak_recovery_reset_date) {
+            $this->streak_recovery_reset_date = $today->copy()->startOfWeek();
+        }
+
+        // Increment recovery count
+        $this->streak_recovery_count++;
+        $this->streak_count = 1;
+        $this->last_streak_date = $today;
+        $this->save();
+
+        // Revive virtual pet
+        $this->updateVirtualPet();
+
+        return true;
+    }
+
+    /**
+     * Get streak display with fire emoji
+     */
+    public function getStreakDisplay(): string
+    {
+        if ($this->streak_count > 0) {
+            return "🔥 {$this->streak_count}";
+        }
+        return "🔥 0";
+    }
+
+    /**
+     * Get the virtual pet for this user
+     */
+    public function virtualPet(): HasOne
+    {
+        return $this->hasOne(VirtualPet::class);
+    }
+
+    /**
+     * Get or create virtual pet
+     */
+    public function getOrCreateVirtualPet(): VirtualPet
+    {
+        $pet = $this->virtualPet;
+
+        if (!$pet) {
+            $pet = VirtualPet::create([
+                'user_id' => $this->id,
+                'name' => 'Kaih',
+                'level' => min(11, collect(VirtualPet::FORMS)->filter(fn($f) => $this->streak_count >= $f['min_streak'])->count() + 1),
+                'form' => 'egg',
+                'happiness' => 50,
+                'health' => 50,
+                'is_alive' => true,
+                'unlocked_forms' => ['egg']
+            ]);
+        } else {
+            // Sync level and form with current streak
+            $pet->syncLevel();
+            $pet->syncForm();
+        }
+
+        return $pet;
+    }
+
+    /**
+     * Update virtual pet based on current streak and habits
+     */
+    public function updateVirtualPet(): void
+    {
+        $pet = $this->getOrCreateVirtualPet();
+        $streakActive = $this->streak_count > 0;
+
+        // Get today's habits
+        $today = Carbon::today();
+        $kebiasaanToday = KebiasaanHarian::where('user_id', $this->id)
+            ->where('tanggal', $today->toDateString())
+            ->first();
+
+        // Get previous day's habits for comparison
+        $kebiasaanPrevious = KebiasaanHarian::where('user_id', $this->id)
+            ->where('tanggal', $today->copy()->subDay()->toDateString())
+            ->first();
+
+        $pet->updateFromHabits($kebiasaanToday, $kebiasaanPrevious, $this->streak_count, $streakActive);
+        $pet->syncLevel();
     }
 }
