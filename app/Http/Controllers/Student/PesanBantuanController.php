@@ -19,14 +19,11 @@ class PesanBantuanController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'nama_pengirim' => ['required', 'string', 'max:255'],
             'kategori'      => ['required', 'string', 'in:teknis,akun,kebiasaan,profil,lainnya'],
             'judul'         => ['required', 'string', 'max:255'],
             'isi'           => ['required', 'string', 'max:2000'],
         ], [
-            'nama_pengirim.required' => 'Nama pengirim wajib diisi.',
             'kategori.required'      => 'Kategori pesan wajib dipilih.',
-            'kategori.in'            => 'Kategori tidak valid.',
             'judul.required'         => 'Judul pesan wajib diisi.',
             'isi.required'           => 'Isi pesan wajib diisi.',
             'isi.max'                => 'Isi pesan maksimal 2000 karakter.',
@@ -34,10 +31,10 @@ class PesanBantuanController extends Controller
  
         PesanBantuan::create([
             'user_id'       => Auth::id(),
-            'nama_pengirim' => $request->nama_pengirim,
+            'nama_pengirim' => Auth::user()->name,
             'kategori'      => $request->kategori,
-            'judul'         => $request->judul,
-            'isi'           => $request->isi,
+            'judul'         => strip_tags($request->judul),
+            'isi'           => strip_tags($request->isi),
             'status'        => 'belum_ditangani',
         ]);
  

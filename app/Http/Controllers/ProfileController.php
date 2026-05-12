@@ -36,12 +36,6 @@ class ProfileController extends Controller
         // Validate the request data
         $validated = $request->validate([
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'nama' => 'required|string|max:255',
-            'kelas' => 'required|string|max:50',
-            'nisn' => 'required|string|max:20',
-            'tempat_lahir' => 'nullable|string|max:255',
-            'tanggal_lahir' => 'required|date',
-            'jk' => 'required|in:Laki-laki,Perempuan',
             'hobi' => 'nullable|string|max:255',
             'cita' => 'nullable|string|max:255',
             'teman' => 'nullable|string|max:255',
@@ -50,7 +44,6 @@ class ProfileController extends Controller
             'teman_terbaik_json.*.nomor' => 'nullable|string|max:20',
             'makan' => 'nullable|string|max:255',
             'warna' => 'nullable|string|max:50',
-            'gender' => 'nullable|in:Laki-laki,Perempuan',
             'hp' => 'nullable|string|max:20',
             'ortu' => 'nullable|string|max:20',
             'email' => 'required|email|max:255',
@@ -88,15 +81,7 @@ class ProfileController extends Controller
             // Update user profile data
             /** @var \App\Models\User $user */
             $user->update([
-                'name'      => $validated['nama'],
                 'foto'      => $validated['foto'] ?? $user->foto,
-                'nisn'      => $validated['nisn'],
-                'kelas_id'  => $kelasId,
-                'tempat_lahir' => $validated['tempat_lahir'],
-                'birth_date' => $validated['tanggal_lahir'],
-                'ttl' => $validated['tempat_lahir'] . ', ' . date('d F Y', strtotime($validated['tanggal_lahir'])),
-                'jenis_kelamin' => $validated['jk'],
-                'gender' => $validated['jk'], // Sync gender with jenis_kelamin
                 'hobi' => $validated['hobi'] ?? null,
                 'cita_cita' => $validated['cita'] ?? null,
                 'teman_terbaik' => $validated['teman'] ?? null,

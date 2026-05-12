@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -55,11 +54,8 @@ class SendDailyNotification extends Command
             $field = 'sholat_isya';
             $namaSholat = 'Isya';
         }
-
-        if ($now >= '07:50' && $now < '08:10') {
-            $field = 'sholat_subuh'; // pinjam field subuh untuk tes
-            $namaSholat = 'Testing';
-        }
+        // $field = 'sholat_subuh';
+        // $namaSholat = 'Subuh';
 
         // kalau bukan jam notif → stop
         if (!$field) {
@@ -91,12 +87,33 @@ class SendDailyNotification extends Command
             try {
                 $messaging->send([
                     'token' => $token,
+
+                    'notification' => [
+                        'title' => "⏰ Waktu $namaSholat Telah Tiba!",
+                        'body'  => "Assalamu'alaikum, yuk catat ibadah $namaSholat kamu hari ini! ✨",
+                        'image' => 'https://7kaih.smkn5telkom.sch.id/img/image.jpg',
+                    ],
+
                     'data' => [
-                        'title' => '⏰ Waktu ' . $namaSholat,
-                        'body'  => 'Jangan lupa isi sholat ' . $namaSholat,
-                        'url'   => '/student/dashboard'
+                        'title' => "⏰ Waktu $namaSholat Telah Tiba!",
+                        'body'  => "Assalamu'alaikum, yuk catat ibadah $namaSholat kamu hari ini! ✨",
+                        'url'   => '/student/dashboard',
+                    ],
+
+                    'webpush' => [
+                        'notification' => [
+                            'icon'  => 'https://7kaih.smkn5telkom.sch.id/img/logo-1.png',
+                            'image' => 'https://7kaih.smkn5telkom.sch.id/img/image.jpg',
+                        ],
+                        'fcm_options' => [
+                            'link' => 'https://7kaih.smkn5telkom.sch.id/student/dashboard',
+                        ],
                     ],
                 ]);
+            } catch (\Kreait\Firebase\Exception\Messaging\NotFound $e) {
+                // Hapus token dari database jika sudah tidak ditemukan/unregistered
+                DB::table('fcm_tokens')->where('token', $token)->delete();
+                Log::warning("Token dihapus karena sudah tidak aktif: $token");
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }

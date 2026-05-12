@@ -450,47 +450,37 @@
                 <div class="field-row">
                     <span class="field-label">Nama Lengkap</span>
                     <span class="field-sep">:</span>
-                    <input type="text" id="p_nama" value="{{ $user->name ?? '' }}" class="field-input"
-                        placeholder="Nama lengkap" />
+                    <span class="field-input">{{ $user->name ?? '-' }}</span>
                 </div>
 
                 <div class="field-row">
                     <span class="field-label">Tempat Lahir</span>
                     <span class="field-sep">:</span>
-                    <input type="text" id="p_tempat_lahir" value="{{ $user->tempat_lahir ?? '' }}"
-                        class="field-input" placeholder="Tempat lahir" />
+                    <span class="field-input">{{ $user->tempat_lahir ?? '-' }}</span>
                 </div>
 
                 <div class="field-row">
                     <span class="field-label">Tanggal Lahir</span>
                     <span class="field-sep">:</span>
-                    <input type="date" id="p_tanggal_lahir" value="{{ $user->birth_date?->format('Y-m-d') ?? '' }}"
-                        class="field-input" />
+                    <span class="field-input">{{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->translatedFormat('d F Y') : '-' }}</span>
                 </div>
 
                 <div class="field-row">
                     <span class="field-label">Jenis Kelamin</span>
                     <span class="field-sep">:</span>
-                    <select id="p_jk" class="field-input cursor-pointer">
-                        <option value="Laki-laki" {{ ($user->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
-                        </option>
-                        <option value="Perempuan" {{ ($user->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan
-                        </option>
-                    </select>
+                    <span class="field-input">{{ $user->gender ?? '-' }}</span>
                 </div>
 
-                <div class="field-row" style="background:#f8fafc; opacity:.8;">
+                <div class="field-row">
                     <span class="field-label">Kelas</span>
                     <span class="field-sep">:</span>
-                    <input type="text" id="p_kelas" value="{{ $user->kelas?->nama_kelas ?? '-' }}"
-                        class="field-input" readonly />
+                    <span class="field-input">{{ $user->kelas?->nama_kelas ?? '-' }}</span>
                 </div>
 
-                <div class="field-row" style="background:#f8fafc; opacity:.8;">
+                <div class="field-row">
                     <span class="field-label">NISN</span>
                     <span class="field-sep">:</span>
-                    <input type="text" id="p_nisn" value="{{ $user->nisn ?? '' }}" class="field-input"
-                        readonly />
+                    <span class="field-input">{{ $user->nisn ?? '-' }}</span>
                 </div>
 
             </div>
@@ -981,12 +971,6 @@
             }
 
             const formData = new FormData();
-            formData.append('nama', document.getElementById('p_nama').value);
-            formData.append('kelas', document.getElementById('p_kelas').value);
-            formData.append('nisn', document.getElementById('p_nisn').value);
-            formData.append('tempat_lahir', document.getElementById('p_tempat_lahir').value);
-            formData.append('tanggal_lahir', document.getElementById('p_tanggal_lahir').value);
-            formData.append('jk', document.getElementById('p_jk').value);
             formData.append('hobi', document.getElementById('f_hobi').value);
             formData.append('cita', document.getElementById('f_cita').value);
             formData.append('makan', document.getElementById('f_makan').value);
