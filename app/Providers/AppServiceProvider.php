@@ -18,20 +18,23 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-        public function boot(): void
-    {
-        // 1. Cek apakah diakses lewat Ngrok
-        if (
-            str_contains(request()->header('host'), 'ngrok-free.dev') ||
-            str_contains(request()->header('host'), 'ngrok.io')
-        ) {
-            URL::forceScheme('https');
-        }
-        // 2. Jika di lokal (Herd / HTTPS)
-        else if (app()->environment('local')) {
-            // Gunakan HTTP untuk lokal agar foto bisa tampil
-            URL::forceScheme('http');
-        }
+public function boot(): void
+{
+    // Production → force HTTPS
+    if (app()->environment('production')) {
+        URL::forceScheme('https');
     }
+    // Ngrok
+    else if (
+        str_contains(request()->header('host'), 'ngrok-free.dev') ||
+        str_contains(request()->header('host'), 'ngrok.io')
+    ) {
+        URL::forceScheme('https');
+    }
+    // Lokal
+    else if (app()->environment('local')) {
+        URL::forceScheme('http');
+    }
+}
 
 }
