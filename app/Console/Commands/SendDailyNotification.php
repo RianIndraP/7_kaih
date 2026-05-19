@@ -38,8 +38,9 @@ class SendDailyNotification extends Command
         if ($now >= '05:30' && $now < '06:30') {
             $field = 'sholat_subuh';
             $namaSholat = 'Subuh';
-        } elseif (date('l', strtotime($now)) === 'Friday' && $now >= '13:00' && $now < '15:00') {
-            $field = 'sholat_jumat';
+        } elseif (date('l') === 'Friday' && $now >= '13:00' && $now < '15:00') {
+            // Tetap gunakan field dzuhur agar database tidak error
+            $field = 'sholat_dzuhur';
             $namaSholat = 'Jumat';
         } elseif ($now >= '13:00' && $now < '14:00') {
             $field = 'sholat_dzuhur';
@@ -90,19 +91,19 @@ class SendDailyNotification extends Command
 
                     'notification' => [
                         'title' => "⏰ Waktu $namaSholat Telah Tiba!",
-                        'body'  => "Assalamu'alaikum, yuk catat ibadah $namaSholat kamu hari ini! ✨",
+                        'body' => "Assalamu'alaikum, yuk catat ibadah $namaSholat kamu hari ini! ✨",
                         'image' => 'https://7kaih.smkn5telkom.sch.id/img/image.jpg',
                     ],
 
                     'data' => [
                         'title' => "⏰ Waktu $namaSholat Telah Tiba!",
-                        'body'  => "Assalamu'alaikum, yuk catat ibadah $namaSholat kamu hari ini! ✨",
-                        'url'   => '/student/dashboard',
+                        'body' => "Assalamu'alaikum, yuk catat ibadah $namaSholat kamu hari ini! ✨",
+                        'url' => '/student/dashboard',
                     ],
 
                     'webpush' => [
                         'notification' => [
-                            'icon'  => 'https://7kaih.smkn5telkom.sch.id/img/logo-1.png',
+                            'icon' => 'https://7kaih.smkn5telkom.sch.id/img/logo-1.png',
                             'image' => 'https://7kaih.smkn5telkom.sch.id/img/image.jpg',
                         ],
                         'fcm_options' => [
