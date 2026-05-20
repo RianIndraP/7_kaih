@@ -9,12 +9,23 @@ class KelasController extends Controller
 {
     public function show($id)
     {
-        $kelas = \App\Models\Kelas::with(['siswa'])->findOrFail($id);
+        $kelas = \App\Models\Kelas::with(['siswa', 'guruWali.user'])->findOrFail($id);
+        $guruList = \App\Models\Guru::with('user')->get();
         
-        // Coba cari guru wali untuk kelas ini jika relasi belum tersedia
-        // Berdasarkan penamaan, mungkin menggunakan where 'kelas_wali' atau 'unit_kerja' dsb
-        // Tapi setidaknya kita kembalikan $kelas untuk saat ini
-        
-        return view('admin.kelas.detail', compact('kelas'));
+        return view('admin.kelas.detail', compact('kelas', 'guruList'));
+    }
+
+    public function updateWali(Request $request, $id)
+    {
+        $request->validate([
+            'guru_wali_id' => 'required|exists:guru,id',
+        ]);
+
+        $kelas = \App\Models\Kelas::findOrFail($id);
+        $kelas->update([
+            'guru_id' => $request->guru_wali_id,
+        ]);
+
+        return redirect()->back()->with('success', 'Wali kelas berhasil diperbarui.');
     }
 }

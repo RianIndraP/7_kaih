@@ -8,7 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $kelas->nama_kelas }} — Buku Tahunan | SMK N 5 Telkom</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         html,
@@ -32,7 +33,19 @@
             </svg>
             Kembali ke Manajemen Kelas
         </a>
-        <span class="text-xs text-gray-400 font-sans">SMK N 5 Telkom Banda Aceh</span>
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-400 font-sans hidden sm:block">SMK N 5 Telkom Banda Aceh</span>
+            <button onclick="openWaliModal()"
+                class="inline-flex items-center gap-2 text-sm text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 px-3 py-1.5 rounded-lg transition-all font-sans">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                Pengaturan Kelas
+            </button>
+        </div>
     </div>
 
     {{-- Cover Banner --}}
@@ -127,8 +140,9 @@
 
                     {{-- Gender Badge --}}
                     @if($s->gender)
-                        <div class="absolute top-3 right-3 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold font-sans
-                            {{ $s->gender == 'Laki-laki' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
+                        <div
+                            class="absolute top-3 right-3 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold font-sans
+                                    {{ $s->gender == 'Laki-laki' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
                             {{ $s->gender == 'Laki-laki' ? 'L' : 'P' }}
                         </div>
                     @endif
@@ -203,6 +217,100 @@
         SMK Negeri 5 Telkom Banda Aceh &nbsp;·&nbsp; {{ $kelas->nama_kelas }} &nbsp;·&nbsp; {{ date('Y') }}
     </div>
 
+{{-- Modal Pengaturan Wali Kelas --}}
+<div id="waliModal" class="fixed inset-0 bg-black/40 z-50 hidden items-center justify-center backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md" onclick="event.stopPropagation()">
+
+        {{-- Head --}}
+        <div class="flex items-start justify-between gap-3 p-5 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-[15px] font-semibold text-gray-900 font-sans">Pengaturan Wali Kelas</h3>
+                    <p class="text-xs text-gray-400 font-sans mt-0.5">{{ $kelas->nama_kelas }}</p>
+                </div>
+            </div>
+            <button onclick="closeWaliModal()" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        {{-- Body --}}
+        <form action="{{ route('admin.kelas.updateWali', $kelas->id) }}" method="POST" class="p-5 space-y-4">
+            @csrf
+            @method('PATCH')
+
+            {{-- Wali saat ini --}}
+            <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3">
+                @php
+                    $waliNow = $kelas->guruWali->user->name ?? 'Belum ditentukan';
+                    $waliInitNow = collect(explode(' ', $waliNow))->take(2)->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
+                @endphp
+                <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold font-sans flex-shrink-0" id="previewAvatar">
+                    {{ $waliInitNow }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-[10px] text-gray-400 font-sans uppercase tracking-wider mb-0.5">Wali kelas saat ini</p>
+                    <p class="text-sm font-semibold text-gray-800 font-sans truncate" id="previewName">{{ $waliNow }}</p>
+                </div>
+                <span class="text-[10px] bg-green-50 text-green-700 font-semibold font-sans px-2.5 py-1 rounded-full shrink-0">Aktif</span>
+            </div>
+
+            {{-- Select guru --}}
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 font-sans">
+                    Pilih Guru Wali Kelas
+                </label>
+                <select name="guru_wali_id" id="guruWaliSelect" required
+                        onchange="updateWaliPreview(this)"
+                        class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-sans text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 bg-white transition-all">
+                    <option value="">— Pilih Guru —</option>
+                    @foreach($guruList as $guru)
+                        <option value="{{ $guru->id }}"
+                                data-nama="{{ $guru->user->name ?? 'Guru ' . $guru->id }}"
+                                {{ $kelas->guru_id == $guru->id ? 'selected' : '' }}>
+                            {{ $guru->user->name ?? 'Guru ' . $guru->id }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Info --}}
+            <div class="flex gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-3">
+                <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+                </svg>
+                <p class="text-xs text-amber-700 font-sans leading-relaxed">
+                    Perubahan wali kelas akan langsung berlaku. Pastikan guru yang dipilih sudah dikonfirmasi.
+                </p>
+            </div>
+
+            {{-- Footer --}}
+            <div class="flex justify-end gap-2.5 pt-1">
+                <button type="button" onclick="closeWaliModal()"
+                        class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors font-sans">
+                    Batal
+                </button>
+                <button type="submit"
+                        class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors font-sans">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                        <polyline points="17,21 17,13 7,13 7,21"/>
+                        <polyline points="7,3 7,8 15,8"/>
+                    </svg>
+                    Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 </body>
 
 </html>
@@ -215,4 +323,25 @@
             card.style.display = match ? '' : 'none';
         });
     });
+function openWaliModal() {
+    const m = document.getElementById('waliModal');
+    m.classList.remove('hidden');
+    m.style.display = 'flex';
+}
+function closeWaliModal() {
+    const m = document.getElementById('waliModal');
+    m.style.display = 'none';
+    m.classList.add('hidden');
+}
+function updateWaliPreview(sel) {
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt.value) return;
+    const nama = opt.dataset.nama;
+    const initials = nama.split(' ').slice(0,2).map(w => w[0].toUpperCase()).join('');
+    document.getElementById('previewName').textContent = nama;
+    document.getElementById('previewAvatar').textContent = initials;
+}
+document.getElementById('waliModal').addEventListener('click', function(e) {
+    if (e.target === this) closeWaliModal();
+});
 </script>

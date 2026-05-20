@@ -269,6 +269,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('/kelas/{id}', [ManajemenKelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{id}', [ManajemenKelasController::class, 'destroy'])->name('kelas.destroy');
     Route::get('/kelas/{kelas}', [KelasController::class, 'show'])->name('kelas.show');
+    Route::patch('/kelas/{id}/wali', [KelasController::class, 'updateWali'])->name('kelas.updateWali');
 
     // Manajemen Website
     Route::get('/manajemen-website', [App\Http\Controllers\Admin\WebsiteManagementController::class, 'index'])->name('manajemen-website');
