@@ -134,10 +134,10 @@
                     @endif
 
                     {{-- Photo --}}
-                    <div class="w-[90px] h-[108px] min-w-[90px] min-h-[108px] max-w-[90px] max-h-[108px] rounded-[3px] overflow-hidden mb-3 flex-shrink-0 relative flex items-center justify-center"
+                    <div class="w-[90px] h-[108px] rounded-[3px] overflow-hidden mb-3 flex-shrink-0"
                         style="background:{{ $ac[0] }}">
                         @if($s->foto)
-                            <img src="{{ Storage::url($s->foto) }}" alt="{{ $s->name }}" class="absolute inset-0 w-full h-full object-cover" style="width: 100%; height: 100%;">
+                            <img src="{{ Storage::url($s->foto) }}" alt="{{ $s->name }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center">
                                 <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold font-sans"
