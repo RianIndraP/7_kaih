@@ -2,11 +2,12 @@
 <html lang="id">
 
 <head>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-1.png') }}">
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $kelas->nama_kelas }} — Buku Tahunan | SMK N 5 Telkom</title>
+    <title>{{ $kelas->nama_kelas }} — Profil Kelas | SMK N 5 Telkom</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -75,7 +76,7 @@
         <div class="relative z-10">
             <span
                 class="inline-block text-[11px] font-sans tracking-[2px] uppercase px-3.5 py-1 rounded-full border border-white/25 bg-white/15 mb-3">
-                Buku Tahunan Kelas
+                Profil Kelas
             </span>
             <h1 class="text-4xl font-bold tracking-tight mb-1" style="font-family:'Georgia',serif">
                 {{ $kelas->nama_kelas }}
