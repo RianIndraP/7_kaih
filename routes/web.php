@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ManajemenGuruController as AdminManajemenGuruController;
 use App\Http\Controllers\Admin\ManajemenKelasController;
+use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\Admin\ManajemenSiswaController as AdminManajemenSiswaController;
 use App\Http\Controllers\Admin\PesanBantuanController as AdminPesanBantuanController;
 use App\Http\Controllers\AuthController;
@@ -267,6 +268,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/kelas', [ManajemenKelasController::class, 'store'])->name('kelas.store');
     Route::put('/kelas/{id}', [ManajemenKelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{id}', [ManajemenKelasController::class, 'destroy'])->name('kelas.destroy');
+    Route::get('/kelas/{kelas}', [KelasController::class, 'show'])->name('kelas.show');
 
     // Manajemen Website
     Route::get('/manajemen-website', [App\Http\Controllers\Admin\WebsiteManagementController::class, 'index'])->name('manajemen-website');

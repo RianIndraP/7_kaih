@@ -11,10 +11,15 @@ class Kelas extends Model
 
     protected $table = 'kelas';
 
-    protected $fillable = ['nama_kelas'];
+    protected $fillable = ['nama_kelas', 'color_index', 'guru_id'];
 
     public function siswa()
     {
         return $this->hasMany(User::class, 'kelas_id');
+    }
+
+    public function guruWali()
+    {
+        return $this->belongsTo(Guru::class, 'guru_id');
     }
 }
