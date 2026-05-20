@@ -74,10 +74,6 @@ class ProfileController extends Controller
                 $validated['foto'] = $path;
             }
 
-            // Find kelas_id based on nama_kelas
-            $kelas = Kelas::where('nama_kelas', $validated['kelas'])->first();
-            $kelasId = $kelas ? $kelas->id : null;
-
             // Update user profile data
             /** @var \App\Models\User $user */
             $user->update([
