@@ -11,8 +11,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Ambil HANYA user yang merupakan siswa (memiliki NISN) yang sudah ada di database
-        $students = User::whereNotNull('nisn')->get(); 
+        // 1. Ambil HANYA user yang merupakan siswa (memiliki NISN)
+        $students = User::whereNotNull('nisn')->get();
 
         if ($students->isEmpty()) {
             $this->command->error('Gagal: Tidak ditemukan data user dengan NISN (Siswa) di database Anda!');
@@ -27,20 +27,20 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('Memulai pengisian data riwayat 1 bulan untuk ' . $students->count() . ' siswa...');
 
-        // 3. Lakukan looping untuk setiap siswa yang ditemukan
+        // 3. Lakukan looping untuk setiap siswa
         $students->each(function ($student) use ($dates) {
-            
+
             $dataSiswa = [];
 
             foreach ($dates as $tanggal) {
-                
+
                 // Membuat struktur template data acak dari objek Factory
                 $templateData = KebiasaanHarian::factory()->make([
                     'user_id' => $student->id,
-                    'tanggal' => $tanggal, 
+                    'tanggal' => $tanggal,
                 ])->toArray();
 
-                // Memastikan format tanggal aman dalam bentuk string Y-m-d (bukan ISO)
+                // Memastikan format tanggal aman dalam bentuk string Y-m-d
                 $templateData['tanggal'] = $tanggal;
 
                 // Mengubah format array PHP menjadi string JSON agar siap masuk via Bulk Insert
@@ -50,11 +50,11 @@ class DatabaseSeeder extends Seeder
                 $dataSiswa[] = $templateData;
             }
 
-            // 4. Lakukan Bulk Insert per siswa agar eksekusi memori server ringan dan instan
-            KebiasaanHarian::insert($dataSiswa);
-            
+            // PERBAIKAN: Gunakan insertOrIgnore agar data yang duplikat otomatis dilewati tanpa error
+            KebiasaanHarian::insertOrIgnore($dataSiswa);
+
         });
 
-        $this->command->info('Sukses! Seluruh data kebiasaan siswa selama 1 bulan berhasil dimasukkan.');
+        $this->command->info('Sukses! Data kebiasaan siswa yang kosong berhasil dilengkapi selama 1 bulan.');
     }
 }
