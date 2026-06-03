@@ -242,16 +242,6 @@
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
-                    <input type="date" name="birth_date" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label>
                     <select name="gender" required 
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
@@ -260,15 +250,20 @@
                         <option value="Perempuan">Perempuan</option>
                     </select>
                 </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Guru Wali <span class="text-red-500">*</span></label>
-                    <select name="guru_wali_id" required 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">Pilih Guru Wali</option>
-                        @foreach($guruWaliList as $guru)
-                            <option value="{{ $guru->id }}">{{ $guru->user->name ?? 'Guru ' . $guru->id }}</option>
-                        @endforeach
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tempat Lahir <span class="text-red-500">*</span></label>
+                    <input type="text" name="tempat_lahir" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
+                    <input type="date" name="birth_date" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Kelas <span class="text-red-500">*</span></label>
@@ -287,6 +282,16 @@
                             </svg>
                         </button>
                     </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Guru Wali <span class="text-red-500">*</span></label>
+                    <select name="guru_wali_id" required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                        <option value="">Pilih Guru Wali</option>
+                        @foreach($guruWaliList as $guru)
+                            <option value="{{ $guru->id }}">{{ $guru->user->name ?? 'Guru ' . $guru->id }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Angkatan <span class="text-red-500">*</span></label>
@@ -343,16 +348,6 @@
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
-                    <input type="date" name="birth_date" id="editBirthDate" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" id="editName" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label>
                     <select name="gender" id="editGender" required 
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
@@ -361,15 +356,20 @@
                         <option value="Perempuan">Perempuan</option>
                     </select>
                 </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" id="editName" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Guru Wali <span class="text-red-500">*</span></label>
-                    <select name="guru_wali_id" id="editGuruWali" required 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">Pilih Guru Wali</option>
-                        @foreach($guruWaliList as $guru)
-                            <option value="{{ $guru->id }}">{{ $guru->user->name ?? 'Guru ' . $guru->id }}</option>
-                        @endforeach
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tempat Lahir <span class="text-red-500">*</span></label>
+                    <input type="text" name="tempat_lahir" id="editBirthPlace" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
+                    <input type="date" name="birth_date" id="editBirthDate" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Kelas <span class="text-red-500">*</span></label>
@@ -388,6 +388,16 @@
                             </svg>
                         </button>
                     </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Guru Wali <span class="text-red-500">*</span></label>
+                    <select name="guru_wali_id" id="editGuruWali" required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                        <option value="">Pilih Guru Wali</option>
+                        @foreach($guruWaliList as $guru)
+                            <option value="{{ $guru->id }}">{{ $guru->user->name ?? 'Guru ' . $guru->id }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Angkatan <span class="text-red-500">*</span></label>
@@ -552,6 +562,7 @@ function openEditModal(id) {
             document.getElementById('editName').value = data.name;
             document.getElementById('editKelasSelect').value = data.kelas_id;
             document.getElementById('editAngkatan').value = data.angkatan;
+            document.getElementById('editBirthPlace').value = data.tempat_lahir ?? '';
             document.getElementById('editBirthDate').value = data.birth_date ?? '';
             document.getElementById('editGuruWali').value = data.guru_wali_id;
             document.getElementById('editGender').value = data.gender;
