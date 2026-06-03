@@ -14,13 +14,13 @@ class KebiasaanHarianFactory extends Factory
     {
         return [
             'user_id' => User::factory(), // Akan otomatis terhubung ke ID User
-            'tanggal' => $this->faker->dateTimeBetween('-1 month', 'now')->format('Y-m-d'),
-            
+            'tanggal' => $this->faker->dateTimeBetween('-1 month', 'now'),
+
             // Bangun Pagi
             'bangun_pagi' => $this->faker->boolean(85), // 85% kemungkinan true
             'jam_bangun' => $this->faker->randomElement(['04:15:00', '04:30:00', '04:45:00']),
             'bangun_catatan' => $this->faker->randomElement(['Alhamdulillah segar', 'Agak ngantuk', null]),
-            
+
             // Beribadah
             'sholat_subuh' => $this->faker->boolean(95),
             'jam_sholat_subuh' => '04:50:00',
@@ -35,12 +35,12 @@ class KebiasaanHarianFactory extends Factory
             'baca_quran' => $this->faker->boolean(70),
             'quran_surah' => $this->faker->randomElement(['Al-Mulk', 'Al-Kahfi', 'Al-Waqiah', 'Juz 30']),
             'ibadah_catatan' => null,
-            
+
             // Berolahraga
             'berolahraga' => $this->faker->boolean(40),
             'jenis_olahraga' => $this->faker->randomElement([['Lari Pagi', 'Push Up'], ['Main Bola'], ['Bersepeda'], null]), // Mengisi array JSON
             'olahraga_catatan' => null,
-            
+
             // Makan Sehat
             'makan_sehat' => $this->faker->boolean(75),
             'makan_pagi' => 'Nasi Uduk / Sayur',
@@ -50,16 +50,16 @@ class KebiasaanHarianFactory extends Factory
             'makan_malam' => 'Nasi Goreng / Buah',
             'makan_malam_done' => $this->faker->boolean(80),
             'makan_catatan' => 'Minum air putih 2 liter hari ini',
-            
+
             // Gemar Belajar
             'gemar_belajar' => $this->faker->boolean(80),
             'materi_belajar' => $this->faker->randomElement(['Matematika', 'Bahasa Inggris', 'Informatika', 'Sejarah']),
             'belajar_catatan' => 'Mengerjakan PR sekolah',
-            
+
             // Bermasyarakat
             'bersama' => $this->faker->randomElement([['Keluarga', 'Teman Sekelas'], ['Orang Tua'], ['Tetangga'], null]), // Mengisi array JSON
             'masyarakat_catatan' => null,
-            
+
             // Tidur Cepat
             'tidur_cepat' => $this->faker->boolean(70),
             'jam_tidur' => $this->faker->randomElement(['21:00:00', '21:30:00', '22:00:00']),
