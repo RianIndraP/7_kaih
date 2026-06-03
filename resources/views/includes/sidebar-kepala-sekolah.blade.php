@@ -84,16 +84,16 @@
     </a>
 
 
-</nav>
+    {{-- ── LOGOUT ── --}}
+    <div class="px-2.5 py-2.5 border-t border-white/10 mt-2">
+        <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+            class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[11px]
+                       text-[13px] font-medium text-red-300/82 bg-transparent border-none
+                       cursor-pointer transition-all duration-200 font-sans
+                       hover:bg-red-500/18 hover:text-red-300">
+            <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">🚪</span>
+            Keluar
+        </button>
+    </div>
 
-{{-- ── LOGOUT ── --}}
-<div class="px-2.5 py-2.5 border-t border-white/10">
-    <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-        class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[11px]
-                   text-[13px] font-medium text-red-300/82 bg-transparent border-none
-                   cursor-pointer transition-all duration-200 font-sans
-                   hover:bg-red-500/18 hover:text-red-300">
-        <span class="w-[17px] h-[17px] shrink-0 flex items-center justify-center text-lg">🚪</span>
-        Keluar
-    </button>
-</div>
+</nav>
