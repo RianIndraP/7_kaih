@@ -41,6 +41,7 @@ class ManajemenGuruController extends Controller
             'nik' => 'nullable|string|unique:users,nik',
             'name' => 'required|string|max:255',
             'gender' => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir' => 'nullable|string|max:255',
             'birth_date' => 'nullable|date',
             // Guru specific fields
             'status_pegawai' => 'nullable|string',
@@ -53,6 +54,7 @@ class ManajemenGuruController extends Controller
             'nip' => $validated['nip'] ?? null,
             'nik' => $validated['nik'] ?? null,
             'gender' => $validated['gender'],
+            'tempat_lahir' => $validated['tempat_lahir'] ?? null,
             'birth_date' => $validated['birth_date'] ?? null,
             'no_telepon' => null,
             'email' => null,
@@ -79,6 +81,7 @@ class ManajemenGuruController extends Controller
             'nik' => 'nullable|string|unique:users,nik,' . $user->id,
             'name' => 'required|string|max:255',
             'gender' => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir' => 'nullable|string|max:255',
             'birth_date' => 'nullable|date',
             'no_telepon' => 'nullable|string',
             'password' => 'nullable|string|min:6',
@@ -92,6 +95,7 @@ class ManajemenGuruController extends Controller
         $user->nip = $validated['nip'] ?? null;
         $user->nik = $validated['nik'] ?? null;
         $user->gender = $validated['gender'];
+        $user->tempat_lahir = $validated['tempat_lahir'] ?? null;
         $user->birth_date = $validated['birth_date'] ?? null;
         $user->no_telepon = $validated['no_telepon'] ?? null;
         if (!empty($validated['password'])) {
@@ -406,6 +410,7 @@ class ManajemenGuruController extends Controller
             'nik' => $guru->user->nik,
             'name' => $guru->user->name,
             'gender' => $guru->user->gender,
+            'tempat_lahir' => $guru->user->tempat_lahir,
             'birth_date' => $guru->user->birth_date ? $guru->user->birth_date->format('Y-m-d') : null,
             'no_telepon' => $guru->user->no_telepon,
             'status_pegawai' => $guru->status_pegawai,
