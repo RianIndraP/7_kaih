@@ -53,7 +53,7 @@
                 @endforeach
             </tbody>
         </table>
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded mt-6 text-sm font-medium shadow-md hover:bg-blue-700 transition-colors print:hidden">
+        <button type="submit" class="w-full md:w-auto bg-blue-600 text-white px-6 py-2 rounded mt-6 text-sm font-medium shadow-md hover:bg-blue-700 transition-colors print:hidden">
             Simpan
         </button>
     </form>

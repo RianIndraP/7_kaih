@@ -1,4 +1,4 @@
-<div class="mt-8 flex justify-between items-start px-10">
+<div class="mt-8 flex flex-col sm:flex-row justify-between items-center sm:items-start px-4 sm:px-10 gap-8 sm:gap-0">
     <div class="text-center text-sm text-gray-700">
         <div>Mengetahui,</div>
         <div class="font-semibold mt-0.5">Kepala Sekolah</div>

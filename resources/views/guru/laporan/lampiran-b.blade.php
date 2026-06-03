@@ -27,8 +27,12 @@
                     {{ request('tahun', now()->year) }}</div>
                 <div><span class="font-semibold">Guru Wali :</span> {{ $guru->user->name }}</div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm border-collapse">
+            {{-- Mobile scroll hint --}}
+            <div class="md:hidden text-xs text-gray-500 text-center mb-2 print:hidden">
+                &larr; Geser ke kanan untuk melihat semua data &rarr;
+            </div>
+            <div class="overflow-x-auto pb-2">
+                <table class="w-full min-w-[700px] text-sm border-collapse">
                     <thead>
                         <tr class="bg-blue-50 text-gray-700">
                             <th class="border border-gray-300 px-3 py-2 text-left font-semibold">Aspek
@@ -78,9 +82,9 @@
         </div>
     @endforeach
 
-    <div class="mt-4 text-right">
+    <div class="mt-4 flex justify-end">
         <button type="submit"
-            class="bg-blue-600 text-white px-4 py-2 rounded print:hidden {{ $muridList->isEmpty() ? 'opacity-50 cursor-not-allowed' : '' }}"
+            class="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded font-medium transition-colors shadow-sm print:hidden {{ $muridList->isEmpty() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700' }}"
             {{ $muridList->isEmpty() ? 'disabled' : '' }}>
             Simpan Lampiran B
         </button>

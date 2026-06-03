@@ -56,7 +56,12 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto print-table-container">
+        {{-- Mobile scroll hint --}}
+        <div class="md:hidden text-xs text-gray-500 text-center mb-2 px-2 print:hidden">
+            &larr; Geser ke kanan untuk melihat semua data &rarr;
+        </div>
+
+        <div class="overflow-x-auto pb-2 print-table-container">
             <table class="w-full min-w-[900px] text-sm border-collapse print-table">
                 <thead>
                     <tr class="bg-blue-50 text-gray-700">
@@ -117,7 +122,7 @@
 
         <div class="mt-4 flex justify-end">
             <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors shadow-sm print:hidden">
+                class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors shadow-sm print:hidden">
                 Simpan Lampiran C
             </button>
         </div>

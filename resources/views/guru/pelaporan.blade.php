@@ -31,13 +31,13 @@
 
 @section('content')
 
-    <div class="p-6 min-h-screen" id="pelaporan-container">
+    <div class="p-3 md:p-6 min-h-screen" id="pelaporan-container">
 
         {{-- ══ FILTER BAR ══ --}}
         <div
-            class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex flex-wrap items-center gap-2 print:hidden">
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex flex-col md:flex-row flex-wrap md:items-center gap-3 print:hidden">
             <select
-                class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
+                class="w-full md:w-auto text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
                 id="lampiranSelect" onchange="handleLampiran(this.value)">
                 <option value="" selected>Pilih Lampiran</option>
                 <option value="A">Lampiran A - ( Identitas Murid Dampingan )</option>
@@ -48,7 +48,7 @@
             </select>
 
             <select
-                class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="sub-filter hidden w-full md:w-auto text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-bulan">
                 <option value="" disabled selected>-- Bulan --</option>
                 @foreach ([1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'] as $num => $b)
@@ -57,7 +57,7 @@
             </select>
 
             <select
-                class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="sub-filter hidden w-full md:w-auto text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-pertemuan">
                 <option value="" disabled selected>-- Pertemuan --</option>
                 @foreach ($pertemuanData as $pt)
@@ -69,7 +69,7 @@
             </select>
 
             <select
-                class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="sub-filter hidden w-full md:w-auto text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-tahun">
                 @foreach ([2024, 2025, 2026] as $y)
                     <option value="{{ $y }}">{{ $y }}</option>
@@ -78,13 +78,13 @@
 
             {{-- Filter Semester untuk Lampiran D --}}
             <select
-                class="sub-filter hidden text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="sub-filter hidden w-full md:w-auto text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 id="sf-semester">
                 <option value="Semester Ganjil">Semester Ganjil</option>
                 <option value="Semester Genap">Semester Genap</option>
             </select>
 
-            <span class="flex items-center gap-1 text-xs text-gray-400 italic">
+            <span class="flex justify-center items-center gap-1 text-xs text-gray-400 italic w-full md:w-auto">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10" />
@@ -94,23 +94,25 @@
                 Pilih Lampiran yang ingin di unduh
             </span>
 
-            <div class="flex-1"></div>
+            <div class="hidden md:block flex-1"></div>
 
-            <button
-                class="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
-                type="button" onclick="applyFilter()">Cari</button>
+            <div class="flex flex-col sm:flex-row w-full md:w-auto gap-2">
+                <button
+                    class="w-full sm:w-auto px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                    type="button" onclick="applyFilter()">Cari</button>
 
-            <button
-                class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                type="button" onclick="forceWhiteBackgroundAndPrint()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                Download PDF
-            </button>
+                <button
+                    class="flex justify-center items-center gap-1.5 w-full sm:w-auto px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    type="button" onclick="forceWhiteBackgroundAndPrint()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Download PDF
+                </button>
+            </div>
         </div>
 
         {{-- ══ DOC WRAP ══ --}}
@@ -272,7 +274,13 @@
             border-radius: 0.75rem;
             border: 1px solid #e5e7eb;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
-            padding: 1.5rem;
+            padding: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .lampiran-panel {
+                padding: 1.5rem;
+            }
         }
 
         @media print {
