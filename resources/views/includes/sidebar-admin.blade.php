@@ -1,7 +1,8 @@
 {{-- ── LOGO ── --}}
 <div class="flex items-center gap-3 px-4 pt-5 pb-4 border-b border-white/10 relative">
 
-    <div class="w-10 h-10 rounded-xl bg-white/18 border border-white/28 overflow-hidden flex items-center justify-center shrink-0">
+    <div
+        class="w-10 h-10 rounded-xl bg-white/18 border border-white/28 overflow-hidden flex items-center justify-center shrink-0">
         <img src="{{ asset('img/logo-1.png') }}" alt="Logo" class="w-9 h-9 object-contain">
     </div>
 
@@ -10,12 +11,11 @@
         <p class="text-[11px] text-white/55 leading-tight">Telkom Banda Aceh</p>
     </div>
 
-    <button id="sbCloseBtn"
-        class="lg:hidden flex items-center justify-center w-7 h-7 rounded-lg
+    <button id="sbCloseBtn" class="lg:hidden flex items-center justify-center w-7 h-7 rounded-lg
                bg-white/15 text-white border-none cursor-pointer shrink-0
                hover:bg-white/25 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
     </button>
 </div>
@@ -25,7 +25,7 @@
 
     @php
         $link = fn(string $route, string $label, string $icon, string $match) =>
-            view()->make('includes._sb-link', compact('route','label','icon','match'))->render();
+            view()->make('includes._sb-link', compact('route', 'label', 'icon', 'match'))->render();
 
         $groups = [
             null => [
@@ -57,16 +57,15 @@
 
         @foreach ($items as [$routeName, $label, $iconPath, $matchPattern])
             @php $isActive = request()->routeIs($matchPattern); @endphp
-            <a href="{{ route($routeName) }}"
-                class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px]
-                       text-[13px] font-medium no-underline transition-all duration-200
-                       {{ $isActive
-                           ? 'bg-white/22 text-white font-bold nav-active-accent'
-                           : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
+            <a href="{{ route($routeName) }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px]
+                               text-[13px] font-medium no-underline transition-all duration-200
+                               {{ $isActive
+                    ? 'bg-white/22 text-white font-bold nav-active-accent'
+                    : 'text-white/72 hover:bg-white/14 hover:text-white hover:translate-x-[3px]' }}">
                 <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     @foreach (explode(' M', $iconPath) as $i => $part)
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                            d="{{ $i === 0 ? $part : 'M'.$part }}"/>
+                            d="{{ $i === 0 ? $part : 'M' . $part }}" />
                     @endforeach
                 </svg>
                 <span class="flex-1">{{ $label }}</span>
@@ -77,20 +76,18 @@
         @endforeach
 
     @endforeach
-
-</nav>
-
-{{-- ── LOGOUT ── --}}
-<div class="px-2.5 pb-3 border-t border-white/10 pt-2.5">
-    <button onclick="document.getElementById('logout-form').submit()"
-        class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[11px]
+    {{-- ── LOGOUT ── --}}
+    <div class="px-2.5 pb-3 border-t border-white/10 pt-2.5">
+        <button onclick="document.getElementById('logout-form').submit()" class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[11px]
                text-[13px] font-medium text-red-300/80 bg-transparent border-none
                cursor-pointer transition-all duration-200 font-sans
                hover:bg-red-500/18 hover:text-red-300">
-        <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-        </svg>
-        Keluar
-    </button>
-</div>
+            <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Keluar
+        </button>
+    </div>
+
+</nav>
