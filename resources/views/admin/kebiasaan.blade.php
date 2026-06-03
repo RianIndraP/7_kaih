@@ -108,35 +108,9 @@
         </table>
     </div>
 
-    {{-- Pagination --}}
-    @if ($kebiasaan->hasPages())
-        <div class="mt-4 flex items-center justify-center gap-1">
-            {{-- First page --}}
-            <a href="{{ $kebiasaan->url(1) }}" class="px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50 {{ $kebiasaan->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
-                &lt;&lt;
-            </a>
-            
-            {{-- Previous page --}}
-            <a href="{{ $kebiasaan->previousPageUrl() }}" class="px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50 {{ $kebiasaan->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
-                &lt;
-            </a>
-
-            {{-- Page numbers --}}
-            @foreach ($kebiasaan->getUrlRange(1, $kebiasaan->lastPage()) as $page => $url)
-                <a href="{{ $url }}" class="px-3 py-1.5 border rounded text-sm font-semibold {{ $page == $kebiasaan->currentPage() ? 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white border-blue-600' : 'border-gray-300 text-gray-600 hover:bg-gray-50' }}">
-                    {{ $page }}
-                </a>
-            @endforeach
-
-            {{-- Next page --}}
-            <a href="{{ $kebiasaan->nextPageUrl() }}" class="px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50 {{ $kebiasaan->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}">
-                &gt;
-            </a>
-
-            {{-- Last page --}}
-            <a href="{{ $kebiasaan->url($kebiasaan->lastPage()) }}" class="px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50 {{ $kebiasaan->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}">
-                &gt;&gt;
-            </a>
+    @if($kebiasaan->hasPages())
+        <div class="mt-4">
+            {{ $kebiasaan->links() }}
         </div>
     @endif
 </div>
