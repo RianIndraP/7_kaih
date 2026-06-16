@@ -39,6 +39,10 @@ class PemantauanKuisController extends Controller
             ];
         });
 
+        // Calculate totals BEFORE filtering so the dashboard numbers remain accurate
+        $totalSiswa = $siswaList->count();
+        $totalSudah = $data->where('status', 'sudah_dikerjakan')->count();
+
         if ($statusFilter) {
             if ($statusFilter === 'sudah') {
                 $data = $data->filter(fn($d) => $d['status'] === 'sudah_dikerjakan');
@@ -51,8 +55,8 @@ class PemantauanKuisController extends Controller
             'kuisList' => $kuisList,
             'selectedKuis' => $selectedKuis,
             'data' => $data,
-            'totalSiswa' => $siswaList->count(),
-            'totalSudah' => $siswaList->count() ? $data->where('status', 'sudah_dikerjakan')->count() : 0,
+            'totalSiswa' => $totalSiswa,
+            'totalSudah' => $totalSudah,
         ]);
     }
 }

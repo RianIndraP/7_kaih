@@ -25,11 +25,15 @@
             <form method="GET" class="flex flex-wrap gap-3">
                 <select name="kuis_id" onchange="this.form.submit()"
                     class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
-                    @foreach($kuisList as $k)
-                        <option value="{{ $k->id }}" {{ ($selectedKuis?->id ?? null) == $k->id ? 'selected' : '' }}>
-                            {{ $k->judul }} — {{ $k->tema }}
-                        </option>
-                    @endforeach
+                    @if($kuisList->isEmpty())
+                        <option value="">Belum ada kuis tersedia</option>
+                    @else
+                        @foreach($kuisList as $k)
+                            <option value="{{ $k->id }}" {{ ($selectedKuis?->id ?? null) == $k->id ? 'selected' : '' }}>
+                                {{ $k->judul }} — {{ $k->tema }}
+                            </option>
+                        @endforeach
+                    @endif
                 </select>
                 <select name="status" onchange="this.form.submit()"
                     class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
