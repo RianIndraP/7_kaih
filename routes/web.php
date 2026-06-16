@@ -113,9 +113,15 @@ Route::middleware(['auth', 'siswa', 'profile.complete', 'website.lock'])->prefix
 
     // Virtual Pet API
     Route::post('/api/pet/change-form', [VirtualPetController::class, 'changeForm'])->name('pet.change-form');
-    
+
     // Streak API
     Route::post('/api/streak/recover', [\App\Http\Controllers\Api\StreakController::class, 'recover'])->name('streak.recover');
+    // Kuis Literasi & Numerasi
+
+    Route::get('/kuis', [\App\Http\Controllers\Student\KuisController::class, 'index'])->name('kuis');
+    Route::get('/kuis/{id}', [\App\Http\Controllers\Student\KuisController::class, 'show'])->name('kuis.show');
+    Route::post('/kuis/{id}/submit', [\App\Http\Controllers\Student\KuisController::class, 'submit'])->name('kuis.submit');
+    Route::get('/kuis/{id}/status', [\App\Http\Controllers\Student\KuisController::class, 'checkStatus'])->name('kuis.status');
 });
 
 // ── Guru (protected) ──────────────────────────────────────────────────────────
@@ -158,16 +164,6 @@ Route::middleware(['auth', 'guru', 'website.lock'])->prefix('guru')->name('guru.
     Route::post('/pelaporan/lampiran-b', [GuruPelaporanController::class, 'storeLampiranB'])->name('lampiran-b.store');  // Lampiran B
     Route::post('/pelaporan/lampiran-c', [GuruPelaporanController::class, 'storeLampiranC'])->name('lampiran-c.store');  // Lampiran C
 
-
-    // Kirim Pesan ke Siswa
-    // Route::get('/kirim-pesan', [GuruKirimPesanController::class, 'index'])->name('kirim-pesan');
-    // Route::post('/kirim-pesan', [GuruKirimPesanController::class, 'store'])->name('kirim-pesan.store');
-
-    // Pesan Bantuan dari Siswa
-    // Route::get('/pesan-bantuan', [GuruPesanBantuanController::class, 'index'])->name('pesan-bantuan');
-    // Route::post('/pesan-bantuan/{id}/balas', [GuruPesanBantuanController::class, 'balas'])->name('pesan-bantuan.balas');
-    // Route::patch('/pesan-bantuan/{id}/status', [GuruPesanBantuanController::class, 'updateStatus'])->name('pesan-bantuan.status');
-
     // Ganti Password
     Route::get('/ganti-password', [GuruGantiPasswordController::class, 'index'])->name('ganti-password');
     Route::post('/ganti-password', [GuruGantiPasswordController::class, 'update'])->name('ganti-password.update');
@@ -175,6 +171,9 @@ Route::middleware(['auth', 'guru', 'website.lock'])->prefix('guru')->name('guru.
     // Kirim Pesan Bantuan
     Route::get('/kirim-pesan-bantuan', [GuruPesanBantuanController::class, 'index'])->name('kirim-pesan-bantuan');
     Route::post('/kirim-pesan-bantuan', [GuruPesanBantuanController::class, 'store'])->name('kirim-pesan-bantuan.store');
+
+    // Pemantauan Kuis Siswa
+    Route::get('/pemantauan-kuis', [\App\Http\Controllers\Guru\PemantauanKuisController::class, 'index'])->name('pemantauan-kuis');
 });
 
 // ── Kepala Sekolah (protected) ─────────────────────────────────────────────────────
@@ -274,4 +273,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Manajemen Website
     Route::get('/manajemen-website', [App\Http\Controllers\Admin\WebsiteManagementController::class, 'index'])->name('manajemen-website');
     Route::post('/manajemen-website', [App\Http\Controllers\Admin\WebsiteManagementController::class, 'update'])->name('manajemen-website.update');
+
+    // Manajemen Kuis
+    Route::get('/kuis', [\App\Http\Controllers\Admin\KuisController::class, 'index'])->name('kuis');
+    Route::post('/kuis', [\App\Http\Controllers\Admin\KuisController::class, 'store'])->name('kuis.store');
+    Route::post('/kuis/{id}', [\App\Http\Controllers\Admin\KuisController::class, 'update'])->name('kuis.update');
+    Route::delete('/kuis/{id}', [\App\Http\Controllers\Admin\KuisController::class, 'destroy'])->name('kuis.destroy');
+    Route::get('/kuis/{id}/data', [\App\Http\Controllers\Admin\KuisController::class, 'getData'])->name('kuis.data');
 });
