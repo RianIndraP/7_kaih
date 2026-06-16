@@ -12,46 +12,52 @@ class KuisController extends Controller
 {
     public function index(Request $request)
     {
-        $siswa = Auth::user();
+        try {
+            $siswa = Auth::user();
 
-        $kuisList = Kuis::where('waktu_mulai', '<=', now())
-            ->orWhere('waktu_mulai', '>', now())
-            ->orderBy('waktu_mulai', 'desc')
-            ->get();
+            $kuisList = Kuis::where('waktu_mulai', '<=', now())
+                ->orWhere('waktu_mulai', '>', now())
+                ->orderBy('waktu_mulai', 'desc')
+                ->get();
 
-        $kuisList = $kuisList->map(function ($kuis) use ($siswa) {
-            /** @var \App\Models\Kuis $kuis */
-            $jawaban = JawabanKuis::where('kuis_id', $kuis->id)
-                ->where('siswa_id', $siswa->id)
-                ->first();
+            $kuisList = $kuisList->map(function ($kuis) use ($siswa) {
+                $jawaban = JawabanKuis::where('kuis_id', $kuis->id)
+                    ->where('siswa_id', $siswa->id)
+                    ->first();
 
-            $status = 'belum_dikerjakan';
+                $status = 'belum_dikerjakan';
 
-            if (!$kuis->isSudahDibuka()) {
-                $status = 'belum_dibuka';
-            } elseif ($jawaban) {
-                $status = $jawaban->status;
-            } elseif (
-                now()->greaterThan($kuis->waktu_mulai->copy()->addMinutes($kuis->durasi_menit))
-                && $kuis->durasi_menit
-            ) {
-                // belum pernah dikerjakan tapi sudah lewat (untuk kuis tanpa start-per-siswa)
-                $status = 'kadaluarsa';
-            }
+                if (!$kuis->isSudahDibuka()) {
+                    $status = 'belum_dibuka';
+                } elseif ($jawaban) {
+                    $status = $jawaban->status;
+                } else {
+                    // Bungkus waktu_mulai dengan Carbon::parse agar aman dari string error
+                    $waktuMulai = \Carbon\Carbon::parse($kuis->waktu_mulai);
 
-            $kuis->status_siswa = $status;
-            $kuis->jawaban_record = $jawaban;
-            return $kuis;
-        });
+                    if (now()->greaterThan($waktuMulai->copy()->addMinutes($kuis->durasi_menit)) && $kuis->durasi_menit) {
+                        $status = 'kadaluarsa';
+                    }
+                }
 
-        return view('student.kuis.index', [
-            'kuisAktif' => $kuisList->filter(fn($k) => in_array($k->status_siswa, ['sedang_berlangsung', 'belum_dikerjakan']) && $k->isSudahDibuka()),
-            'kuisSelesai' => $kuisList->filter(fn($k) => $k->status_siswa === 'sudah_dikerjakan'),
-            'kuisKadaluarsa' => $kuisList->filter(fn($k) => $k->status_siswa === 'kadaluarsa'),
-            'kuisTerjadwal' => $kuisList->filter(fn($k) => $k->status_siswa === 'belum_dibuka'),
-        ]);
+                $kuis->status_siswa = $status;
+                $kuis->jawaban_record = $jawaban;
+                return $kuis;
+            });
+
+            return view('student.kuis.index', [
+                'kuisAktif' => $kuisList->filter(fn($k) => in_array($k->status_siswa, ['sedang_berlangsung', 'belum_dikerjakan']) && $k->isSudahDibuka()),
+                'kuisSelesai' => $kuisList->filter(fn($k) => $k->status_siswa === 'sudah_dikerjakan'),
+                'kuisKadaluarsa' => $kuisList->filter(fn($k) => $k->status_siswa === 'kadaluarsa'),
+                'kuisTerjadwal' => $kuisList->filter(fn($k) => $k->status_siswa === 'belum_dibuka'),
+            ]);
+
+        } catch (\Exception $e) {
+            // Jika masih ada error lain, paksa tampilkan teks aslinya di browser
+            dd("Error ditemukan: " . $e->getMessage() . " di baris " . $e->getLine());
+        }
     }
-
+    
     public function show($id)
     {
         $kuis = Kuis::findOrFail($id);

@@ -46,7 +46,7 @@
             };
             @endphp
 
-            <div onclick="{{ $clickable ? " window.location='" . route(' student.kuis.show', $kuis->id) . "'" : '' }}"
+            <div onclick="{{ $clickable ? " window.location='" . route('student.kuis.show', $kuis->id) . "'" : '' }}"
                 class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 {{ $clickable ? 'cursor-pointer
                 hover:border-blue-300 hover:shadow-md transition-all' : 'opacity-60' }}">
                 <div class="flex items-start justify-between mb-2 gap-2">
