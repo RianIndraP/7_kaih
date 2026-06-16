@@ -12,11 +12,26 @@ class PemantauanKuisController extends Controller
 {
     public function index(Request $request)
     {
-        $guru = Auth::user()->guru;
+        $user = Auth::user();
+        $guru = $user->guru;
 
-        // Ambil semua kelas yang diwalikan guru ini
-        $kelasIds = \App\Models\Kelas::where('guru_id', $guru->id)->pluck('id');
-        $siswaList = \App\Models\User::whereIn('kelas_id', $kelasIds)->whereNotNull('nisn')->orderBy('name')->get();
+        // Dapatkan ID guru yang valid
+        $guruId = $guru ? $guru->id : (\App\Models\Guru::where('user_id', $user->id)->first()->id ?? $user->id);
+
+        // Ambil daftar siswa yang berada di bawah bimbingan guru ini
+        $siswaList = \App\Models\User::where('guru_wali_id', $guruId)
+            ->whereNotNull('nisn')
+            ->orderBy('name')
+            ->get();
+
+        // Fallback: Jika masih kosong, coba ambil lewat relasi tabel Kelas
+        if ($siswaList->isEmpty() && $guru) {
+            $kelasIds = \App\Models\Kelas::where('guru_id', $guru->id)->pluck('id');
+            $siswaList = \App\Models\User::whereIn('kelas_id', $kelasIds)
+                ->whereNotNull('nisn')
+                ->orderBy('name')
+                ->get();
+        }
 
         $kuisList = Kuis::where('waktu_mulai', '<=', now())->orderBy('waktu_mulai', 'desc')->get();
 
