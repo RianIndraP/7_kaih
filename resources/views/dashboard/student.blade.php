@@ -14,17 +14,17 @@
         {{-- ═══════════════════════════════════════════
         GREETING CARD
         ════════════════════════════════════════════ --}}
-        <div class="greeting-gradient relative overflow-hidden rounded-2xl px-6 py-5
-                    flex items-center justify-between anim-fade-up">
+        <div class="greeting-gradient relative overflow-hidden rounded-2xl px-5 sm:px-6 py-5
+                    flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 anim-fade-up">
             {{-- Decorative circles --}}
             <span class="absolute -top-14 -right-10 w-44 h-44 rounded-full bg-white/7 pointer-events-none"></span>
             <span class="absolute -bottom-8 right-20 w-24 h-24 rounded-full bg-white/5 pointer-events-none"></span>
 
-            <div class="relative z-10">
-                <h1 class="text-[18px] font-extrabold text-white mb-1 leading-tight">
+            <div class="relative z-10 w-full pr-0 sm:pr-4 flex-1 min-w-0">
+                <h1 class="text-[17px] sm:text-[18px] font-extrabold text-white mb-1 leading-tight truncate sm:whitespace-normal">
                     Selamat Datang, {{ $user->name ?? 'Siswa' }} 👋
                 </h1>
-                <p class="text-[13px] text-white/72">
+                <p class="text-[12px] sm:text-[13px] text-white/72 truncate sm:whitespace-normal">
                     {{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('l, d F Y') }}
                     · {{ $user->kelas?->nama_kelas ?? '-' }}
                 </p>
@@ -469,8 +469,8 @@
         {{-- ═══════════════════════════════════════════
         DATE ROW
         ════════════════════════════════════════════ --}}
-        <div class="flex items-center justify-between bg-white border border-gray-200 rounded-2xl
-                    px-5 py-3.5 anim-fade-up-2">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 bg-white border border-gray-200 rounded-2xl
+                    px-4 sm:px-5 py-3.5 anim-fade-up-2">
             <div class="flex items-center gap-3">
                 <div class="flex items-center justify-center w-10 h-10 rounded-[10px] icon-gradient shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -561,7 +561,7 @@
                             @endif
                         </div>
                         {{-- Info rows --}}
-                        <div class="flex flex-col gap-2 flex-1">
+                        <div class="flex flex-col gap-2 flex-1 min-w-0 w-full">
                             <div class="flex justify-between items-center px-2.5 py-1.5 bg-slate-50 rounded-lg">
                                 <span class="text-[11px] font-semibold text-gray-400">Nama</span>
                                 <span class="text-[12px] font-bold text-gray-900">{{ $user->name ?? '-' }}</span>
@@ -683,7 +683,7 @@
                     </div>
 
                     {{-- Checklist grid (interactive) --}}
-                    <div class="grid grid-cols-2 gap-2" id="habitsGrid">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="habitsGrid">
                         @foreach ($kebiasaanList as $key => $label)
                             @php $checked = !empty($kebiasaanData[$key]); @endphp
                             <div data-key="{{ $key }}"
@@ -966,7 +966,7 @@
         NOTIFIKASI CARD
         ════════════════════════════════════════════ --}}
         <div class="notif-gradient border border-blue-200 rounded-2xl p-5 anim-fade-up-4">
-            <div class="flex items-start gap-4">
+            <div class="flex flex-col sm:flex-row items-start gap-4">
 
                 {{-- Icon --}}
                 <div class="flex items-center justify-center w-[50px] h-[50px] rounded-[14px]

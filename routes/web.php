@@ -139,7 +139,6 @@ Route::middleware(['auth', 'guru', 'website.lock'])->prefix('guru')->name('guru.
     // PENTING: semua route static harus SEBELUM route dengan parameter {id}
     Route::get('/list-murid', [ListMuridController::class, 'index'])->name('list-murid');
     Route::get('/list-murid/get-siswa', [ListMuridController::class, 'getSiswa'])->name('list-murid.get-siswa');
-    Route::get('/list-murid/get-minggu-options', [ListMuridController::class, 'getMingguOptions'])->name('list-murid.get-minggu-options');
     Route::get('/list-murid/weekly-stats', [ListMuridController::class, 'getWeeklyStats'])->name('list-murid.weekly-stats');
     Route::get('/list-murid/meeting-stats', [ListMuridController::class, 'getMeetingStats'])->name('list-murid.meeting-stats');
     Route::get('/list-murid/monthly-stats', [ListMuridController::class, 'getMonthlyStats'])->name('list-murid.monthly-stats');
@@ -148,7 +147,6 @@ Route::middleware(['auth', 'guru', 'website.lock'])->prefix('guru')->name('guru.
     Route::get('/list-murid/siswa-profile/{siswaId}', [ListMuridController::class, 'getSiswaProfile'])->name('list-murid.siswa-profile');
     // Route dengan parameter — HARUS di bawah route static
     Route::get('/list-murid/pesan-history/{siswaId}', [ListMuridController::class, 'getPesanHistory'])->name('list-murid.pesan-history');
-    Route::get('/list-murid/detail/{id}', [ListMuridController::class, 'getDetailSiswa'])->name('list-murid.detail');
 
     // Absensi Murid
     Route::get('/absensi-murid', [GuruAbsensiController::class, 'index'])->name('absensi-murid');

@@ -22,7 +22,7 @@
 
     {{-- ── SIDEBAR ── --}}
     <aside id="sidebar"
-        class="sidebar-gradient fixed top-0 left-0 w-60 min-h-screen flex flex-col z-40
+        class="sidebar-gradient fixed top-0 left-0 w-60 h-screen flex flex-col z-40
                   -translate-x-full lg:translate-x-0
                   transition-transform duration-300 ease-in-out
                   shadow-[4px_0_24px_rgba(37,99,235,0.18)] print:hidden">

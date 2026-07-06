@@ -543,7 +543,7 @@
                             @endphp
                             @if (empty($temanTerbaikJson))
                                 <div class="teman-terbaik-item teman-card">
-                                    <div class="grid grid-cols-2 gap-2">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         <div>
                                             <label
                                                 class="block text-[10.5px] font-semibold text-blue-500 mb-1">Nama</label>
@@ -563,7 +563,7 @@
                             @else
                                 @foreach ($temanTerbaikJson as $teman)
                                     <div class="teman-terbaik-item teman-card">
-                                        <div class="grid grid-cols-2 gap-2">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                             <div>
                                                 <label
                                                     class="block text-[10.5px] font-semibold text-blue-500 mb-1">Nama</label>
