@@ -74,4 +74,63 @@ class PemantauanKuisController extends Controller
             'totalSudah' => $totalSudah,
         ]);
     }
+
+    public function cetak(Request $request)
+    {
+        $user = Auth::user();
+        $guru = $user->guru;
+
+        // Dapatkan ID guru yang valid
+        $guruId = $guru ? $guru->id : (\App\Models\Guru::where('user_id', $user->id)->first()->id ?? $user->id);
+
+        // Ambil daftar siswa yang berada di bawah bimbingan guru ini
+        $siswaList = \App\Models\User::where('guru_wali_id', $guruId)
+            ->whereNotNull('nisn')
+            ->orderBy('name')
+            ->get();
+
+        // Fallback: Jika masih kosong, coba ambil lewat relasi tabel Kelas
+        if ($siswaList->isEmpty() && $guru) {
+            $kelasIds = \App\Models\Kelas::where('guru_id', $guru->id)->pluck('id');
+            $siswaList = \App\Models\User::whereIn('kelas_id', $kelasIds)
+                ->whereNotNull('nisn')
+                ->orderBy('name')
+                ->get();
+        }
+
+        $kuisList = Kuis::where('waktu_mulai', '<=', now())->orderBy('waktu_mulai', 'desc')->get();
+
+        $selectedKuisId = $request->input('kuis_id', $kuisList->first()?->id);
+        $selectedKuis = $kuisList->firstWhere('id', $selectedKuisId);
+
+        $statusFilter = $request->input('status');
+
+        $data = $siswaList->map(function ($siswa) use ($selectedKuis) {
+            $jawaban = $selectedKuis
+                ? JawabanKuis::where('kuis_id', $selectedKuis->id)
+                    ->where('siswa_id', $siswa->id)
+                    ->first()
+                : null;
+
+            return [
+                'siswa' => $siswa,
+                'jawaban' => $jawaban,
+                'status' => $jawaban?->status ?? 'belum_dikerjakan',
+            ];
+        });
+
+        if ($statusFilter) {
+            if ($statusFilter === 'sudah') {
+                $data = $data->filter(fn($d) => $d['status'] === 'sudah_dikerjakan');
+            } elseif ($statusFilter === 'belum') {
+                $data = $data->filter(fn($d) => $d['status'] !== 'sudah_dikerjakan');
+            }
+        }
+
+        return view('guru.kuis.cetak', [
+            'selectedKuis' => $selectedKuis,
+            'data' => $data,
+            'statusFilter' => $statusFilter,
+        ]);
+    }
 }

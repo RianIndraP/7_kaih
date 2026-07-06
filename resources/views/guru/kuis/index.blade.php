@@ -23,24 +23,39 @@
 
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
             <form method="GET" class="flex flex-wrap gap-3">
-                <select name="kuis_id" onchange="this.form.submit()"
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
-                    @if($kuisList->isEmpty())
-                        <option value="">Belum ada kuis tersedia</option>
-                    @else
-                        @foreach($kuisList as $k)
-                            <option value="{{ $k->id }}" {{ ($selectedKuis?->id ?? null) == $k->id ? 'selected' : '' }}>
-                                {{ $k->judul }} — {{ $k->tema }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
-                <select name="status" onchange="this.form.submit()"
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
-                    <option value="">Semua status</option>
-                    <option value="sudah" {{ request('status') == 'sudah' ? 'selected' : '' }}>Sudah menjawab</option>
-                    <option value="belum" {{ request('status') == 'belum' ? 'selected' : '' }}>Belum menjawab</option>
-                </select>
+                <div class="">
+                    <select name="kuis_id" onchange="this.form.submit()"
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        @if($kuisList->isEmpty())
+                            <option value="">Belum ada kuis tersedia</option>
+                        @else
+                            @foreach($kuisList as $k)
+                                <option value="{{ $k->id }}" {{ ($selectedKuis?->id ?? null) == $k->id ? 'selected' : '' }}>
+                                    {{ $k->judul }} — {{ $k->tema }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    <select name="status" onchange="this.form.submit()"
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        <option value="">Semua status</option>
+                        <option value="sudah" {{ request('status') == 'sudah' ? 'selected' : '' }}>Sudah menjawab</option>
+                        <option value="belum" {{ request('status') == 'belum' ? 'selected' : '' }}>Belum menjawab</option>
+                    </select>
+                </div>
+                <div class="ml-auto">
+                    <button
+                        class="flex justify-center items-center gap-1.5 w-full sm:w-auto px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        type="submit" formaction="{{ route('guru.pemantauan-kuis.cetak') }}" formtarget="_blank">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Download PDF
+                    </button>
+                </div>
             </form>
         </div>
 
