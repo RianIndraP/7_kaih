@@ -69,6 +69,8 @@
                             <th class="px-4 py-3 text-center font-medium text-gray-700">Status</th>
                             <th class="px-4 py-3 text-left font-medium text-gray-700">Jawaban</th>
                             <th class="px-4 py-3 text-center font-medium text-gray-700">Waktu Kirim</th>
+                            {{-- tambahkan setelah <th>Waktu Kirim</th> --}}
+                            <th class="px-4 py-3 text-center font-medium text-gray-700">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -100,10 +102,22 @@
                                 <td class="px-4 py-3 text-center text-gray-500 text-xs whitespace-nowrap">
                                     {{ $row['jawaban']?->waktu_kirim?->format('d M Y, H:i') ?? '—' }}
                                 </td>
+                                <td class="px-4 py-3 text-center">
+                                    <a href="{{ route('guru.pemantauan-kuis.laporan', $row['siswa']->id) }}?kuis_id={{ $selectedKuis?->id }}"
+                                        target="_blank"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-100 transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                                        </svg>
+                                        Laporan
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-400">Tidak ada data siswa.</td>
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-400">Tidak ada data siswa.</td>
                             </tr>
                         @endforelse
                     </tbody>

@@ -173,6 +173,7 @@ Route::middleware(['auth', 'guru', 'website.lock'])->prefix('guru')->name('guru.
     // Pemantauan Kuis Siswa
     Route::get('/pemantauan-kuis', [\App\Http\Controllers\Guru\PemantauanKuisController::class, 'index'])->name('pemantauan-kuis');
     Route::get('/pemantauan-kuis/cetak', [\App\Http\Controllers\Guru\PemantauanKuisController::class, 'cetak'])->name('pemantauan-kuis.cetak');
+    Route::get('/pemantauan-kuis/{siswaId}/laporan', [\App\Http\Controllers\Guru\PemantauanKuisController::class, 'laporanSiswa'])->name('pemantauan-kuis.laporan');
 });
 
 // ── Kepala Sekolah (protected) ─────────────────────────────────────────────────────

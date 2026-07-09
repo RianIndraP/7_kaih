@@ -26,7 +26,7 @@ class PemantauanKuisController extends Controller
 
         // Fallback: Jika masih kosong, coba ambil lewat relasi tabel Kelas
         if ($siswaList->isEmpty() && $guru) {
-            $kelasIds = \App\Models\Kelas::where('guru_id', $guru->id)->pluck('id');
+            $kelasIds = $guru->kelas->pluck('id');
             $siswaList = \App\Models\User::whereIn('kelas_id', $kelasIds)
                 ->whereNotNull('nisn')
                 ->orderBy('name')
@@ -131,6 +131,29 @@ class PemantauanKuisController extends Controller
             'selectedKuis' => $selectedKuis,
             'data' => $data,
             'statusFilter' => $statusFilter,
+            'guru' => $guru, // tambahkan ini
         ]);
+    }
+    public function laporanSiswa(Request $request, $siswaId)
+    {
+        $user = Auth::user();
+        $guru = \App\Models\Guru::where('user_id', $user->id)->firstOrFail();
+
+        $siswa = \App\Models\User::findOrFail($siswaId);
+
+        $kuisId = $request->get('kuis_id');
+        $selectedKuis = Kuis::findOrFail($kuisId);
+
+        $jawaban = JawabanKuis::where('kuis_id', $kuisId)
+            ->where('siswa_id', $siswaId)
+            ->first();
+
+        $row = [
+            'siswa' => $siswa,
+            'jawaban' => $jawaban,
+            'status' => $jawaban?->status ?? 'belum_dikerjakan',
+        ];
+
+        return view('guru.kuis.laporan-siswa', compact('row', 'selectedKuis', 'guru'));
     }
 }

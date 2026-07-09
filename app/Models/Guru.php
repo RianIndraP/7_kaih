@@ -80,4 +80,8 @@ class Guru extends Model
     {
         return $this->hasMany(LampiranA::class);
     }
+    public function kelas(): HasMany
+    {
+        return $this->hasMany(Kelas::class, 'guru_id');
+    }
 }

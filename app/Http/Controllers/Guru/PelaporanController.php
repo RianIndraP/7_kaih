@@ -34,8 +34,8 @@ class PelaporanController extends Controller
         $pertemuanReq = request()->filled('pertemuan')
             ? (int) request('pertemuan')
             : AbsensiSiswa::where('guru_id', $guru->id)
-            ->orderBy('pertemuan_ke')
-            ->value('pertemuan_ke'); // ambil pertama yg ada
+                ->orderBy('pertemuan_ke')
+                ->value('pertemuan_ke'); // ambil pertama yg ada
 
         $tahunFilter = request()->filled('tahun') ? (int) request('tahun') : now()->year;
         $muridList = User::with('kelas')
@@ -87,7 +87,7 @@ class PelaporanController extends Controller
                         ->put($m->id, $catatanB->get($m->id, collect()))
                         ->get($m->id)
                         ->put($aspek, collect([
-                            (object)[
+                            (object) [
                                 'deskripsi' => $this->getPredikat($nilai),
                                 'tindak_lanjut' => $this->getTindak($nilai),
                                 'keterangan' => ''
@@ -257,17 +257,23 @@ class PelaporanController extends Controller
 
     private function getPredikat($nilai)
     {
-        if ($nilai >= 3.26) return 'Sangat Berkembang';
-        if ($nilai >= 2.51) return 'Berkembang';
-        if ($nilai >= 1.76) return 'Mulai Berkembang';
+        if ($nilai >= 3.26)
+            return 'Sangat Berkembang';
+        if ($nilai >= 2.51)
+            return 'Berkembang';
+        if ($nilai >= 1.76)
+            return 'Mulai Berkembang';
         return 'Belum Berkembang';
     }
 
     private function getTindak($nilai)
     {
-        if ($nilai >= 3.26) return 'Pertahankan';
-        if ($nilai >= 2.51) return 'Perlu Ditingkatkan';
-        if ($nilai >= 1.76) return 'Butuh Motivasi';
+        if ($nilai >= 3.26)
+            return 'Pertahankan';
+        if ($nilai >= 2.51)
+            return 'Perlu Ditingkatkan';
+        if ($nilai >= 1.76)
+            return 'Butuh Motivasi';
         return 'Perlu Bimbingan Khusus';
     }
 
@@ -281,7 +287,8 @@ class PelaporanController extends Controller
             ->whereYear('tanggal', $tahun)
             ->get();
 
-        if ($data->isEmpty()) return 1;
+        if ($data->isEmpty())
+            return 1;
 
         $totalSkor = 0;
         $jumlahParameter = 0;
@@ -353,9 +360,12 @@ class PelaporanController extends Controller
 
     private function konversiNilaiRata($rata)
     {
-        if ($rata >= 0.85) return 4;
-        if ($rata >= 0.70) return 3;
-        if ($rata >= 0.50) return 2;
+        if ($rata >= 0.85)
+            return 4;
+        if ($rata >= 0.70)
+            return 3;
+        if ($rata >= 0.50)
+            return 2;
         return 1;
     }
 }
