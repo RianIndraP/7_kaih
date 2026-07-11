@@ -58,6 +58,7 @@ class User extends Authenticatable
         'streak_recovery_count',
         'streak_recovery_reset_date',
         'last_streak_date',
+        'status_akademik',
     ];
 
     /**

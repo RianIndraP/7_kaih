@@ -253,7 +253,7 @@
 <body>
 
     <div class="print-bar print-hidden">
-        <a href="{{ route('guru.pemantauan-kuis', ['kuis_id' => $selectedKuis->id]) }}"
+        <a href="{{ route('guru.pemantauan-kuis') }}?kuis_id={{ $selectedKuis->id }}"
             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-sans text-gray-700 hover:bg-gray-50 transition-colors">
             ← Kembali
         </a>

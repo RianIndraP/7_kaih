@@ -5,6 +5,21 @@
 
 @section('content')
     <div class="space-y-5">
+        @if(session('error'))
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                {{ session('error') }}
+            </div>
+        @endif
+        
+        @if(!$selectedKuis && $kuisList->isNotEmpty())
+            <div class="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-lg">
+                Silakan pilih kuis terlebih dahulu untuk melihat laporan siswa.
+            </div>
+        @elseif($kuisList->isEmpty())
+            <div class="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-lg">
+                Belum ada kuis tersedia. Silakan hubungi administrator.
+            </div>
+        @endif
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
@@ -45,7 +60,10 @@
                 </div>
                 <div class="ml-auto">
                     <button
-                        class="flex justify-center items-center gap-1.5 w-full sm:w-auto px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        @if(!$selectedKuis)
+                        disabled
+                        @endif
+                        class="flex justify-center items-center gap-1.5 w-full sm:w-auto px-4 py-2 text-sm font-medium {{ $selectedKuis ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed' }} text-white rounded-lg transition-colors"
                         type="submit" formaction="{{ route('guru.pemantauan-kuis.cetak') }}" formtarget="_blank">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -103,16 +121,27 @@
                                     {{ $row['jawaban']?->waktu_kirim?->format('d M Y, H:i') ?? '—' }}
                                 </td>
                                 <td class="px-4 py-3 text-center">
-                                    <a href="{{ route('guru.pemantauan-kuis.laporan', $row['siswa']->id) }}?kuis_id={{ $selectedKuis?->id }}"
-                                        target="_blank"
-                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-100 transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
-                                        </svg>
-                                        Laporan
-                                    </a>
+                                    @if($selectedKuis)
+                                        <a href="{{ route('guru.pemantauan-kuis.laporan', $row['siswa']->id) }}?kuis_id={{ $selectedKuis->id }}"
+                                            target="_blank"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-100 transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                                            </svg>
+                                            Laporan
+                                        </a>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gray-100 text-gray-400 rounded-lg text-xs font-medium cursor-not-allowed">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                                            </svg>
+                                            Laporan
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

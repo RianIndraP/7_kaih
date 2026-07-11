@@ -280,4 +280,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/kuis/{id}', [\App\Http\Controllers\Admin\KuisController::class, 'update'])->name('kuis.update');
     Route::delete('/kuis/{id}', [\App\Http\Controllers\Admin\KuisController::class, 'destroy'])->name('kuis.destroy');
     Route::get('/kuis/{id}/data', [\App\Http\Controllers\Admin\KuisController::class, 'getData'])->name('kuis.data');
+
+    // Sistem & Administrasi
+    Route::get('/sistem', [\App\Http\Controllers\Admin\SistemController::class, 'index'])->name('sistem');
+    Route::post('/sistem/tahun-ajaran', [\App\Http\Controllers\Admin\SistemController::class, 'updateTahunAjaran'])->name('sistem.tahun-ajaran');
+    Route::post('/sistem/tandai-pengecualian', [\App\Http\Controllers\Admin\SistemController::class, 'tandaiPengecualian'])->name('sistem.tandai-pengecualian');
+    Route::post('/sistem/batalkan-pengecualian', [\App\Http\Controllers\Admin\SistemController::class, 'batalkanPengecualian'])->name('sistem.batalkan-pengecualian');
+    Route::post('/sistem/keluarkan-siswa', [\App\Http\Controllers\Admin\SistemController::class, 'keluarkanSiswa'])->name('sistem.keluarkan-siswa');
+    Route::post('/sistem/kenaikan-kelas', [\App\Http\Controllers\Admin\SistemController::class, 'prosesKenaikanKelas'])->name('sistem.kenaikan-kelas');
+    Route::post('/sistem/pindah-siswa', [\App\Http\Controllers\Admin\SistemController::class, 'pindahSiswa'])->name('sistem.pindah-siswa');
+    Route::post('/sistem/ganti-kepala-sekolah', [\App\Http\Controllers\Admin\SistemController::class, 'gantiKepalaSekolah'])->name('sistem.ganti-kepala-sekolah');
+    Route::get('/sistem/search-siswa', [\App\Http\Controllers\Admin\SistemController::class, 'searchSiswa'])->name('sistem.search-siswa');
 });

@@ -101,7 +101,16 @@ class PemantauanKuisController extends Controller
         $kuisList = Kuis::where('waktu_mulai', '<=', now())->orderBy('waktu_mulai', 'desc')->get();
 
         $selectedKuisId = $request->input('kuis_id', $kuisList->first()?->id);
+        
+        if (!$selectedKuisId) {
+            return redirect()->route('guru.pemantauan-kuis')->with('error', 'ID kuis tidak ditemukan. Silakan pilih kuis terlebih dahulu.');
+        }
+        
         $selectedKuis = $kuisList->firstWhere('id', $selectedKuisId);
+        
+        if (!$selectedKuis) {
+            return redirect()->route('guru.pemantauan-kuis')->with('error', 'Kuis tidak ditemukan. Silakan pilih kuis yang valid.');
+        }
 
         $statusFilter = $request->input('status');
 
@@ -142,6 +151,16 @@ class PemantauanKuisController extends Controller
         $siswa = \App\Models\User::findOrFail($siswaId);
 
         $kuisId = $request->get('kuis_id');
+        
+        if (!$kuisId) {
+            // Try to get the first available quiz
+            $firstKuis = Kuis::where('waktu_mulai', '<=', now())->orderBy('waktu_mulai', 'desc')->first();
+            if ($firstKuis) {
+                return redirect()->to(route('guru.pemantauan-kuis.laporan', $siswaId) . '?kuis_id=' . $firstKuis->id);
+            }
+            return redirect()->route('guru.pemantauan-kuis')->with('error', 'ID kuis tidak ditemukan. Silakan pilih kuis terlebih dahulu.');
+        }
+        
         $selectedKuis = Kuis::findOrFail($kuisId);
 
         $jawaban = JawabanKuis::where('kuis_id', $kuisId)
