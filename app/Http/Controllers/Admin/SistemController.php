@@ -116,15 +116,22 @@ class SistemController extends Controller
         // Konfirmasi wajib diisi
         $request->validate([
             'konfirmasi' => 'required|in:NAIK KELAS',
+            'kelas_id' => 'nullable|exists:kelas,id',
         ], [
             'konfirmasi.in' => 'Ketik "NAIK KELAS" untuk konfirmasi.',
         ]);
 
-        DB::transaction(function () {
+        $selectedKelasId = $request->input('kelas_id');
+
+        DB::transaction(function () use ($selectedKelasId) {
+            // Always get full class list for mapping
             $kelasList = Kelas::orderBy('nama_kelas')->get();
 
             // Log all class names for debugging
             \Log::info('Kenaikan Kelas - Daftar Kelas:', $kelasList->pluck('nama_kelas', 'id')->toArray());
+            if ($selectedKelasId) {
+                \Log::info('Kenaikan Kelas - Processing single class ID:', ['id' => $selectedKelasId]);
+            }
 
             // Mapping kelas X → XI dan XI → XII berdasarkan nama
             $mapping = [];
@@ -157,16 +164,25 @@ class SistemController extends Controller
 
             \Log::info('Kenaikan Kelas - Final Mapping:', $mapping);
 
+            // Filter mapping if single class selected
+            if ($selectedKelasId) {
+                $mapping = array_filter($mapping, fn($v, $k) => $k == $selectedKelasId, ARRAY_FILTER_USE_BOTH);
+                \Log::info('Kenaikan Kelas - Filtered Mapping for single class:', $mapping);
+            }
+
             // Siswa kelas XII yang aktif → alumni
             $kelasXII = $kelasList->filter(fn($k) => str_starts_with($k->nama_kelas, 'XII'));
-            User::whereIn('kelas_id', $kelasXII->pluck('id'))
+            $xiiQuery = User::whereIn('kelas_id', $kelasXII->pluck('id'))
                 ->whereNotNull('nisn')
-                ->where('status_akademik', 'aktif')
-                ->update([
-                    'is_alumni' => 1,
-                    'kelas_id' => null,
-                    'guru_wali_id' => null,
-                ]);
+                ->where('status_akademik', 'aktif');
+            if ($selectedKelasId) {
+                $xiiQuery->where('kelas_id', $selectedKelasId);
+            }
+            $xiiQuery->update([
+                'is_alumni' => 1,
+                'kelas_id' => null,
+                'guru_wali_id' => null,
+            ]);
 
             // Naik kelas: X → XI, XI → XII
             $totalMoved = 0;

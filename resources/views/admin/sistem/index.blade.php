@@ -228,6 +228,16 @@
                 onsubmit="return confirm('Yakin ingin menjalankan proses kenaikan kelas? Tindakan ini tidak bisa dibatalkan.')">
                 @csrf
                 <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Pilih kelas (opsional)</label>
+                    <select name="kelas_id" class="w-full sm:w-64 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <option value="">Semua kelas</option>
+                        @foreach($kelasList as $k)
+                            <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Kosongkan untuk memproses semua kelas sekaligus</p>
+                </div>
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">
                         Ketik <span class="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-red-600">NAIK KELAS</span> untuk
                         konfirmasi
