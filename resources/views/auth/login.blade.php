@@ -58,7 +58,7 @@
                     NISN/NIP/NIK/Username
                 </label>
                 <input type="text" name="identifier" value="{{ old('identifier') }}"
-                    placeholder="Masukkan identitas Anda"
+                    placeholder="Masukkan identitas Anda" autocomplete="username" required
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-indigo-50/30">
             </div>
 
@@ -73,6 +73,7 @@
                 </label>
                 <div class="relative">
                     <input type="password" name="password" placeholder="Masukkan password Anda"
+                        autocomplete="current-password" required
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-indigo-50/30 pr-12">
                     <button type="button"
                         class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors toggle-password">
