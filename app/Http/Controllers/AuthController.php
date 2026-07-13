@@ -16,13 +16,13 @@ class AuthController extends Controller
         // If already logged in, check if website is locked
         if (Auth::check()) {
             $user = Auth::user();
-            
+
             // Check if website is locked (except for admin)
             if (!$user->isAdmin() && WebsiteManagement::isWebsiteLocked()) {
                 Auth::logout(); // Force logout non-admin users
                 return redirect()->route('website.locked');
             }
-            
+
             return $this->redirectToDashboard($user);
         }
         return view('auth.login');
@@ -43,7 +43,7 @@ class AuthController extends Controller
             Auth::logout(); // Force logout non-admin users
             return redirect()->route('website.locked');
         }
-        
+
         if ($user->isSiswa()) {
             return redirect()->route('student.dashboard');
         } else if ($user->isKepalaSekolah()) {
@@ -85,14 +85,17 @@ class AuthController extends Controller
             // Check if website is locked (except for admin)
             if (!$user->isAdmin() && WebsiteManagement::isWebsiteLocked()) {
                 $lockMessage = WebsiteManagement::getLockMessage() ?: 'Website sedang dalam masa perbaikan. Silakan coba lagi nanti.';
-                
+
                 return view('auth.website-locked', [
                     'message' => $lockMessage
                 ]);
             }
-            
+
             Auth::login($user);
-            
+
+            $request->session()->regenerate();
+
+
             // Redirect based on user type
             if ($user->isSiswa()) {
                 return redirect()->route('student.dashboard');
@@ -103,7 +106,7 @@ class AuthController extends Controller
             } else if ($user->isAdmin()) {
                 return redirect()->route('admin.dashboard');
             }
-            
+
             return redirect()->intended('/dashboard');
         }
 
@@ -146,7 +149,7 @@ class AuthController extends Controller
 
             // Generate 6-digit OTP
             $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-            
+
             // Store user and OTP in session
             session(['forgot_user' => $user]);
             session(['forgot_otp' => $otp]);
@@ -154,7 +157,7 @@ class AuthController extends Controller
 
             // Send OTP via email
             try {
-                Mail::html("<h1>Kode OTP untuk reset password Anda</h1><p style='font-size: 18px;'>Kode OTP Anda adalah:</p><p style='font-size: 32px; font-weight: bold; color: #1e40af;'>{$otp}</p><p style='font-size: 16px;'>Kode ini berlaku selama 10 menit. Jangan berikan kode ini kepada siapapun.</p><hr><p style='font-size: 14px; color: #666;'>7 Kebiasaan Anak Indonesia Hebat<br>SMK Negeri 5 Telkom Banda Aceh</p>", function($message) use ($user) {
+                Mail::html("<h1>Kode OTP untuk reset password Anda</h1><p style='font-size: 18px;'>Kode OTP Anda adalah:</p><p style='font-size: 32px; font-weight: bold; color: #1e40af;'>{$otp}</p><p style='font-size: 16px;'>Kode ini berlaku selama 10 menit. Jangan berikan kode ini kepada siapapun.</p><hr><p style='font-size: 14px; color: #666;'>7 Kebiasaan Anak Indonesia Hebat<br>SMK Negeri 5 Telkom Banda Aceh</p>", function ($message) use ($user) {
                     $message->to($user->email)
                         ->subject('Kode OTP Reset Password - 7 Kebiasaan Anak Indonesia Hebat');
                 });
@@ -233,14 +236,14 @@ class AuthController extends Controller
 
         // Generate new 6-digit OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        
+
         // Update OTP in session
         session(['forgot_otp' => $otp]);
         session(['forgot_otp_expires_at' => now()->addMinutes(10)]);
 
         // Send OTP via email
         try {
-            Mail::html("<h1>Kode OTP untuk reset password Anda</h1><p style='font-size: 18px;'>Kode OTP Anda adalah:</p><p style='font-size: 32px; font-weight: bold; color: #1e40af;'>{$otp}</p><p style='font-size: 16px;'>Kode ini berlaku selama 10 menit. Jangan berikan kode ini kepada siapapun.</p><hr><p style='font-size: 14px; color: #666;'>7 Kebiasaan Anak Indonesia Hebat<br>SMK Negeri 5 Telkom Banda Aceh</p>", function($message) use ($user) {
+            Mail::html("<h1>Kode OTP untuk reset password Anda</h1><p style='font-size: 18px;'>Kode OTP Anda adalah:</p><p style='font-size: 32px; font-weight: bold; color: #1e40af;'>{$otp}</p><p style='font-size: 16px;'>Kode ini berlaku selama 10 menit. Jangan berikan kode ini kepada siapapun.</p><hr><p style='font-size: 14px; color: #666;'>7 Kebiasaan Anak Indonesia Hebat<br>SMK Negeri 5 Telkom Banda Aceh</p>", function ($message) use ($user) {
                 $message->to($user->email)
                     ->subject('Kode OTP Reset Password - 7 Kebiasaan Anak Indonesia Hebat');
             });
