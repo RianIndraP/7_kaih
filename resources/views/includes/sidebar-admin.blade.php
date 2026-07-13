@@ -21,7 +21,7 @@
 </div>
 
 {{-- ── NAV ── --}}
-<nav class="flex-1 flex flex-col px-2.5 py-3 overflow-y-auto sb-scroll gap-0.5">
+<nav class="flex-1 flex flex-col px-2.5 py-3 overflow-y-auto sb-scroll gap-0.5 pb-2">
 
     @php
         $link = fn(string $route, string $label, string $icon, string $match) =>
@@ -82,7 +82,7 @@
 </nav>
 
 {{-- ── LOGOUT ── --}}
-<div class="px-2.5 pb-3 border-t border-white/10 pt-2.5">
+<div class="px-2.5 pb-3 border-t border-white/10 pt-2.5 sticky bottom-0 bg-[#0f172a]">
     <button onclick="document.getElementById('logout-form').submit()" class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[11px]
                text-[13px] font-medium text-red-300/80 bg-transparent border-none
                cursor-pointer transition-all duration-200 font-sans

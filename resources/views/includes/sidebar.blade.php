@@ -43,7 +43,7 @@
     ];
 @endphp
 
-<nav class="flex-1 flex flex-col px-2.5 py-3 overflow-y-auto sb-scroll gap-0.5">
+<nav class="flex-1 flex flex-col px-2.5 py-3 overflow-y-auto sb-scroll gap-0.5 pb-2">
     @foreach ($navGroups as $group => $items)
         @if ($group)
             <p class="px-3 pt-3 pb-1 text-[10px] font-bold text-white/40 uppercase tracking-widest">{{ $group }}</p>
@@ -83,7 +83,7 @@
 </nav>
 
 {{-- ══ LOGOUT ══ --}}
-<div class="px-2.5 pb-3 pt-2.5 border-t border-white/10 shrink-0">
+<div class="px-2.5 pb-3 pt-2.5 border-t border-white/10 shrink-0 sticky bottom-0 bg-[#0f172a]">
     <button onclick="document.getElementById('logout-form').submit()"
         class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[11px] text-[13px] font-medium text-red-300/80 bg-transparent border-none cursor-pointer transition-all duration-200 font-sans hover:bg-red-500/18 hover:text-red-300">
         <svg class="w-[17px] h-[17px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
