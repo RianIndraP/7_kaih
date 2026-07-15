@@ -36,7 +36,11 @@ class ListMuridController extends Controller
             }
         }
 
-        return view('guru.list-murid', compact('user', 'siswaList'));
+        // Ambil pengaturan tahun ajaran
+        $tahunAjaran = \App\Models\PengaturanSistem::getValue('tahun_ajaran', '2025/2026');
+        $mulaiTahunBaru = \App\Models\PengaturanSistem::getValue('mulai_tahun_baru', now()->toDateString());
+
+        return view('guru.list-murid', compact('user', 'siswaList', 'tahunAjaran', 'mulaiTahunBaru'));
     }
 
     // ── AJAX: ambil daftar siswa + progress ─────────────────────────────────

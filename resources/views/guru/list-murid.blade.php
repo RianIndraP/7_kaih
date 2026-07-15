@@ -1198,6 +1198,12 @@
         var currentSiswaLat = null;
         var currentSiswaLng = null;
         var NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        
+        // Academic year settings
+        var tahunAjaran = '{{ $tahunAjaran }}';
+        var mulaiTahunBaru = '{{ $mulaiTahunBaru }}';
+        var tanggalMulaiAjaran = new Date(mulaiTahunBaru);
+        var tanggalSekarang = new Date();
 
         document.getElementById('selectPeriode').addEventListener('change', function () {
             currentPeriode = this.value;
@@ -1213,18 +1219,58 @@
             var year = new Date().getFullYear();
             var sel = document.getElementById('select_minggu');
             sel.innerHTML = '<option value="">-- Pilih Minggu --</option>';
-            for (var m = 0; m < 12; m++) { var d = new Date(year, m, 1), w = 1; while (d.getMonth() === m) { var opt = document.createElement('option'); opt.value = year + '-' + String(m + 1).padStart(2, '0') + '-W' + w; opt.textContent = 'Minggu ' + w + ' - ' + d.getDate() + ' ' + NAMA_BULAN[m] + ' ' + year; sel.appendChild(opt); d.setDate(d.getDate() + 7); w++; } }
+            
+            // Generate weeks only from academic year start date
+            for (var m = 0; m < 12; m++) { 
+                var d = new Date(year, m, 1), w = 1; 
+                while (d.getMonth() === m) { 
+                    // Check if this week is after or equal to academic year start
+                    if (d >= tanggalMulaiAjaran && d <= tanggalSekarang) {
+                        var opt = document.createElement('option'); 
+                        opt.value = year + '-' + String(m + 1).padStart(2, '0') + '-W' + w; 
+                        opt.textContent = 'Minggu ' + w + ' - ' + d.getDate() + ' ' + NAMA_BULAN[m] + ' ' + year; 
+                        sel.appendChild(opt); 
+                    }
+                    d.setDate(d.getDate() + 7); 
+                    w++; 
+                } 
+            }
         }
+        
         function generatePertemuan() {
             var year = new Date().getFullYear(), sel = document.getElementById('select_pertemuan');
             sel.innerHTML = '<option value="">-- Pilih Pertemuan --</option>';
             var d = new Date(year, 0, 1), p = 1;
-            while (d.getFullYear() === year) { var opt = document.createElement('option'); opt.value = year + '-P' + p; opt.textContent = 'Pertemuan ' + p + ' - ' + d.getDate() + ' ' + NAMA_BULAN[d.getMonth()] + ' ' + year; sel.appendChild(opt); d.setDate(d.getDate() + 14); p++; }
+            
+            // Generate meetings only from academic year start date
+            while (d.getFullYear() === year) { 
+                // Check if this meeting is after or equal to academic year start
+                if (d >= tanggalMulaiAjaran && d <= tanggalSekarang) {
+                    var opt = document.createElement('option'); 
+                    opt.value = year + '-P' + p; 
+                    opt.textContent = 'Pertemuan ' + p + ' - ' + d.getDate() + ' ' + NAMA_BULAN[d.getMonth()] + ' ' + year; 
+                    sel.appendChild(opt); 
+                }
+                d.setDate(d.getDate() + 14); 
+                p++; 
+            }
         }
+        
         function generateBulan() {
             var year = new Date().getFullYear(), sel = document.getElementById('select_bulan');
             sel.innerHTML = '<option value="">-- Pilih Bulan --</option>';
-            NAMA_BULAN.forEach(function (nama, i) { var opt = document.createElement('option'); opt.value = (i + 1) + '|' + year; opt.textContent = nama + ' ' + year; sel.appendChild(opt); });
+            
+            // Generate months only from academic year start date
+            NAMA_BULAN.forEach(function (nama, i) { 
+                var bulanDate = new Date(year, i, 1);
+                // Check if this month is after or equal to academic year start
+                if (bulanDate >= tanggalMulaiAjaran && bulanDate <= tanggalSekarang) {
+                    var opt = document.createElement('option'); 
+                    opt.value = (i + 1) + '|' + year; 
+                    opt.textContent = nama + ' ' + year; 
+                    sel.appendChild(opt); 
+                }
+            });
         }
 
         function cariData() {
