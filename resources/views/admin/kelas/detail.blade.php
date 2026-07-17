@@ -122,7 +122,7 @@
             <h1 class="text-4xl font-bold tracking-tight mb-1" style="font-family:'Georgia',serif">
                 {{ $kelas->nama_kelas }}
             </h1>
-            <p class="text-sm font-sans opacity-70">Tahun Ajaran {{ date('Y') - 1 }} / {{ date('Y') }}</p>
+            <p class="text-sm font-sans opacity-70">Tahun Ajaran {{ $tahunAjaran }}</p>
             <div class="flex justify-center gap-8 mt-6 pt-6 border-t border-white/20">
                 <div class="text-center">
                     <div class="text-2xl font-bold font-sans">{{ $kelas->siswa->count() }}</div>

@@ -12,7 +12,10 @@ class KelasController extends Controller
         $kelas = \App\Models\Kelas::with(['siswa', 'guruWali.user'])->findOrFail($id);
         $guruList = \App\Models\Guru::with('user')->get();
         
-        return view('admin.kelas.detail', compact('kelas', 'guruList'));
+        // Ambil pengaturan tahun ajaran
+        $tahunAjaran = \App\Models\PengaturanSistem::getValue('tahun_ajaran', date('Y') - 1 . '/' . date('Y'));
+        
+        return view('admin.kelas.detail', compact('kelas', 'guruList', 'tahunAjaran'));
     }
 
     public function updateWali(Request $request, $id)
