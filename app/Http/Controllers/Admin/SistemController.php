@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\PengaturanSistem;
 
 class SistemController extends Controller
 {
@@ -39,8 +40,8 @@ class SistemController extends Controller
             ->where('status_pegawai', 'Kepala Sekolah')
             ->first();
 
-        $tahunAjaran = \App\Models\PengaturanSistem::getValue('tahun_ajaran', date('Y') . ' / ' . (date('Y') + 1));
-        $mulaiTahunBaru = \App\Models\PengaturanSistem::getValue('mulai_tahun_baru', '');
+        $tahunAjaran = PengaturanSistem::getValue('tahun_ajaran', date('Y') . ' / ' . (date('Y') + 1));
+        $mulaiTahunBaru = PengaturanSistem::getValue('mulai_tahun_baru', '');
 
         $totalSiswaAktif = User::whereNotNull('nisn')->where('is_alumni', 0)->where('status_akademik', 'aktif')->count();
         $totalTinggalKelas = User::whereNotNull('nisn')->where('status_akademik', 'tinggal_kelas')->count();
@@ -66,8 +67,8 @@ class SistemController extends Controller
             'mulai_tahun_baru' => 'required|date',
         ]);
 
-        \App\Models\PengaturanSistem::setValue('tahun_ajaran', $request->tahun_ajaran);
-        \App\Models\PengaturanSistem::setValue('mulai_tahun_baru', $request->mulai_tahun_baru);
+        PengaturanSistem::setValue('tahun_ajaran', $request->tahun_ajaran);
+        PengaturanSistem::setValue('mulai_tahun_baru', $request->mulai_tahun_baru);
 
         return back()->with('success', 'Pengaturan tahun ajaran disimpan.');
     }
@@ -266,5 +267,81 @@ class SistemController extends Controller
             ->get(['id', 'name', 'nisn', 'kelas_id', 'status_akademik']);
 
         return response()->json($siswa);
+    }
+
+    public function updateModeIsiData(Request $request)
+    {
+        // Checkbox: jika dicentang, Laravel terima nilai "1"
+        // Jika tidak dicentang, field tidak ada sama sekali di request
+        // Hidden input trick tidak bekerja saat ada dua field sama nama — pakai has() saja
+        PengaturanSistem::setValue('mode_isi_data_guru', $request->has('mode_guru') ? '1' : '0');
+        PengaturanSistem::setValue('mode_isi_data_siswa', $request->has('mode_siswa') ? '1' : '0');
+
+        PengaturanSistem::setValue('mode_isi_data_guru_deadline', $request->input('deadline_guru') ?: null);
+        PengaturanSistem::setValue('mode_isi_data_siswa_deadline', $request->input('deadline_siswa') ?: null);
+
+        PengaturanSistem::setValue('mode_isi_data_guru_fields', json_encode($request->input('fields_guru', [])));
+        PengaturanSistem::setValue('mode_isi_data_siswa_fields', json_encode($request->input('fields_siswa', [])));
+
+        return back()->with('success', 'Pengaturan mode pengisian data disimpan.');
+    }
+
+    public function getSiswaByKelas($id)
+    {
+        $siswa = User::where('kelas_id', $id)
+            ->whereNotNull('nisn')
+            ->where('is_alumni', 0)
+            ->orderBy('name')
+            ->get(['id', 'name', 'nisn', 'kelas_id']);
+
+        return response()->json($siswa);
+    }
+
+    public function pindahKelas(Request $request)
+    {
+        $request->validate([
+            'mode' => 'required|in:kelas,beberapa,satu',
+            'ke_kelas_id' => 'required|exists:kelas,id',
+            'dari_kelas_id' => 'nullable|exists:kelas,id',
+            'siswa_ids' => 'nullable|array',
+            'siswa_ids.*' => 'exists:users,id',
+            'siswa_id' => 'nullable|exists:users,id',
+        ]);
+
+        $keKelasId = $request->ke_kelas_id;
+        $keKelas = Kelas::findOrFail($keKelasId);
+
+        switch ($request->mode) {
+
+            case 'kelas':
+                $request->validate(['dari_kelas_id' => 'required|exists:kelas,id|different:ke_kelas_id']);
+                $jumlah = User::where('kelas_id', $request->dari_kelas_id)
+                    ->whereNotNull('nisn')
+                    ->where('is_alumni', 0)
+                    ->update(['kelas_id' => $keKelasId]);
+                return response()->json([
+                    'success' => true,
+                    'message' => "{$jumlah} siswa berhasil dipindahkan ke {$keKelas->nama_kelas}.",
+                ]);
+
+            case 'beberapa':
+                $request->validate(['siswa_ids' => 'required|array|min:1']);
+                $jumlah = User::whereIn('id', $request->siswa_ids)
+                    ->whereNotNull('nisn')
+                    ->update(['kelas_id' => $keKelasId]);
+                return response()->json([
+                    'success' => true,
+                    'message' => "{$jumlah} siswa berhasil dipindahkan ke {$keKelas->nama_kelas}.",
+                ]);
+
+            case 'satu':
+                $request->validate(['siswa_id' => 'required|exists:users,id']);
+                $siswa = User::findOrFail($request->siswa_id);
+                $siswa->update(['kelas_id' => $keKelasId]);
+                return response()->json([
+                    'success' => true,
+                    'message' => "{$siswa->name} berhasil dipindahkan ke {$keKelas->nama_kelas}.",
+                ]);
+        }
     }
 }

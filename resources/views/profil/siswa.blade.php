@@ -434,57 +434,178 @@
         </div>
 
         {{-- ── DATA DIRI CARD ───────────────────────────────── --}}
-        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden fu-1">
-            <div class="section-header">
-                <div class="section-icon">
-                    <svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                </div>
-                <span class="text-[13px] font-bold text-gray-900">Data Diri</span>
-            </div>
+        {{-- ── DATA DIRI CARD ───────────────────────────────── --}}
+@php
+    $modeAktif  = \App\Models\PengaturanSistem::getValue('mode_isi_data_siswa') == '1';
+    $deadline   = \App\Models\PengaturanSistem::getValue('mode_isi_data_siswa_deadline');
+    $modeValid  = $modeAktif && (!$deadline || now()->lte(\Carbon\Carbon::parse($deadline)->endOfDay()));
+    $fieldsIzin = json_decode(\App\Models\PengaturanSistem::getValue('mode_isi_data_siswa_fields', '[]'), true) ?? [];
+    $boleh      = fn(string $f) => $modeValid && in_array($f, $fieldsIzin);
+@endphp
 
-            <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+{{-- Banner mode aktif --}}
+@if($modeValid)
+<div class="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 flex items-start gap-3 fu-1">
+    <svg class="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+    </svg>
+    <div>
+        <p class="text-sm font-semibold text-purple-800">Mode pengisian data sedang aktif</p>
+        <p class="text-xs text-purple-600 mt-0.5">
+            Kamu dapat memperbaiki data yang biasanya terkunci.
+            @if($deadline)
+                Batas waktu: <strong>{{ \Carbon\Carbon::parse($deadline)->translatedFormat('d F Y') }}</strong>.
+            @endif
+        </p>
+    </div>
+</div>
+@endif
 
-                <div class="field-row">
-                    <span class="field-label">Nama Lengkap</span>
-                    <span class="field-sep">:</span>
-                    <span class="field-input">{{ $user->name ?? '-' }}</span>
-                </div>
-
-                <div class="field-row">
-                    <span class="field-label">Tempat Lahir</span>
-                    <span class="field-sep">:</span>
-                    <span class="field-input">{{ $user->tempat_lahir ?? '-' }}</span>
-                </div>
-
-                <div class="field-row">
-                    <span class="field-label">Tanggal Lahir</span>
-                    <span class="field-sep">:</span>
-                    <span class="field-input">{{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->translatedFormat('d F Y') : '-' }}</span>
-                </div>
-
-                <div class="field-row">
-                    <span class="field-label">Jenis Kelamin</span>
-                    <span class="field-sep">:</span>
-                    <span class="field-input">{{ $user->gender ?? '-' }}</span>
-                </div>
-
-                <div class="field-row">
-                    <span class="field-label">Kelas</span>
-                    <span class="field-sep">:</span>
-                    <span class="field-input">{{ $user->kelas?->nama_kelas ?? '-' }}</span>
-                </div>
-
-                <div class="field-row">
-                    <span class="field-label">NISN</span>
-                    <span class="field-sep">:</span>
-                    <span class="field-input">{{ $user->nisn ?? '-' }}</span>
-                </div>
-
-            </div>
+<div class="bg-white border border-gray-200 rounded-2xl overflow-hidden fu-1">
+    <div class="section-header">
+        <div class="section-icon">
+            <svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
         </div>
+        <span class="text-[13px] font-bold text-gray-900">Data Diri</span>
+    </div>
+
+    <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+
+        {{-- Nama Lengkap --}}
+        <div class="field-row" style="{{ $boleh('name') ? '' : 'opacity:.75;' }}">
+            <span class="field-label">
+                Nama Lengkap
+                @if(!$boleh('name'))
+                    <svg class="w-3 h-3 text-gray-400 inline ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                @endif
+            </span>
+            <span class="field-sep">:</span>
+            @if($boleh('name'))
+                <input type="text" id="d_name" value="{{ $user->name }}" class="field-input" placeholder="Nama lengkap"/>
+            @else
+                <span class="field-input">{{ $user->name ?? '-' }}</span>
+                <input type="hidden" id="d_name" value="{{ $user->name }}">
+            @endif
+        </div>
+
+        {{-- Tempat Lahir --}}
+        <div class="field-row" style="{{ $boleh('tempat_lahir') ? '' : 'opacity:.75;' }}">
+            <span class="field-label">
+                Tempat Lahir
+                @if(!$boleh('tempat_lahir'))
+                    <svg class="w-3 h-3 text-gray-400 inline ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                @endif
+            </span>
+            <span class="field-sep">:</span>
+            @if($boleh('tempat_lahir'))
+                <input type="text" id="d_tempat_lahir" value="{{ $user->tempat_lahir }}" class="field-input" placeholder="Tempat lahir"/>
+            @else
+                <span class="field-input">{{ $user->tempat_lahir ?? '-' }}</span>
+                <input type="hidden" id="d_tempat_lahir" value="{{ $user->tempat_lahir }}">
+            @endif
+        </div>
+
+        {{-- Tanggal Lahir --}}
+        <div class="field-row" style="{{ $boleh('birth_date') ? '' : 'opacity:.75;' }}">
+            <span class="field-label">
+                Tanggal Lahir
+                @if(!$boleh('birth_date'))
+                    <svg class="w-3 h-3 text-gray-400 inline ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                @endif
+            </span>
+            <span class="field-sep">:</span>
+            @if($boleh('birth_date'))
+                <input type="date" id="d_birth_date"
+                    value="{{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->format('Y-m-d') : '' }}"
+                    class="field-input"/>
+            @else
+                <span class="field-input">
+                    {{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->translatedFormat('d F Y') : '-' }}
+                </span>
+                <input type="hidden" id="d_birth_date"
+                    value="{{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->format('Y-m-d') : '' }}">
+            @endif
+        </div>
+
+        {{-- Jenis Kelamin --}}
+        <div class="field-row" style="{{ $boleh('gender') ? '' : 'opacity:.75;' }}">
+            <span class="field-label">
+                Jenis Kelamin
+                @if(!$boleh('gender'))
+                    <svg class="w-3 h-3 text-gray-400 inline ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                @endif
+            </span>
+            <span class="field-sep">:</span>
+            @if($boleh('gender'))
+                <select id="d_gender" class="field-input" style="cursor:pointer">
+                    <option value="">Pilih...</option>
+                    <option value="Laki-laki"   {{ $user->gender == 'Laki-laki'  ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="Perempuan"   {{ $user->gender == 'Perempuan'  ? 'selected' : '' }}>Perempuan</option>
+                </select>
+            @else
+                <span class="field-input">{{ $user->gender ?? '-' }}</span>
+                <input type="hidden" id="d_gender" value="{{ $user->gender }}">
+            @endif
+        </div>
+
+        {{-- Kelas --}}
+        <div class="field-row" style="{{ $boleh('kelas_id') ? '' : 'opacity:.75;' }}">
+            <span class="field-label">
+                Kelas
+                @if(!$boleh('kelas_id'))
+                    <svg class="w-3 h-3 text-gray-400 inline ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                @endif
+            </span>
+            <span class="field-sep">:</span>
+            @if($boleh('kelas_id'))
+                <select id="d_kelas_id" class="field-input" style="cursor:pointer">
+                    <option value="">Pilih kelas...</option>
+                    @foreach(\App\Models\Kelas::orderBy('nama_kelas')->get() as $k)
+                        <option value="{{ $k->id }}" {{ $user->kelas_id == $k->id ? 'selected' : '' }}>
+                            {{ $k->nama_kelas }}
+                        </option>
+                    @endforeach
+                </select>
+            @else
+                <span class="field-input">{{ $user->kelas?->nama_kelas ?? '-' }}</span>
+                <input type="hidden" id="d_kelas_id" value="{{ $user->kelas_id }}">
+            @endif
+        </div>
+
+        {{-- NISN --}}
+        <div class="field-row" style="{{ $boleh('nisn') ? '' : 'opacity:.75;' }}">
+            <span class="field-label">
+                NISN
+                @if(!$boleh('nisn'))
+                    <svg class="w-3 h-3 text-gray-400 inline ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                @endif
+            </span>
+            <span class="field-sep">:</span>
+            @if($boleh('nisn'))
+                <input type="text" id="d_nisn" value="{{ $user->nisn }}" class="field-input" placeholder="NISN"/>
+            @else
+                <span class="field-input">{{ $user->nisn ?? '-' }}</span>
+                <input type="hidden" id="d_nisn" value="{{ $user->nisn }}">
+            @endif
+        </div>
+
+    </div>
+</div>
 
         {{-- ── GRID: HOBI + KONTAK ─────────────────────────── --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 fu-2">
@@ -971,6 +1092,13 @@
             }
 
             const formData = new FormData();
+            // Field restricted — selalu dikirim, controller yang filter
+formData.append('d_name',         document.getElementById('d_name').value);
+formData.append('d_tempat_lahir', document.getElementById('d_tempat_lahir').value);
+formData.append('d_birth_date',   document.getElementById('d_birth_date').value);
+formData.append('d_gender',       document.getElementById('d_gender').value);
+formData.append('d_kelas_id',     document.getElementById('d_kelas_id').value);
+formData.append('d_nisn',         document.getElementById('d_nisn').value);
             formData.append('hobi', document.getElementById('f_hobi').value);
             formData.append('cita', document.getElementById('f_cita').value);
             formData.append('makan', document.getElementById('f_makan').value);

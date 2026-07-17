@@ -291,4 +291,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/sistem/pindah-siswa', [\App\Http\Controllers\Admin\SistemController::class, 'pindahSiswa'])->name('sistem.pindah-siswa');
     Route::post('/sistem/ganti-kepala-sekolah', [\App\Http\Controllers\Admin\SistemController::class, 'gantiKepalaSekolah'])->name('sistem.ganti-kepala-sekolah');
     Route::get('/sistem/search-siswa', [\App\Http\Controllers\Admin\SistemController::class, 'searchSiswa'])->name('sistem.search-siswa');
+    Route::post('/sistem/mode-isi-data', [\App\Http\Controllers\Admin\SistemController::class, 'updateModeIsiData'])->name('sistem.mode-isi-data');
+    Route::post('/sistem/pindah-kelas', [\App\Http\Controllers\Admin\SistemController::class, 'pindahKelas'])->name('sistem.pindah-kelas');
+    Route::get('/sistem/siswa-kelas/{id}', [\App\Http\Controllers\Admin\SistemController::class, 'getSiswaByKelas'])->name('sistem.siswa-kelas');
 });

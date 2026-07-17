@@ -26,14 +26,12 @@ class ProfileController extends Controller
      */
     public function save(Request $request)
     {
-        // Decode teman_terbaik_json from string to array
         if ($request->has('teman_terbaik_json') && is_string($request->teman_terbaik_json)) {
             $request->merge([
                 'teman_terbaik_json' => json_decode($request->teman_terbaik_json, true) ?? []
             ]);
         }
 
-        // Validate the request data
         $validated = $request->validate([
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'hobi' => 'nullable|string|max:255',
@@ -50,57 +48,82 @@ class ProfileController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'alamat' => 'nullable|string|max:500',
-        ], [
-            'foto.image' => 'Foto harus berupa gambar.',
-            'foto.max' => 'Ukuran foto maksimal 5MB.',
-            'foto.mimes' => 'Format foto harus jpeg, png, jpg, atau gif.',
+            // field restricted — validasi tapi controller yang memutuskan apakah disimpan
+            'd_name' => 'nullable|string|max:255',
+            'd_tempat_lahir' => 'nullable|string|max:255',
+            'd_birth_date' => 'nullable|date',
+            'd_gender' => 'nullable|in:Laki-laki,Perempuan',
+            'd_kelas_id' => 'nullable|exists:kelas,id',
+            'd_nisn' => 'nullable|string|max:20',
         ]);
 
         try {
-            // Get the authenticated user
+            /** @var \App\Models\User $user */
             $user = Auth::user();
 
-            // 2. Logika Update atau Insert Foto
+            // ── Cek mode pengisian data siswa ────────────────────────────────
+            $modeAktif = \App\Models\PengaturanSistem::getValue('mode_isi_data_siswa') == '1';
+            $deadline = \App\Models\PengaturanSistem::getValue('mode_isi_data_siswa_deadline');
+            $modeValid = $modeAktif && (!$deadline || now()->lte(\Carbon\Carbon::parse($deadline)->endOfDay()));
+            $fieldsIzin = json_decode(
+                \App\Models\PengaturanSistem::getValue('mode_isi_data_siswa_fields', '[]'),
+                true
+            ) ?? [];
+            $boleh = fn(string $f) => $modeValid && in_array($f, $fieldsIzin);
+
+            // ── Foto ─────────────────────────────────────────────────────────
+            $fotoPath = $user->foto;
             if ($request->hasFile('foto')) {
-                // Hapus foto lama dari storage jika user sudah punya foto sebelumnya
                 if ($user->foto && Storage::disk('public')->exists($user->foto)) {
                     Storage::disk('public')->delete($user->foto);
                 }
-
-                // Simpan foto baru
-                $path = $request->file('foto')->store('profile_photos', 'public');
-
-                // Masukkan path ke array data yang akan diupdate
-                $validated['foto'] = $path;
+                $fotoPath = $request->file('foto')->store('profile_photos', 'public');
             }
 
-            // Update user profile data
-            /** @var \App\Models\User $user */
-            $user->update([
-                'foto'      => $validated['foto'] ?? $user->foto,
-                'hobi' => $validated['hobi'] ?? null,
-                'cita_cita' => $validated['cita'] ?? null,
-                'teman_terbaik' => $validated['teman'] ?? null,
-                'teman_terbaik_json' => $validated['teman_terbaik_json'] ?? null,
-                'makanan_kesukaan' => $validated['makan'] ?? null,
-                'warna_kesukaan' => $validated['warna'] ?? null,
+            // ── Field bebas ──────────────────────────────────────────────────
+            $data = [
+                'foto' => $fotoPath,
+                'hobi' => $validated['hobi'] ?? $user->hobi,
+                'cita_cita' => $validated['cita'] ?? $user->cita_cita,
+                'teman_terbaik' => $validated['teman'] ?? $user->teman_terbaik,
+                'teman_terbaik_json' => $validated['teman_terbaik_json'] ?? $user->teman_terbaik_json,
+                'makanan_kesukaan' => $validated['makan'] ?? $user->makanan_kesukaan,
+                'warna_kesukaan' => $validated['warna'] ?? $user->warna_kesukaan,
                 'no_telepon' => $validated['hp'],
                 'no_ortu' => $validated['ortu'],
                 'email' => $validated['email'],
                 'latitude' => $validated['latitude'],
                 'longitude' => $validated['longitude'],
                 'alamat' => $validated['alamat'],
-            ]);
+            ];
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Profil berhasil disimpan!',
-                'data' => $user
-            ]);
+            // ── Field restricted — hanya simpan jika mode aktif & diizinkan ──
+            if ($boleh('name') && filled($request->d_name))
+                $data['name'] = $request->d_name;
+
+            if ($boleh('tempat_lahir') && filled($request->d_tempat_lahir))
+                $data['tempat_lahir'] = $request->d_tempat_lahir;
+
+            if ($boleh('birth_date') && filled($request->d_birth_date))
+                $data['birth_date'] = $request->d_birth_date;
+
+            if ($boleh('gender') && filled($request->d_gender))
+                $data['gender'] = $request->d_gender;
+
+            if ($boleh('kelas_id') && filled($request->d_kelas_id))
+                $data['kelas_id'] = $request->d_kelas_id;
+
+            if ($boleh('nisn') && filled($request->d_nisn))
+                $data['nisn'] = $request->d_nisn;
+
+            $user->update($data);
+
+            return response()->json(['success' => true, 'message' => 'Profil berhasil disimpan!']);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan profil: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -22,53 +22,86 @@ class GuruProfilController extends Controller
     public function save(Request $request): JsonResponse
     {
         $request->validate([
-            'nama'          => ['nullable', 'string', 'max:255'],
-            'tempat_lahir'  => ['nullable', 'string', 'max:255'],
+            'nama' => ['nullable', 'string', 'max:255'],
+            'tempat_lahir' => ['nullable', 'string', 'max:255'],
             'tanggal_lahir' => ['nullable', 'date'],
-            'status_guru'   => ['nullable', 'string', 'max:100'],
-            'gender'        => ['nullable', 'string', 'in:Laki-laki,Perempuan'],
-            'unit_kerja'    => ['nullable', 'string', 'max:255'],
-            'hp'            => ['nullable', 'string', 'max:20'],
-            'email'         => ['nullable', 'email', 'max:255'],
-            'alamat'        => ['nullable', 'string', 'max:500'],
-            'latitude'      => ['nullable', 'numeric'],
-            'longitude'     => ['nullable', 'numeric'],
+            'nip' => ['nullable', 'string', 'max:50'],
+            'nik' => ['nullable', 'string', 'max:50'],
+            'status_guru' => ['nullable', 'string', 'max:100'],
+            'status_pegawai' => ['nullable', 'string', 'max:100'],
+            'gender' => ['nullable', 'string', 'in:Laki-laki,Perempuan'],
+            'unit_kerja' => ['nullable', 'string', 'max:255'],
+            'hp' => ['nullable', 'string', 'max:20'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'alamat' => ['nullable', 'string', 'max:500'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
         $user = Auth::user();
         $guru = $user->guru;
 
-        $pathFoto = $user->foto; // default pakai foto lama
+        // ── Cek mode pengisian data ──────────────────────────────────────────
+        $modeAktif = \App\Models\PengaturanSistem::getValue('mode_isi_data_guru') == '1';
+        $deadline = \App\Models\PengaturanSistem::getValue('mode_isi_data_guru_deadline');
+        $modeValid = $modeAktif && (!$deadline || now()->lte(\Carbon\Carbon::parse($deadline)->endOfDay()));
+        $fieldsIzin = json_decode(
+            \App\Models\PengaturanSistem::getValue('mode_isi_data_guru_fields', '[]'),
+            true
+        ) ?? [];
+        $boleh = fn(string $f) => $modeValid && in_array($f, $fieldsIzin);
+
+        // ── Foto (selalu bebas) ──────────────────────────────────────────────
+        $pathFoto = $user->foto;
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
             if ($user->foto && Storage::disk('public')->exists($user->foto)) {
                 Storage::disk('public')->delete($user->foto);
             }
-            // Simpan foto baru
             $pathFoto = $request->file('foto')->store('profile_photos', 'public');
         }
 
-        // Update data user
-        /** @var \App\Models\User $user */
-        $user->update([
-            'name'          => $request->nama ?? $user->name,
-            'foto'          => $pathFoto, // Tambahkan ini
-            'email'         => $request->email ?? $user->email,
-            'gender'        => $request->gender ?? $user->gender,
-            'no_telepon'    => $request->hp ?? $user->no_telepon,
-            'tempat_lahir'  => $request->tempat_lahir ?? $user->tempat_lahir,
-            'birth_date'    => $request->tanggal_lahir ?? $user->birth_date,
-            'alamat'        => $request->alamat ?? $user->alamat,
-            'latitude'      => $request->latitude ?? $user->latitude,
-            'longitude'     => $request->longitude ?? $user->longitude,
-        ]);
+        // ── Data user: field bebas ───────────────────────────────────────────
+        $userData = [
+            'foto' => $pathFoto,
+            'email' => $request->email ?? $user->email,
+            'gender' => $request->gender ?? $user->gender,
+            'no_telepon' => $request->hp ?? $user->no_telepon,
+            'alamat' => $request->alamat ?? $user->alamat,
+            'latitude' => $request->latitude ?? $user->latitude,
+            'longitude' => $request->longitude ?? $user->longitude,
+        ];
 
-        // Update data guru jika ada (hanya field spesifik guru)
+        // ── Data user: field restricted ──────────────────────────────────────
+        if ($boleh('nama_lengkap'))
+            $userData['name'] = $request->nama ?? $user->name;
+
+        if ($boleh('tempat_lahir'))
+            $userData['tempat_lahir'] = $request->tempat_lahir ?? $user->tempat_lahir;
+
+        if ($boleh('tanggal_lahir'))
+            $userData['birth_date'] = $request->tanggal_lahir ?? $user->birth_date;
+
+        if ($boleh('nip'))
+            $userData['nip'] = $request->nip ?? $user->nip;
+
+        if ($boleh('nik'))
+            $userData['nik'] = $request->nik ?? $user->nik;
+
+        /** @var \App\Models\User $user */
+        $user->update($userData);
+
+        // ── Data guru: field bebas ───────────────────────────────────────────
         if ($guru) {
-            $guru->update([
-                'status_pegawai' => $request->status_guru ?? $guru->status_pegawai,
-                'unit_kerja'     => $request->unit_kerja ?? $guru->unit_kerja,
-            ]);
+            $guruData = [
+                'unit_kerja' => $request->unit_kerja ?? $guru->unit_kerja,
+            ];
+
+            // Field restricted guru
+            if ($boleh('status_pegawai'))
+                $guruData['status_pegawai'] = $request->status_pegawai ?? $guru->status_pegawai;
+
+            $guru->update($guruData);
         }
 
         return response()->json([

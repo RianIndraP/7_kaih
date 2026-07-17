@@ -11,7 +11,7 @@
     </div>
     <div class="text-center text-sm text-gray-700">
         <div>Banda Aceh, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
-        <div class="font-semibold mt-0.5">Guru Wali Kelas</div>
+        <div class="font-semibold mt-0.5">Guru Wali</div>
         <div class="mt-20">
             <div class="font-bold border-b border-gray-700 inline-block px-1">
                 {{ $user->name ?? '____________________' }}
