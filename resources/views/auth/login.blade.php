@@ -33,7 +33,8 @@
             <span class="text-xs text-gray-500 font-medium">SMK Negeri 5 Telkom Banda Aceh</span>
         </p>
 
-        <form class="space-y-5" method="POST" action="{{ route('login') }}">
+        <!-- 1. Menambahkan autocomplete="off" pada tag form utama -->
+        <form id="laravelLoginForm" class="space-y-5" method="POST" action="{{ route('login') }}" autocomplete="off">
             @csrf
             @if ($errors->any())
                 <div
@@ -95,17 +96,14 @@
             </div>
 
             <div class="flex justify-end">
-                {{-- <label class="flex items-center gap-2 text-sm text-gray-600">
-                    <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                    Ingat saya
-                </label> --}}
                 <a href="{{ route('forgot-password') }}"
                     class="text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors">
                     Lupa password?
                 </a>
             </div>
 
-            <button type="submit"
+            <!-- 2. Menambahkan ID agar tombol submit mudah dikenali oleh JS -->
+            <button id="btnSubmitLogin" type="submit"
                 class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold py-3.5 rounded-xl hover:from-blue-700 hover:to-indigo-800 transform hover:scale-[1.01] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
                 Masuk
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,6 +112,34 @@
                 </svg>
             </button>
         </form>
+
+        <!-- 3. Skrip Penangkal Auto-Submit Brutal dari Google/iOS Autofill -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById('laravelLoginForm');
+                const submitBtn = document.getElementById('btnSubmitLogin');
+                let isRealHumanClick = false;
+
+                // Tandai true jika tombol "Masuk" benar-benar ditekan jari pengguna
+                submitBtn.addEventListener('click', function () {
+                    isRealHumanClick = true;
+                });
+
+                // Intersepsi pengiriman form
+                form.addEventListener('submit', function (e) {
+                    // Jika form ter-submit sendiri tanpa klik manusia (ulah autofill HP)
+                    if (!isRealHumanClick) {
+                        e.preventDefault(); // Gagalkan auto-submit instan yang merusak token CSRF
+
+                        // Beri jeda 400ms agar browser selesai mengisi data & token CSRF siap sepenuhnya
+                        setTimeout(function () {
+                            isRealHumanClick = true; // Buka kunci pengaman
+                            form.submit(); // Kirim form secara aman
+                        }, 400);
+                    }
+                });
+            });
+        </script>
 
         <!-- Footer -->
         <div class="mt-8 pt-6 border-t border-blue-200 text-center">
