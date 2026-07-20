@@ -113,34 +113,6 @@
             </button>
         </form>
 
-        <!-- 3. Skrip Penangkal Auto-Submit Brutal dari Google/iOS Autofill -->
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const form = document.getElementById('laravelLoginForm');
-                const submitBtn = document.getElementById('btnSubmitLogin');
-                let isRealHumanClick = false;
-
-                // Tandai true jika tombol "Masuk" benar-benar ditekan jari pengguna
-                submitBtn.addEventListener('click', function () {
-                    isRealHumanClick = true;
-                });
-
-                // Intersepsi pengiriman form
-                form.addEventListener('submit', function (e) {
-                    // Jika form ter-submit sendiri tanpa klik manusia (ulah autofill HP)
-                    if (!isRealHumanClick) {
-                        e.preventDefault(); // Gagalkan auto-submit instan yang merusak token CSRF
-
-                        // Beri jeda 400ms agar browser selesai mengisi data & token CSRF siap sepenuhnya
-                        setTimeout(function () {
-                            isRealHumanClick = true; // Buka kunci pengaman
-                            form.submit(); // Kirim form secara aman
-                        }, 400);
-                    }
-                });
-            });
-        </script>
-
         <!-- Footer -->
         <div class="mt-8 pt-6 border-t border-blue-200 text-center">
             <p class="text-xs text-gray-500 font-medium">
@@ -152,6 +124,33 @@
     </div>
 
     <script>
+
+        // 3. Skrip Penangkal Auto-Submit Brutal dari Google/iOS Autofill
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById('laravelLoginForm');
+            const submitBtn = document.getElementById('btnSubmitLogin');
+            let isRealHumanClick = false;
+
+            // Tandai true jika tombol "Masuk" benar-benar ditekan jari pengguna
+            submitBtn.addEventListener('click', function () {
+                isRealHumanClick = true;
+            });
+
+            // Intersepsi pengiriman form
+            form.addEventListener('submit', function (e) {
+                // Jika form ter-submit sendiri tanpa klik manusia (ulah autofill HP)
+                if (!isRealHumanClick) {
+                    e.preventDefault(); // Gagalkan auto-submit instan yang merusak token CSRF
+
+                    // Beri jeda 400ms agar browser selesai mengisi data & token CSRF siap sepenuhnya
+                    setTimeout(function () {
+                        isRealHumanClick = true; // Buka kunci pengaman
+                        form.submit(); // Kirim form secara aman
+                    }, 400);
+                }
+            });
+        });
+
         // Password visibility toggle
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function () {
