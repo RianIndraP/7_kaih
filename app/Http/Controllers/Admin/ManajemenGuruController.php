@@ -452,181 +452,317 @@ class ManajemenGuruController extends Controller
         return response()->download($filePath, 'Template_Import_Guru.xlsx');
     }
 
-    public function export()
-    {
-        $guruList = Guru::with('user')->orderBy('id')->get();
+    public function export(Request $request)
+{
+    $filter = $request->get('filter', 'semua');
+    $format = $request->get('format', 'tampilan'); // 'tampilan' atau 'import'
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Data Guru');
+    // ── Query berdasarkan filter ──────────────────────────────────────────
+    $query = Guru::with('user')->orderBy('id');
 
-        // ── Kop sekolah ─────────────────────────────────────────────────────
-        $sheet->mergeCells('A1:G1');
-        $sheet->setCellValue('A1', 'SMK NEGERI 5 TELKOM BANDA ACEH');
-        $sheet->getStyle('A1')->applyFromArray([
-            'font' => ['bold' => true, 'size' => 14, 'color' => ['rgb' => '1E3A5F']],
-            'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
-        ]);
-        $sheet->getRowDimension(1)->setRowHeight(24);
+    switch ($filter) {
+        case 'tanpa_nip':
+            $query->whereHas('user', fn($q) => $q->whereNull('nip')->orWhere('nip', ''));
+            $filterLabel = 'Tanpa NIP';
+            break;
 
-        $sheet->mergeCells('A2:G2');
-        $sheet->setCellValue('A2', 'DATA GURU TAHUN AJARAN ' . date('Y') . '/' . (date('Y') + 1));
-        $sheet->getStyle('A2')->applyFromArray([
-            'font' => ['bold' => true, 'size' => 11, 'color' => ['rgb' => '374151']],
-            'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
-        ]);
-        $sheet->getRowDimension(2)->setRowHeight(18);
+        case 'tanpa_nik':
+            $query->whereHas('user', fn($q) => $q->whereNull('nik')->orWhere('nik', ''));
+            $filterLabel = 'Tanpa NIK';
+            break;
 
-        $sheet->mergeCells('A3:G3');
-        $sheet->setCellValue('A3', 'Dicetak pada: ' . now()->translatedFormat('d F Y, H:i') . ' WIB');
-        $sheet->getStyle('A3')->applyFromArray([
-            'font' => ['italic' => true, 'size' => 9, 'color' => ['rgb' => '6B7280']],
-            'alignment' => ['horizontal' => 'center'],
-        ]);
-        $sheet->getRowDimension(3)->setRowHeight(14);
+        case 'tidak_lengkap':
+            $query->whereHas('user', function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNull('nip')->orWhere('nip', '');
+                })->orWhere(function ($sub) {
+                    $sub->whereNull('nik')->orWhere('nik', '');
+                })->orWhere(function ($sub) {
+                    $sub->whereNull('gender')->orWhere('gender', '');
+                })->orWhere(function ($sub) {
+                    $sub->whereNull('birth_date');
+                })->orWhere(function ($sub) {
+                    $sub->whereNull('no_telepon')->orWhere('no_telepon', '');
+                });
+            });
+            $filterLabel = 'Data Tidak Lengkap';
+            break;
 
-        // ── Baris kosong pemisah ─────────────────────────────────────────────
-        $sheet->getRowDimension(4)->setRowHeight(6);
+        default:
+            $filterLabel = 'Semua Guru';
+            break;
+    }
 
-        // ── Header tabel ─────────────────────────────────────────────────────
-        $headers = ['No', 'NIP', 'NIK', 'Nama Lengkap', 'Jenis Kelamin', 'Tanggal Lahir', 'Status Pegawai'];
-        $cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    $guruList = $query->get();
 
-        foreach ($headers as $i => $label) {
-            $cell = $cols[$i] . '5';
-            $sheet->setCellValue($cell, $label);
-        }
+    // ── Format: siap re-import ────────────────────────────────────────────
+    if ($format === 'import') {
+        return $this->exportForImport($guruList, $filterLabel);
+    }
 
-        $sheet->getStyle('A5:G5')->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'size' => 10,
-                'color' => ['rgb' => 'FFFFFF'],
-            ],
-            'fill' => [
-                'fillType' => 'solid',
-                'startColor' => ['rgb' => '1D4ED8'],
-            ],
-            'alignment' => [
-                'horizontal' => 'center',
-                'vertical' => 'center',
-                'wrapText' => true,
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => ['rgb' => 'BFDBFE'],
-                ],
-            ],
-        ]);
-        $sheet->getRowDimension(5)->setRowHeight(22);
+    // ── Format: tampilan rapi ─────────────────────────────────────────────
+    return $this->exportTampilan($guruList, $filterLabel, $filter);
+}
 
-        // ── Data ─────────────────────────────────────────────────────────────
-        $row = 6;
-        foreach ($guruList as $i => $g) {
-            $isEven = ($i % 2 === 0);
-            $bgColor = $isEven ? 'EFF6FF' : 'FFFFFF';
+private function exportTampilan($guruList, string $filterLabel, string $filter)
+{
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Data Guru');
 
-            $sheet->setCellValue('A' . $row, $i + 1);
-            $sheet->setCellValue('B' . $row, $g->user->nip ?? '-');
-            $sheet->setCellValue('C' . $row, $g->user->nik ?? '-');
-            $sheet->setCellValue('D' . $row, $g->user->name ?? '-');
-            $sheet->setCellValue('E' . $row, $g->user->gender ?? '-');
-            $sheet->setCellValue(
-                'F' . $row,
-                $g->user->birth_date
+    // ── Kop ──────────────────────────────────────────────────────────────
+    $sheet->mergeCells('A1:H1');
+    $sheet->setCellValue('A1', 'SMK NEGERI 5 TELKOM BANDA ACEH');
+    $sheet->getStyle('A1')->applyFromArray([
+        'font'      => ['bold' => true, 'size' => 14, 'color' => ['rgb' => '1E3A5F']],
+        'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+    ]);
+    $sheet->getRowDimension(1)->setRowHeight(24);
+
+    $sheet->mergeCells('A2:H2');
+    $sheet->setCellValue('A2', 'DATA GURU — ' . strtoupper($filterLabel) . ' | TAHUN AJARAN ' . date('Y') . '/' . (date('Y') + 1));
+    $sheet->getStyle('A2')->applyFromArray([
+        'font'      => ['bold' => true, 'size' => 11, 'color' => ['rgb' => '374151']],
+        'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+    ]);
+    $sheet->getRowDimension(2)->setRowHeight(18);
+
+    $sheet->mergeCells('A3:H3');
+    $sheet->setCellValue('A3', 'Dicetak pada: ' . now()->translatedFormat('d F Y, H:i') . ' WIB  |  Total: ' . $guruList->count() . ' guru');
+    $sheet->getStyle('A3')->applyFromArray([
+        'font'      => ['italic' => true, 'size' => 9, 'color' => ['rgb' => '6B7280']],
+        'alignment' => ['horizontal' => 'center'],
+    ]);
+    $sheet->getRowDimension(3)->setRowHeight(14);
+    $sheet->getRowDimension(4)->setRowHeight(6);
+
+    // ── Header tabel ──────────────────────────────────────────────────────
+    $headers = ['No', 'NIP', 'NIK', 'Nama Lengkap', 'Jenis Kelamin', 'Tanggal Lahir', 'Status Pegawai', 'Kelengkapan'];
+    $cols    = ['A','B','C','D','E','F','G','H'];
+
+    foreach ($headers as $i => $label) {
+        $sheet->setCellValue($cols[$i] . '5', $label);
+    }
+
+    $sheet->getStyle('A5:H5')->applyFromArray([
+        'font'      => ['bold' => true, 'size' => 10, 'color' => ['rgb' => 'FFFFFF']],
+        'fill'      => ['fillType' => 'solid', 'startColor' => ['rgb' => '1D4ED8']],
+        'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+        'borders'   => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color' => ['rgb' => 'BFDBFE']]],
+    ]);
+    $sheet->getRowDimension(5)->setRowHeight(22);
+
+    // ── Data ──────────────────────────────────────────────────────────────
+    $row = 6;
+    foreach ($guruList as $i => $g) {
+        $bgColor = $i % 2 === 0 ? 'EFF6FF' : 'FFFFFF';
+
+        // Hitung kelengkapan
+        $missingFields = [];
+        if (empty($g->user->nip))        $missingFields[] = 'NIP';
+        if (empty($g->user->nik))        $missingFields[] = 'NIK';
+        if (empty($g->user->gender))     $missingFields[] = 'JK';
+        if (empty($g->user->birth_date)) $missingFields[] = 'Tgl Lahir';
+        if (empty($g->user->no_telepon)) $missingFields[] = 'Telepon';
+        $kelengkapan = empty($missingFields) ? '✓ Lengkap' : '✗ Kurang: ' . implode(', ', $missingFields);
+        $kelengkapanColor = empty($missingFields) ? '15803D' : 'DC2626';
+
+        $sheet->setCellValue("A{$row}", $i + 1);
+        $sheet->setCellValue("B{$row}", $g->user->nip  ?? '-');
+        $sheet->setCellValue("C{$row}", $g->user->nik  ?? '-');
+        $sheet->setCellValue("D{$row}", $g->user->name ?? '-');
+        $sheet->setCellValue("E{$row}", $g->user->gender ?? '-');
+        $sheet->setCellValue("F{$row}",
+            $g->user->birth_date
                 ? \Carbon\Carbon::parse($g->user->birth_date)->format('d/m/Y')
                 : '-'
-            );
-            $sheet->setCellValue('G' . $row, $g->status_pegawai ?? '-');
+        );
+        $sheet->setCellValue("G{$row}", $g->status_pegawai ?? '-');
+        $sheet->setCellValue("H{$row}", $kelengkapan);
 
-            // Style baris data
-            $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
-                'fill' => [
-                    'fillType' => 'solid',
-                    'startColor' => ['rgb' => $bgColor],
-                ],
-                'alignment' => ['vertical' => 'center'],
-                'borders' => [
-                    'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        'color' => ['rgb' => 'DBEAFE'],
-                    ],
-                ],
-            ]);
-
-            // Kolom No & JK center
-            $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal('center');
-            $sheet->getStyle("E{$row}")->getAlignment()->setHorizontal('center');
-            $sheet->getStyle("F{$row}")->getAlignment()->setHorizontal('center');
-            $sheet->getStyle("G{$row}")->getAlignment()->setHorizontal('center');
-
-            $sheet->getRowDimension($row)->setRowHeight(18);
-            $row++;
-        }
-
-        // ── Baris total ───────────────────────────────────────────────────────
-        $sheet->mergeCells("A{$row}:C{$row}");
-        $sheet->setCellValue("A{$row}", 'Total Guru');
-        $sheet->setCellValue("D{$row}", $guruList->count() . ' guru');
-        $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
-            'font' => ['bold' => true, 'size' => 10, 'color' => ['rgb' => '1E3A5F']],
-            'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => 'DBEAFE']],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => ['rgb' => '93C5FD'],
-                ],
-            ],
-        ]);
-        $sheet->getRowDimension($row)->setRowHeight(20);
-
-        // ── Lebar kolom ───────────────────────────────────────────────────────
-        $sheet->getColumnDimension('A')->setWidth(6);
-        $sheet->getColumnDimension('B')->setWidth(22);
-        $sheet->getColumnDimension('C')->setWidth(20);
-        $sheet->getColumnDimension('D')->setWidth(32);
-        $sheet->getColumnDimension('E')->setWidth(16);
-        $sheet->getColumnDimension('F')->setWidth(16);
-        $sheet->getColumnDimension('G')->setWidth(20);
-
-        // ── Freeze panes di bawah header ─────────────────────────────────────
-        $sheet->freezePane('A6');
-
-        // ── Auto-filter ───────────────────────────────────────────────────────
-        $lastDataRow = $row - 1;
-        $sheet->setAutoFilter("A5:G{$lastDataRow}");
-
-        // ── Border luar seluruh tabel ─────────────────────────────────────────
-        $sheet->getStyle("A5:G{$row}")->applyFromArray([
-            'borders' => [
-                'outline' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM,
-                    'color' => ['rgb' => '1D4ED8'],
-                ],
-            ],
+        $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
+            'fill'    => ['fillType' => 'solid', 'startColor' => ['rgb' => $bgColor]],
+            'alignment' => ['vertical' => 'center'],
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color' => ['rgb' => 'DBEAFE']]],
         ]);
 
-        // ── Print settings ────────────────────────────────────────────────────
-        $sheet->getPageSetup()
-            ->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE)
-            ->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4)
-            ->setFitToWidth(1)
-            ->setFitToHeight(0);
-        $sheet->getHeaderFooter()
-            ->setOddHeader('&C&B Data Guru SMK Negeri 5 Telkom Banda Aceh');
-        $sheet->getHeaderFooter()
-            ->setOddFooter('&L&D &T&R Halaman &P dari &N');
+        $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal('center');
+        $sheet->getStyle("E{$row}")->getAlignment()->setHorizontal('center');
+        $sheet->getStyle("F{$row}")->getAlignment()->setHorizontal('center');
+        $sheet->getStyle("G{$row}")->getAlignment()->setHorizontal('center');
+        $sheet->getStyle("H{$row}")->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($kelengkapanColor));
 
-        // ── Output ────────────────────────────────────────────────────────────
-        $filename = 'Data_Guru_SMK_N5_' . now()->format('Ymd_His') . '.xlsx';
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
+        $sheet->getRowDimension($row)->setRowHeight(18);
+        $row++;
     }
+
+    // ── Baris total ───────────────────────────────────────────────────────
+    $sheet->mergeCells("A{$row}:C{$row}");
+    $sheet->setCellValue("A{$row}", 'Total');
+    $sheet->setCellValue("D{$row}", $guruList->count() . ' guru');
+    $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
+        'font'    => ['bold' => true, 'color' => ['rgb' => '1E3A5F']],
+        'fill'    => ['fillType' => 'solid', 'startColor' => ['rgb' => 'DBEAFE']],
+        'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color' => ['rgb' => '93C5FD']]],
+    ]);
+    $sheet->getRowDimension($row)->setRowHeight(20);
+
+    // ── Lebar kolom ───────────────────────────────────────────────────────
+    $sheet->getColumnDimension('A')->setWidth(5);
+    $sheet->getColumnDimension('B')->setWidth(22);
+    $sheet->getColumnDimension('C')->setWidth(20);
+    $sheet->getColumnDimension('D')->setWidth(32);
+    $sheet->getColumnDimension('E')->setWidth(15);
+    $sheet->getColumnDimension('F')->setWidth(15);
+    $sheet->getColumnDimension('G')->setWidth(20);
+    $sheet->getColumnDimension('H')->setWidth(28);
+
+    $sheet->freezePane('A6');
+    $sheet->setAutoFilter("A5:H" . ($row - 1));
+
+    $sheet->getStyle("A5:H{$row}")->applyFromArray([
+        'borders' => ['outline' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM, 'color' => ['rgb' => '1D4ED8']]],
+    ]);
+
+    // Print settings
+    $sheet->getPageSetup()
+          ->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE)
+          ->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4)
+          ->setFitToWidth(1)->setFitToHeight(0);
+
+    $filename = 'Data_Guru_' . str_replace(' ', '_', $filterLabel) . '_' . now()->format('Ymd_His') . '.xlsx';
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+
+    (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet))->save('php://output');
+    exit;
+}
+
+private function exportForImport($guruList, string $filterLabel)
+{
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Import Guru');
+
+    // ── Kop 2 baris (sesuai format import yang sudah ada) ────────────────
+    $sheet->mergeCells('A1:G1');
+    $sheet->setCellValue('A1', 'SMK NEGERI 5 TELKOM BANDA ACEH — DATA GURU (Format Re-Import)');
+    $sheet->getStyle('A1')->applyFromArray([
+        'font'      => ['bold' => true, 'size' => 12, 'color' => ['rgb' => '1E3A5F']],
+        'alignment' => ['horizontal' => 'center'],
+    ]);
+
+    $sheet->mergeCells('A2:G2');
+    $sheet->setCellValue('A2',
+        'Dicetak: ' . now()->translatedFormat('d F Y') .
+        ' | Edit data lalu import kembali menggunakan tombol "Import Excel"'
+    );
+    $sheet->getStyle('A2')->applyFromArray([
+        'font'      => ['italic' => true, 'size' => 9, 'color' => ['rgb' => '6B7280']],
+        'alignment' => ['horizontal' => 'center'],
+    ]);
+
+    // ── Baris 3: header (sesuai urutan kolom di controller import) ────────
+    $headers = ['NIP', 'NIK', 'Nama Lengkap *', 'Jenis Kelamin', 'Tanggal Lahir (dd/mm/yyyy)', 'Status Pegawai', 'Unit Kerja'];
+    foreach ($headers as $i => $label) {
+        $col = chr(65 + $i); // A, B, C, ...
+        $sheet->setCellValue($col . '3', $label);
+    }
+
+    $sheet->getStyle('A3:G3')->applyFromArray([
+        'font'      => ['bold' => true, 'size' => 10, 'color' => ['rgb' => 'FFFFFF']],
+        'fill'      => ['fillType' => 'solid', 'startColor' => ['rgb' => '1D4ED8']],
+        'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+        'borders'   => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+    ]);
+    $sheet->getRowDimension(3)->setRowHeight(20);
+
+    // ── Data mulai baris 4 ────────────────────────────────────────────────
+    $row = 4;
+    foreach ($guruList as $i => $g) {
+        $bgColor = $i % 2 === 0 ? 'F0F9FF' : 'FFFFFF';
+
+        $sheet->setCellValue("A{$row}", $g->user->nip  ?? '');
+        $sheet->setCellValue("B{$row}", $g->user->nik  ?? '');
+        $sheet->setCellValue("C{$row}", $g->user->name ?? '');
+        $sheet->setCellValue("D{$row}", $g->user->gender ?? '');
+        $sheet->setCellValue("E{$row}",
+            $g->user->birth_date
+                ? \Carbon\Carbon::parse($g->user->birth_date)->format('d/m/Y')
+                : ''
+        );
+        $sheet->setCellValue("F{$row}", $g->status_pegawai ?? '');
+        $sheet->setCellValue("G{$row}", $g->unit_kerja    ?? '');
+
+        $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
+            'fill'    => ['fillType' => 'solid', 'startColor' => ['rgb' => $bgColor]],
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color' => ['rgb' => 'E2E8F0']]],
+            'alignment' => ['vertical' => 'center'],
+        ]);
+
+        $sheet->getRowDimension($row)->setRowHeight(17);
+        $row++;
+    }
+
+    // ── Lebar kolom ───────────────────────────────────────────────────────
+    $sheet->getColumnDimension('A')->setWidth(22);
+    $sheet->getColumnDimension('B')->setWidth(20);
+    $sheet->getColumnDimension('C')->setWidth(30);
+    $sheet->getColumnDimension('D')->setWidth(16);
+    $sheet->getColumnDimension('E')->setWidth(22);
+    $sheet->getColumnDimension('F')->setWidth(18);
+    $sheet->getColumnDimension('G')->setWidth(24);
+
+    $sheet->freezePane('A4');
+    $sheet->setAutoFilter('A3:G' . ($row - 1));
+
+    // ── Sheet kedua: panduan ──────────────────────────────────────────────
+    $guide = $spreadsheet->createSheet();
+    $guide->setTitle('Panduan');
+
+    $panduan = [
+        ['PANDUAN RE-IMPORT DATA GURU', ''],
+        ['', ''],
+        ['Kolom', 'Keterangan'],
+        ['A - NIP', 'Nomor Induk Pegawai (boleh kosong jika tidak ada)'],
+        ['B - NIK', 'Nomor Induk Kependudukan (boleh kosong jika tidak ada)'],
+        ['C - Nama Lengkap', 'WAJIB DIISI — nama lengkap guru'],
+        ['D - Jenis Kelamin', 'Isi dengan: Laki-laki atau Perempuan'],
+        ['E - Tanggal Lahir', 'Format: dd/mm/yyyy  contoh: 15/08/1985'],
+        ['F - Status Pegawai', 'PNS, PPPK, Honorer, atau Kepala Sekolah'],
+        ['G - Unit Kerja', 'Mata pelajaran atau bidang kerja'],
+        ['', ''],
+        ['CATATAN PENTING', ''],
+        ['1.', 'Jangan ubah atau hapus baris 1 dan 2 (kop surat)'],
+        ['2.', 'Jangan ubah baris 3 (header kolom)'],
+        ['3.', 'Data dimulai dari baris 4'],
+        ['4.', 'Guru dengan NIP/NIK yang sudah ada di sistem akan dilewati'],
+        ['5.', 'Password default guru yang baru: guru'],
+    ];
+
+    foreach ($panduan as $i => $rowData) {
+        $guide->setCellValue('A' . ($i + 1), $rowData[0]);
+        $guide->setCellValue('B' . ($i + 1), $rowData[1]);
+    }
+
+    $guide->getStyle('A1')->applyFromArray(['font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => '1E3A5F']]]);
+    $guide->getStyle('A3:B3')->applyFromArray(['font' => ['bold' => true], 'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => 'DBEAFE']]]);
+    $guide->getStyle('A12')->applyFromArray(['font' => ['bold' => true, 'color' => ['rgb' => 'DC2626']]]);
+    $guide->getColumnDimension('A')->setWidth(22);
+    $guide->getColumnDimension('B')->setWidth(55);
+
+    // ── Kembali ke sheet pertama ──────────────────────────────────────────
+    $spreadsheet->setActiveSheetIndex(0);
+
+    $filename = 'ReImport_Data_Guru_' . now()->format('Ymd_His') . '.xlsx';
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+
+    (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet))->save('php://output');
+    exit;
+}
 }

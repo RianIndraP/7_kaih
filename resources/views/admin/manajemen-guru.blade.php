@@ -50,14 +50,110 @@
                 </a>
 
                 {{-- Tambahkan setelah tombol "Download Template" --}}
-<a href="{{ route('admin.guru.export') }}"
-   class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 rounded-xl text-sm font-semibold text-emerald-700 hover:from-emerald-100 hover:to-teal-100 hover:border-emerald-400 transition-all shadow-sm">
-    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-    </svg>
-    Export Excel
-</a>
+{{-- Export dropdown --}}
+<div class="relative" id="exportDropdownWrap">
+    <button onclick="toggleExportDropdown()"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 rounded-xl text-sm font-semibold text-emerald-700 hover:from-emerald-100 hover:to-teal-100 hover:border-emerald-400 transition-all shadow-sm">
+        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Export Excel
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+
+    {{-- Dropdown menu --}}
+    <div id="exportDropdown"
+         class="hidden absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+
+        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pilih data yang diekspor</p>
+        </div>
+
+        {{-- Semua guru --}}
+        <a href="{{ route('admin.guru.export', ['filter' => 'semua']) }}"
+           class="flex items-start gap-3 px-4 py-3 hover:bg-emerald-50 transition-colors group">
+            <div class="w-8 h-8 bg-emerald-100 group-hover:bg-emerald-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-800 group-hover:text-emerald-700">Semua guru</p>
+                <p class="text-xs text-gray-500 mt-0.5">Export seluruh data guru</p>
+            </div>
+        </a>
+
+        <div class="h-px bg-gray-100 mx-4"></div>
+
+        {{-- Data tidak lengkap --}}
+        <a href="{{ route('admin.guru.export', ['filter' => 'tidak_lengkap']) }}"
+           class="flex items-start gap-3 px-4 py-3 hover:bg-amber-50 transition-colors group">
+            <div class="w-8 h-8 bg-amber-100 group-hover:bg-amber-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-800 group-hover:text-amber-700">Data tidak lengkap</p>
+                <p class="text-xs text-gray-500 mt-0.5">Guru yang datanya masih ada yang kosong</p>
+            </div>
+        </a>
+
+        <div class="h-px bg-gray-100 mx-4"></div>
+
+        {{-- Tanpa NIP --}}
+        <a href="{{ route('admin.guru.export', ['filter' => 'tanpa_nip']) }}"
+           class="flex items-start gap-3 px-4 py-3 hover:bg-red-50 transition-colors group">
+            <div class="w-8 h-8 bg-red-100 group-hover:bg-red-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0"/>
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-800 group-hover:text-red-700">Tanpa NIP</p>
+                <p class="text-xs text-gray-500 mt-0.5">Guru yang belum memiliki NIP</p>
+            </div>
+        </a>
+
+        <div class="h-px bg-gray-100 mx-4"></div>
+
+        {{-- Tanpa NIK --}}
+        <a href="{{ route('admin.guru.export', ['filter' => 'tanpa_nik']) }}"
+           class="flex items-start gap-3 px-4 py-3 hover:bg-red-50 transition-colors group">
+            <div class="w-8 h-8 bg-red-100 group-hover:bg-red-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/>
+                    <line x1="11" y1="6" x2="6" y2="18"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-800 group-hover:text-red-700">Tanpa NIK</p>
+                <p class="text-xs text-gray-500 mt-0.5">Guru yang belum memiliki NIK</p>
+            </div>
+        </a>
+
+        <div class="h-px bg-gray-100 mx-4"></div>
+
+        {{-- Untuk re-import --}}
+        <a href="{{ route('admin.guru.export', ['filter' => 'semua', 'format' => 'import']) }}"
+           class="flex items-start gap-3 px-4 py-3 hover:bg-blue-50 transition-colors group">
+            <div class="w-8 h-8 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-800 group-hover:text-blue-700">Export untuk re-import</p>
+                <p class="text-xs text-gray-500 mt-0.5">Format siap diimport kembali setelah diedit</p>
+            </div>
+        </a>
+
+    </div>
+</div>
 
                 <button onclick="openImportModal()"
                     class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm">
@@ -415,6 +511,16 @@
     </div>
 
     <script>
+        function toggleExportDropdown() {
+    document.getElementById('exportDropdown').classList.toggle('hidden');
+}
+// Tutup saat klik di luar
+document.addEventListener('click', function(e) {
+    if (!document.getElementById('exportDropdownWrap').contains(e.target)) {
+        document.getElementById('exportDropdown').classList.add('hidden');
+    }
+});
+
         function applyFilter() {
             const search = document.getElementById('searchInput').value;
             let url = new URL(window.location.href);

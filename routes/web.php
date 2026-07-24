@@ -256,8 +256,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Manajemen Guru
     Route::get('/guru', [AdminManajemenGuruController::class, 'index'])->name('guru');
     Route::post('/guru', [AdminManajemenGuruController::class, 'store'])->name('guru.store');
-    Route::get('/guru/export', [AdminManajemenGuruController::class, 'export'])->name('guru.export');       // ← tambah di sini
-    Route::get('/guru/template', [AdminManajemenGuruController::class, 'downloadTemplate'])->name('guru.template');
+Route::get('/guru/export', [AdminManajemenGuruController::class, 'export'])->name('guru.export');    
+Route::get('/guru/template', [AdminManajemenGuruController::class, 'downloadTemplate'])->name('guru.template');
     Route::post('/guru/import', [AdminManajemenGuruController::class, 'import'])->name('guru.import');
     Route::post('/guru/{id}', [AdminManajemenGuruController::class, 'update'])->name('guru.update');
     Route::delete('/guru/{id}', [AdminManajemenGuruController::class, 'destroy'])->name('guru.destroy');
