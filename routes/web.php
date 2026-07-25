@@ -246,6 +246,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/siswa', [AdminManajemenSiswaController::class, 'index'])->name('siswa');
     Route::get('/siswa/template', [AdminManajemenSiswaController::class, 'downloadTemplate'])->name('siswa.template');
     Route::post('/siswa/import', [AdminManajemenSiswaController::class, 'import'])->name('siswa.import');
+    Route::get('/siswa/export', [AdminManajemenSiswaController::class, 'export'])->name('siswa.export');
     Route::post('/siswa/kelas', [AdminManajemenSiswaController::class, 'addKelas'])->name('siswa.kelas.store');
     Route::post('/siswa', [AdminManajemenSiswaController::class, 'store'])->name('siswa.store');
     Route::post('/siswa/{id}', [AdminManajemenSiswaController::class, 'update'])->name('siswa.update');
