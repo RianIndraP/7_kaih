@@ -177,7 +177,7 @@ Route::middleware(['auth', 'guru', 'website.lock'])->prefix('guru')->name('guru.
 });
 
 // ── Kepala Sekolah (protected) ─────────────────────────────────────────────────────
-Route::middleware(['auth', 'website.lock'])->prefix('kepala-sekolah')->name('kepala-sekolah.')->group(function () {
+Route::middleware(['auth', 'kepala.sekolah', 'website.lock'])->prefix('kepala-sekolah')->name('kepala-sekolah.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [KepalaSekolahDashboardController::class, 'index'])->name('dashboard');
@@ -223,7 +223,7 @@ Route::middleware(['auth', 'website.lock'])->prefix('kepala-sekolah')->name('kep
 });
 
 // ── Admin (protected) ─────────────────────────────────────────────────────────
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -257,8 +257,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Manajemen Guru
     Route::get('/guru', [AdminManajemenGuruController::class, 'index'])->name('guru');
     Route::post('/guru', [AdminManajemenGuruController::class, 'store'])->name('guru.store');
-Route::get('/guru/export', [AdminManajemenGuruController::class, 'export'])->name('guru.export');    
-Route::get('/guru/template', [AdminManajemenGuruController::class, 'downloadTemplate'])->name('guru.template');
+    Route::get('/guru/export', [AdminManajemenGuruController::class, 'export'])->name('guru.export');
+    Route::get('/guru/template', [AdminManajemenGuruController::class, 'downloadTemplate'])->name('guru.template');
     Route::post('/guru/import', [AdminManajemenGuruController::class, 'import'])->name('guru.import');
     Route::post('/guru/{id}', [AdminManajemenGuruController::class, 'update'])->name('guru.update');
     Route::delete('/guru/{id}', [AdminManajemenGuruController::class, 'destroy'])->name('guru.destroy');

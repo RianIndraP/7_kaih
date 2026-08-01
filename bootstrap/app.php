@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'siswa'             => App\Http\Middleware\SiswaMiddleware::class,
             'profile.complete'  => App\Http\Middleware\ProfileComplete::class,
             'website.lock'      => App\Http\Middleware\CheckWebsiteLock::class,
+            'admin'             => App\Http\Middleware\AdminMiddleware::class,
+            'Kepala.sekolah'    => App\Http\Middleware\KepalaSekolahMiddleware::class,
         ]);
 
         // Apply website lock check globally for web routes

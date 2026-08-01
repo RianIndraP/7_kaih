@@ -184,7 +184,7 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return !empty($this->username);
+        return !empty($this->username) && !$this->isGuru() && !$this->isSiswa();
     }
 
     /**
