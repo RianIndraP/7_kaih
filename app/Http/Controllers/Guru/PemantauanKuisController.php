@@ -16,7 +16,7 @@ class PemantauanKuisController extends Controller
         $guru = $user->guru;
 
         // Dapatkan ID guru yang valid
-        $guruId = $guru ? $guru->id : (\App\Models\Guru::where('user_id', $user->id)->first()->id ?? $user->id);
+        $guruId = $guru ? $guru->id : (optional(\App\Models\Guru::where('user_id', $user->id)->first())->id ?? $user->id);
 
         // Ambil daftar siswa yang berada di bawah bimbingan guru ini
         $siswaList = \App\Models\User::where('guru_wali_id', $guruId)
@@ -81,7 +81,7 @@ class PemantauanKuisController extends Controller
         $guru = $user->guru;
 
         // Dapatkan ID guru yang valid
-        $guruId = $guru ? $guru->id : (\App\Models\Guru::where('user_id', $user->id)->first()->id ?? $user->id);
+        $guruId = $guru ? $guru->id : (optional(\App\Models\Guru::where('user_id', $user->id)->first())->id ?? $user->id);
 
         // Ambil daftar siswa yang berada di bawah bimbingan guru ini
         $siswaList = \App\Models\User::where('guru_wali_id', $guruId)
@@ -148,7 +148,11 @@ class PemantauanKuisController extends Controller
         $user = Auth::user();
         $guru = \App\Models\Guru::where('user_id', $user->id)->firstOrFail();
 
-        $siswa = \App\Models\User::findOrFail($siswaId);
+        // Authorization: hanya boleh melihat laporan siswa walinya sendiri (IDOR).
+        $guruId = $guru->id;
+        $siswa = \App\Models\User::whereNotNull('nisn')
+            ->where('guru_wali_id', $guruId)
+            ->findOrFail($siswaId);
 
         $kuisId = $request->get('kuis_id');
         

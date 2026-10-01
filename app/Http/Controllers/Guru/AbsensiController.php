@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -64,21 +65,41 @@ class AbsensiController extends Controller
 
         $guruId = $this->getGuruId();
 
-        foreach ($request->absensi as $item) {
-            AbsensiSiswa::updateOrCreate(
-                [
-                    'siswa_id'      => $item['siswa_id'],
-                    'pertemuan_ke'  => $request->pertemuan_ke,
-                    'tanggal_mulai' => $request->tanggal_mulai,
-                ],
-                [
-                    'guru_id'             => $guruId,
-                    'tanggal_selesai'     => $request->tanggal_selesai,
-                    'tanggal_absen'       => now()->toDateString(),
-                    'status'              => $item['status']
-                ]
-            );
+        // Authorization: guru hanya boleh mencatat absensi siswa walinya sendiri.
+        // Tanpa cek ini, guru bisa menandai kehadiran siswa kelas lain (IDOR).
+        $anakWali = $this->getSiswaWaliKelas()->pluck('id')->map(fn ($id) => (int) $id)->all();
+
+        $invalid = [];
+        foreach ($request->absensi as $index => $item) {
+            if (! in_array((int) $item['siswa_id'], $anakWali, true)) {
+                $invalid[] = $index;
+            }
         }
+
+        if ($invalid) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Absensi ditolak: ada siswa yang bukan anak wali Anda.',
+            ], 403);
+        }
+
+        DB::transaction(function () use ($request, $guruId) {
+            foreach ($request->absensi as $item) {
+                AbsensiSiswa::updateOrCreate(
+                    [
+                        'siswa_id'      => $item['siswa_id'],
+                        'pertemuan_ke'  => $request->pertemuan_ke,
+                        'tanggal_mulai' => $request->tanggal_mulai,
+                    ],
+                    [
+                        'guru_id'             => $guruId,
+                        'tanggal_selesai'     => $request->tanggal_selesai,
+                        'tanggal_absen'       => now()->toDateString(),
+                        'status'              => $item['status']
+                    ]
+                );
+            }
+        });
 
         return response()->json(['success' => true, 'message' => 'Absensi berhasil disimpan.']);
     }
@@ -256,13 +277,16 @@ class AbsensiController extends Controller
         $guruId = $this->getGuruId(); // guru.id
 
         // Coba dengan guru.id dulu
-        $siswa = User::where('guru_wali_id', $guruId)
+        // whereNotNull('nisn') = hanya siswa, bukan guru/admin
+        $siswa = User::whereNotNull('nisn')
+            ->where('guru_wali_id', $guruId)
             ->orderBy('name')
             ->get();
 
         // Jika kosong, coba dengan users.id sebagai fallback
         if ($siswa->isEmpty()) {
-            $siswa = User::where('guru_wali_id', $user->id)
+            $siswa = User::whereNotNull('nisn')
+                ->where('guru_wali_id', $user->id)
                 ->orderBy('name')
                 ->get();
         }

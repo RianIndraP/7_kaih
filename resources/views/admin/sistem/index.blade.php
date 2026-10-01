@@ -882,12 +882,22 @@ function loadSiswaPreview() {
             count.textContent = '';
             return;
         }
+function escHtml(v) {
+    if (v === null || v === undefined) return '';
+    return String(v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
         list.innerHTML = data.map(s => `
             <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50">
                 <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                    ${s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+                    ${escHtml(s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase())}
                 </div>
-                <span class="text-sm text-gray-800">${s.name}</span>
+                <span class="text-sm text-gray-800">${escHtml(s.name)}</span>
                 <span class="ml-auto text-xs text-gray-400">${s.nisn ?? '-'}</span>
             </div>`).join('');
         count.textContent = `${data.length} siswa akan dipindahkan`;
@@ -945,10 +955,10 @@ function renderCheckboxList(data) {
             <input type="checkbox" value="${s.id}" class="siswa-checkbox rounded border-gray-300 text-indigo-600"
                    onchange="updateSelectedCount()">
             <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                ${s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+                ${escHtml(s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase())}
             </div>
-            <span class="text-sm text-gray-800 flex-1">${s.name}</span>
-            <span class="text-xs text-gray-400">${s.kelas?.nama_kelas ?? '-'}</span>
+            <span class="text-sm text-gray-800 flex-1">${escHtml(s.name)}</span>
+            <span class="text-xs text-gray-400">${escHtml(s.kelas?.nama_kelas ?? '-')}</span>
         </label>`).join('');
     updateSelectedCount();
 }
@@ -1004,13 +1014,13 @@ function searchSatuSiswa() {
             } else {
                 dd.innerHTML = data.map(s => `
                     <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-indigo-50 cursor-pointer transition-colors"
-                         onclick="selectSatuSiswa(${s.id}, '${s.name.replace(/'/g,"\\'")}', '${s.nisn ?? ''}', '${s.kelas?.nama_kelas ?? '-'}')">
+                         data-siswa-pilih data-id="${s.id}" data-nama="${escHtml(s.name)}" data-nisn="${escHtml(s.nisn ?? '')}" data-kelas="${escHtml(s.kelas?.nama_kelas ?? '-')}">
                         <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                            ${s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+                            ${escHtml(s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase())}
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-800">${s.name}</p>
-                            <p class="text-xs text-gray-400">${s.nisn ?? '-'} · ${s.kelas?.nama_kelas ?? '-'}</p>
+                            <p class="text-sm font-medium text-gray-800">${escHtml(s.name)}</p>
+                            <p class="text-xs text-gray-400">${escHtml(s.nisn ?? '-')} · ${escHtml(s.kelas?.nama_kelas ?? '-')}</p>
                         </div>
                     </div>`).join('');
             }
@@ -1019,6 +1029,19 @@ function searchSatuSiswa() {
         .catch(() => dd.classList.add('hidden'));
     }, 350);
 }
+
+// Nama/NISN siswa dibaca dari data-* (sudah di-escape), bukan dari argumen
+// string JS di dalam atribut onclick — yang bisa di-break dengan karakter '.
+document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-siswa-pilih]');
+    if (!el) return;
+    selectSatuSiswa(
+        el.getAttribute('data-id'),
+        el.getAttribute('data-nama'),
+        el.getAttribute('data-nisn'),
+        el.getAttribute('data-kelas')
+    );
+});
 
 function selectSatuSiswa(id, nama, nisn, kelas) {
     selectedSiswaId = id;

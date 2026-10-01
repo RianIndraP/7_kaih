@@ -1303,6 +1303,23 @@
                 .catch(function () { tampilkanToast('Gagal terhubung ke server', 'red'); });
         }
 
+function esc(v) {
+    if (v === null || v === undefined) return '';
+    return String(v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Data siswa disimpan di registry JS, bukan di atribut HTML.
+// Button hanya membawa index integer — sehingga nama/kelas/NISN siswa
+// tidak pernah diparse sebagai HTML maupun sebagai string JS.
+var _dataReg = [];
+function dataIndex(obj) { _dataReg.push(obj); return _dataReg.length - 1; }
+function dataAt(i) { return _dataReg[i]; }
+
         function renderTabel(data, periode, noPeriode) {
             var tbody = document.getElementById('tabelBody');
             var keyword = document.getElementById('searchInput').value.toLowerCase();
@@ -1314,22 +1331,26 @@
                 var persen = s.persen || 0;
                 var barColor = persen >= 80 ? '#22c55e' : persen >= 50 ? '#3b82f6' : '#f59e0b';
                 var umpan = noPeriode ? '<span style="color:#94a3b8;font-style:italic;font-size:11.5px;">Pilih Periode</span>'
-                    : (s.umpan_balik ? (s.umpan_balik.substring(0, 22) + (s.umpan_balik.length > 22 ? '…' : '')) : '<span style="color:#cbd5e1;">-</span>');
+                    : (s.umpan_balik ? (esc(s.umpan_balik.substring(0, 22)) + (s.umpan_balik.length > 22 ? '…' : '')) : '<span style="color:#cbd5e1;">-</span>');
 
-                var profBtn = '<button onclick="bukaProfil(' + s.id + ')" title="Lihat Profil" class="act-btn blue"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>';
-                var aksiHtml = noPeriode ? profBtn
+                // Data disimpan di <script type="application/json"> lalu dibaca via
+                // event delegation — tidak ada nama siswa yang masuk ke atribut HTML.
+                var idx = dataIndex(s);
+
+                var aksiHtml = noPeriode
+                    ? '<button data-aksi="profil" data-i="' + idx + '" title="Lihat Profil" class="act-btn blue"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>'
                     : '<div style="display:flex;align-items:center;justify-content:center;gap:2px;">'
-                    + profBtn
-                    + '<button onclick="bukaDetail(' + JSON.stringify(s).replace(/"/g, '&quot;') + ',\'' + periode + '\')" title="Detail" class="act-btn blue"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg></button>'
-                    + '<button onclick="bukaPesan(' + JSON.stringify(s).replace(/"/g, '&quot;') + ',\'' + periode + '\')" title="Kirim Pesan" class="act-btn purple"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg></button>'
-                    + '<button onclick="bukaHapus(' + s.id + ',\'' + s.nama + '\')" title="Hapus" class="act-btn red"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>'
+                    + '<button data-aksi="profil" data-i="' + idx + '" title="Lihat Profil" class="act-btn blue"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>'
+                    + '<button data-aksi="detail" data-i="' + idx + '" title="Detail" class="act-btn blue"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg></button>'
+                    + '<button data-aksi="pesan" data-i="' + idx + '" title="Kirim Pesan" class="act-btn purple"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg></button>'
+                    + '<button data-aksi="hapus" data-i="' + idx + '" title="Hapus" class="act-btn red"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A5.003 5.003 0 0016 19H8a5.003 5.003 0 01-4.865-5.142L3 7m3 0h12a2 2 0 002-2V5a2 2 0 00-2-2h-3.293M11 11v3m0 6v-4"/></svg></button>'
                     + '</div>';
 
                 return '<tr>'
                     + '<td style="color:#64748b;font-size:12.5px;">' + (i + 1) + '</td>'
-                    + '<td style="font-weight:700;color:#1e293b;">' + s.nama + '</td>'
-                    + '<td style="color:#64748b;">' + s.kelas + '</td>'
-                    + '<td style="color:#64748b;font-size:12px;">' + s.nisn + '</td>'
+                    + '<td style="font-weight:700;color:#1e293b;">' + esc(s.nama) + '</td>'
+                    + '<td style="color:#64748b;">' + esc(s.kelas) + '</td>'
+                    + '<td style="color:#64748b;font-size:12px;">' + esc(s.nisn) + '</td>'
                     + '<td style="font-weight:800;color:#f97316;">🔥 ' + (s.streak_count || 0) + '</td>'
                     + '<td style="min-width:90px;">'
                     + '<div class="prog-track"><div class="prog-fill" style="background:' + barColor + ';width:' + persen + '%;"></div></div>'
@@ -1344,6 +1365,26 @@
         document.getElementById('searchInput').addEventListener('input', function () {
             if (document.getElementById('tabelBody').querySelector('[colspan]')) return;
             cariData();
+        });
+
+        // Event delegation untuk tombol aksi. Nama/NISN siswa TIDAK lagi
+        // disisipkan ke atribut onclick — hanya index integer ke registry JS.
+        document.getElementById('tabelBody').addEventListener('click', function (e) {
+            var btn = e.target.closest('button[data-aksi]');
+            if (!btn) return;
+
+            var s = dataAt(parseInt(btn.getAttribute('data-i'), 10));
+            if (!s) return;
+
+            var periode = document.getElementById('selectPeriode')
+                ? document.getElementById('selectPeriode').value : '';
+
+            switch (btn.getAttribute('data-aksi')) {
+                case 'profil': bukaProfil(s.id); break;
+                case 'detail': bukaDetail(s, periode); break;
+                case 'pesan':  bukaPesan(s, periode); break;
+                case 'hapus':  bukaHapus(s.id, s.nama); break;
+            }
         });
 
         function bukaDetail(siswa, periode) {
@@ -1511,9 +1552,9 @@
                     }
                     document.getElementById('historyBody').innerHTML = res.data.map(function (p) {
                         return '<tr class="border-b border-gray-100">' +
-                            '<td class="px-3 py-2 font-medium text-gray-800">' + p.nama_siswa + '</td>' +
-                            '<td class="px-3 py-2 text-gray-700">' + p.judul + '</td>' +
-                            '<td class="px-3 py-2 text-gray-600 max-w-[160px] truncate">' + p.isi + '</td>' +
+                            '<td class="px-3 py-2 font-medium text-gray-800">' + esc(p.nama_siswa) + '</td>' +
+                            '<td class="px-3 py-2 text-gray-700">' + esc(p.judul) + '</td>' +
+                            '<td class="px-3 py-2 text-gray-600 max-w-[160px] truncate">' + esc(p.isi) + '</td>' +
                             '<td class="px-3 py-2 text-gray-500 whitespace-nowrap">' + p.tanggal + '</td>' +
                             '</tr>';
                     }).join('');

@@ -36,7 +36,7 @@ class SistemController extends Controller
         $siswaList = $query->paginate(30)->withQueryString();
 
         $kepalaSekolah = Guru::with('user')
-            ->whereHas('user', fn($q) => $q->where('nip', '!=', null))
+            ->whereHas('user', fn($q) => $q->whereNotNull('nip'))
             ->where('status_pegawai', 'Kepala Sekolah')
             ->first();
 

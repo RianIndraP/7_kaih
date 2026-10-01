@@ -58,7 +58,8 @@ class PesanGuru extends Model
      */
     public function waktuRelatif(): string
     {
-        $diff = now()->diffInDays($this->created_at);
+        // Cast ke int: diffInDays() float, jadi 0.0 === 0 bernilai false.
+        $diff = (int) now()->diffInDays($this->created_at);
 
         if ($diff === 0) return 'Hari ini';
         if ($diff === 1) return '1 Hari yang lalu';

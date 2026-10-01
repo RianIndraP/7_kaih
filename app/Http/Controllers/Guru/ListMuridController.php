@@ -273,13 +273,11 @@ class ListMuridController extends Controller
             return response()->json(['success' => false, 'message' => 'siswa_id wajib diisi.']);
         }
 
-        $siswa = User::find($siswaId);
+        $siswa = $this->authorizeSiswa($siswaId);
         if (! $siswa) {
             return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan.']);
         }
 
-        // Ambil SEMUA pesan untuk siswa ini tanpa filter guru_id
-        // karena guru_id bisa merujuk ke users.id atau guru.id tergantung konfigurasi
         $pesanList = PesanGuruSiswa::where('siswa_id', $siswaId)
             ->orderByDesc('created_at')
             ->get()
@@ -312,10 +310,10 @@ class ListMuridController extends Controller
             'filter'   => ['nullable', 'string'],
         ]);
 
-        $siswa = User::find($request->siswa_id);
+        $siswa = $this->authorizeSiswa((int) $request->siswa_id);
 
         if (! $siswa) {
-            return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan.']);
+            return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan.'], 403);
         }
 
         // guru_id harus dari tabel guru (FK: pesan_guru_siswa.guru_id → guru.id)
@@ -337,7 +335,9 @@ class ListMuridController extends Controller
                 $pesanData['minggu'] = $filter;
                 break;
             case 'pertemuan':
-                $pesanData['pertemuan'] = $filter;
+                // Kolom pertemuan bertipe INT, filter dari UI format "2026-P3".
+                // Ambil nomor setelah "P" (bukan semua digit — "2026-P3" bukan 20263).
+                $pesanData['pertemuan'] = $this->parseNomorPertemuan($filter);
                 break;
             case 'bulanan':
                 if (str_contains($filter, '|')) {
@@ -364,28 +364,37 @@ class ListMuridController extends Controller
             'siswa_id' => ['required', 'integer', 'exists:users,id'],
             'periode'  => ['nullable', 'string'],
             'filter'   => ['nullable', 'string'],
+            'umpan_balik_id' => ['nullable', 'integer', 'exists:pesan_guru_siswa,id'],
         ]);
 
+        // Authorization: siswa harus wallet dari guru yang login
+        if (! $this->authorizeSiswa((int) $request->siswa_id)) {
+            return response()->json(['success' => false, 'message' => 'Siswa tidak ditemukan.'], 403);
+        }
+
         $siswaId = (int) $request->siswa_id;
+        $guruId  = $this->getGuruId();
         $periode = $request->input('periode', '');
         $filter  = $request->input('filter', '');
 
-        // Jika ada umpan_balik_id spesifik → hapus 1 record itu saja
+        // Jika ada umpan_balik_id spesifik → hapus 1 record itu saja.
+        // where('guru_id') WAJIB: tanpa itu guru bisa hapus feedback guru lain.
         if ($request->filled('umpan_balik_id')) {
             $deleted = PesanGuruSiswa::where('id', $request->umpan_balik_id)
                 ->where('siswa_id', $siswaId)
+                ->where('guru_id', $guruId)
                 ->delete();
 
             if (! $deleted) {
-                return response()->json(['success' => false, 'message' => 'Umpan balik tidak ditemukan.']);
+                return response()->json(['success' => false, 'message' => 'Umpan balik tidak ditemukan.'], 404);
             }
 
             return response()->json(['success' => true, 'message' => 'Umpan balik berhasil dihapus.']);
         }
 
-        // Tidak ada umpan_balik_id → hapus semua pesan untuk siswa ini
-        // pada periode + filter yang sedang aktif
-        $query = PesanGuruSiswa::where('siswa_id', $siswaId);
+        // Tidak ada umpan_balik_id → hapus pesan milik guru ini saja
+        $query = PesanGuruSiswa::where('siswa_id', $siswaId)
+            ->where('guru_id', $guruId);
 
         if ($periode) {
             $query->where('periode', $periode);
@@ -428,6 +437,28 @@ class ListMuridController extends Controller
         return $user->id;
     }
 
+
+    /**
+     * Pastikan siswa yang dituju benar-benar wallet dari guru yang login.
+     *
+     * Tanpa cek ini, guru bisa membaca/mengirim/menghapus umpan balik
+     * siswa kelas lain hanya dengan menebak siswa_id (IDOR).
+     * Key: users.guru_wali_id → guru.id.
+     */
+    private function authorizeSiswa(int $siswaId): ?User
+    {
+        $siswa = User::whereNotNull('nisn')->find($siswaId);
+
+        if (! $siswa) {
+            return null;
+        }
+
+        if ((int) $siswa->guru_wali_id !== $this->getGuruId()) {
+            return null;
+        }
+
+        return $siswa;
+    }
 
     /**
      * Hitung rentang tanggal dari periode + filter.
@@ -483,6 +514,29 @@ class ListMuridController extends Controller
     /**
      * Filter query PesanGuruSiswa berdasarkan kolom periode yang sesuai.
      */
+    /**
+     * Ambil nomor pertemuan dari filter berformat "2026-P3" → 3.
+     * Mengembalikan null bila format tidak dikenali atau kosong.
+     */
+    private function parseNomorPertemuan(?string $filter): ?int
+    {
+        if ($filter === null || trim($filter) === '') {
+            return null;
+        }
+
+        // "2026-P3" → 3
+        if (preg_match('/P\s*(\d+)/i', $filter, $m)) {
+            return (int) $m[1];
+        }
+
+        // Filter angka langsung
+        if (preg_match('/^\s*(\d+)\s*$/', $filter, $m)) {
+            return (int) $m[1];
+        }
+
+        return null;
+    }
+
     private function filterPesanByPeriode($query, string $periode, string $filter): void
     {
         switch ($periode) {
@@ -498,8 +552,7 @@ class ListMuridController extends Controller
                 break;
 
             case 'pertemuan':
-                // filter = "2026-P3" — cocok dengan kolom pertemuan VARCHAR
-                $query->where('pertemuan', $filter);
+                $query->where('pertemuan', $this->parseNomorPertemuan($filter));
                 break;
 
             case 'bulanan':

@@ -476,13 +476,23 @@
         // Name
         document.getElementById('sdName').textContent = s.name;
 
+        function escHtml(v) {
+            if (v === null || v === undefined) return '';
+            return String(v)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // Badges
         const genderBadge = s.gender === 'Laki-laki'
             ? `<span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-family:sans-serif">Laki-laki</span>`
             : `<span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:#fce7f3;color:#be185d;font-family:sans-serif">Perempuan</span>`;
         document.getElementById('sdBadges').innerHTML = `
-        <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:#eff6ff;color:#1d4ed8;font-family:sans-serif">${s.kelas}</span>
-        <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:#f0fdf4;color:#15803d;font-family:sans-serif">${s.angkatan}</span>
+        <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:#eff6ff;color:#1d4ed8;font-family:sans-serif">${escHtml(s.kelas)}</span>
+        <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:#f0fdf4;color:#15803d;font-family:sans-serif">${escHtml(s.angkatan)}</span>
         ${genderBadge}
     `;
 
@@ -510,7 +520,7 @@
             </div>
             <div>
                 <div style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;font-family:sans-serif">${r.label}</div>
-                <div style="font-size:13px;color:#111;font-weight:500;font-family:${r.mono ? "'Courier New',monospace" : 'sans-serif'};${r.mono ? 'font-size:11px' : ''}">${r.val}</div>
+                <div style="font-size:13px;color:#111;font-weight:500;font-family:${r.mono ? "'Courier New',monospace" : 'sans-serif'};${r.mono ? 'font-size:11px' : ''}">${escHtml(r.val)}</div>
             </div>
         </div>
     `).join('');

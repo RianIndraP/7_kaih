@@ -384,8 +384,10 @@ class User extends Authenticatable
 
         // Can only recover if last streak was yesterday (1 day ago)
         if ($lastStreakDate) {
-            $daysSince = $lastStreakDate->diffInDays($today, false);
-            
+            // diffInDays() mengembalikan float di Carbon 3 — 1.0 === 1 bernilai
+            // false, sehingga pemulihan streak mustahil terjadi tanpa cast ini.
+            $daysSince = (int) $lastStreakDate->diffInDays($today, false);
+
             // Only allow recovery if exactly 1 day ago (yesterday)
             if ($daysSince === 1) {
                 // Also check weekly limit

@@ -169,18 +169,46 @@ class PelaporanController extends Controller
         return view('guru.pelaporan', compact('user', 'guru', 'muridList', 'tahunAjaran', 'pertemuanList', 'catatanA', 'catatanB', 'catatanC', 'pertemuan', 'absensi', 'rekapD', 'fotoPertemuan', 'pertemuanData', 'hasData', 'semester'));
     }
 
-    public function storeLampiranA(Request $request)
+    /**
+     * Pastikan murid_id yang dikirim benar-benar anak wali dari guru yang login.
+     * Nilai kembali: array murid_id yang sah, atau null bila tidak ada yang sah.
+     *
+     * Tanpa cek ini guru bisa menulis lampiran untuk siswa kelas lain (IDOR).
+     */
+    private function filterMuridSah(array $muridIds): array
     {
         $guru = Guru::where('user_id', Auth::id())->first();
+        $guruId = $guru ? $guru->id : Auth::id();
+
+        $anakWali = User::whereNotNull('nisn')
+            ->where('guru_wali_id', $guruId)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        return array_values(array_filter(
+            $muridIds,
+            fn ($id) => in_array((int) $id, $anakWali, true)
+        ));
+    }
+
+    public function storeLampiranA(Request $request)
+    {
+        $guru = Guru::where('user_id', Auth::id())->firstOrFail();
 
         $request->validate([
-            'catatan' => 'nullable|array',
+            'catatan' => 'required|array',
             'catatan.*' => 'nullable|string|max:500',
             'tahun_ajaran' => 'required|string',
         ]);
 
-        foreach ($request->catatan as $murid_id => $catatan) {
+        $catatan = $this->filterMuridSah(array_keys($request->catatan));
 
+        if (empty($catatan)) {
+            return back()->with('error', 'Tidak ada catatan murid yang sah untuk disimpan.');
+        }
+
+        foreach ($catatan as $murid_id) {
             LampiranA::updateOrCreate(
                 [
                     'guru_id' => $guru->id,
@@ -188,7 +216,7 @@ class PelaporanController extends Controller
                     'tahun_ajaran' => $request->tahun_ajaran
                 ],
                 [
-                    'catatan' => $catatan
+                    'catatan' => $request->catatan[$murid_id]
                 ]
             );
         }
@@ -198,16 +226,36 @@ class PelaporanController extends Controller
 
     public function storeLampiranB(Request $request)
     {
-        $guru = Guru::where('user_id', Auth::id())->first();
+        $guru = Guru::where('user_id', Auth::id())->firstOrFail();
 
         $request->validate([
             'data' => 'required|array',
+            'data.*' => 'required|array',
             'bulan' => 'required|integer',
             'tahun' => 'required|integer',
         ]);
 
-        foreach ($request->data as $murid_id => $aspekData) {
+        // Aspek yang diizinkan — mencegah division by zero di hitungNilaiDariKebiasaan
+        // karena switch() di sana tidak punya default.
+        $aspekValid = ['akademik', 'spiritual', 'sosial', 'fisik', 'potensi_minat'];
+
+        $data = $request->data;
+
+        foreach (array_keys($data) as $murid_id) {
+            if (! in_array((int) $murid_id, $this->filterMuridSah([$murid_id]), true)) {
+                unset($data[$murid_id]);
+            }
+        }
+
+        if (empty($data)) {
+            return back()->with('error', 'Tidak ada data murid yang sah untuk disimpan.');
+        }
+
+        foreach ($data as $murid_id => $aspekData) {
             foreach ($aspekData as $aspek => $value) {
+                if (! in_array($aspek, $aspekValid, true)) {
+                    continue;
+                }
 
                 $nilai = $this->hitungNilaiDariKebiasaan($murid_id, $aspek);
                 $deskripsi = $this->getPredikat($nilai);
@@ -235,10 +283,27 @@ class PelaporanController extends Controller
 
     public function storeLampiranC(Request $request)
     {
-        $guru = Guru::where('user_id', Auth::id())->first();
+        $guru = Guru::where('user_id', Auth::id())->firstOrFail();
 
-        foreach ($request->data as $murid_id => $value) {
+        $request->validate([
+            'data' => 'required|array',
+            'data.*' => 'required|array',
+            'pertemuan' => 'required|integer',
+        ]);
 
+        $data = $request->data;
+
+        foreach (array_keys($data) as $murid_id) {
+            if (! in_array((int) $murid_id, $this->filterMuridSah([$murid_id]), true)) {
+                unset($data[$murid_id]);
+            }
+        }
+
+        if (empty($data)) {
+            return back()->with('error', 'Tidak ada data murid yang sah untuk disimpan.');
+        }
+
+        foreach ($data as $murid_id => $value) {
             LampiranC::updateOrCreate(
                 [
                     'guru_id' => $guru->id,

@@ -40,7 +40,9 @@ class DashboardController extends Controller
         $totalPesanBantuanProses = PesanBantuan::where('status', 'sedang_diproses')->count();
         $pesanBantuanTerbaru    = PesanBantuan::latest()->take(5)->get();
 
-        $totalSiswa = User::where('nisn', '!=', null)->count();
+        // where('nisn','!=',null) selalu menghasilkan 0 baris di SQL
+        // (x != NULL tidak pernah true). Gunakan whereNotNull.
+        $totalSiswa = User::whereNotNull('nisn')->count();
 
         return view('guru.dashboard', compact(
             'user',

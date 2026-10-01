@@ -390,7 +390,10 @@ class ManajemenGuruController extends Controller
             } else {
                 $message = 'Import berhasil! ' . $imported . ' guru ditambahkan.';
                 if (!empty($errors)) {
-                    $message .= '<br><br><strong>Rincian data yang bermasalah:</strong><br>' . implode('<br>', $errors);
+                    // Escape nilai dari file XLSX — view merender flash dengan
+                    // {!! !!}, sehingga HTML dari cell akan dieksekusi.
+                    $message .= '<br><br><strong>Rincian data yang bermasalah:</strong><br>'
+                        . implode('<br>', array_map('e', $errors));
                 }
             }
 

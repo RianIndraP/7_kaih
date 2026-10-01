@@ -12,9 +12,19 @@ class LampiranC extends Model
         'guru_id',
         'murid_id',
         'pertemuan',
-        'tanggal',
         'topik',
         'tindak_lanjut',
-        'keterangan',
     ];
+
+    // ── Relasi ke Murid (User) ─────────────────────
+    public function murid()
+    {
+        return $this->belongsTo(User::class, 'murid_id');
+    }
+
+    // ── Relasi ke Guru ─────────────────────────────
+    public function guru()
+    {
+        return $this->belongsTo(Guru::class, 'guru_id');
+    }
 }

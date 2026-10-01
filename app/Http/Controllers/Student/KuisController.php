@@ -53,8 +53,11 @@ class KuisController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // Jika masih ada error lain, paksa tampilkan teks aslinya di browser
-            dd("Error ditemukan: " . $e->getMessage() . " di baris " . $e->getLine());
+            // Jangan pernah dd()/dump() di sini: membocorkan pesan SQL/PDO
+            // dan path absolut ke browser, sekaligus mematikan seluruh response.
+            report($e);
+
+            return back()->with('error', 'Gagal memuat daftar kuis. Silakan coba lagi.');
         }
     }
     

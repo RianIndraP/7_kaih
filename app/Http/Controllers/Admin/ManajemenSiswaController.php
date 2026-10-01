@@ -391,7 +391,11 @@ class ManajemenSiswaController extends Controller
             // Build summary message
             $message = 'Import berhasil! ' . $imported . ' data siswa diproses.';
             if (!empty($errors)) {
-                $message .= '<br><br><strong>Rincian data yang bermasalah:</strong><br>' . implode('<br>', $errors);
+                // Escape semua nilai dari file XLSX sebelum masuk flash message.
+                // Nilai ini dirender dengan {!! !!} di view — tanpa escaping,
+                // cell berisi <script> akan dieksekusi di sesi admin.
+                $message .= '<br><br><strong>Rincian data yang bermasalah:</strong><br>'
+                    . implode('<br>', array_map('e', $errors));
             }
 
             return redirect()->route('admin.siswa')->with('success', $message);
