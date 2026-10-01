@@ -81,7 +81,7 @@ class ManajemenSiswaController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
-        $user = User::findOrFail($id);
+        $user = User::whereNotNull('nisn')->findOrFail($id);
 
         $validated = $request->validate([
             'nisn' => 'required|string|unique:users,nisn,' . $id,
@@ -118,7 +118,7 @@ class ManajemenSiswaController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        $user = User::findOrFail($id);
+        $user = User::whereNotNull('nisn')->findOrFail($id);
         $user->delete();
 
         return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil dihapus!');
@@ -130,8 +130,15 @@ class ManajemenSiswaController extends Controller
             'selected_ids' => 'required|string',
         ]);
 
-        $selectedIds = explode(',', $validated['selected_ids']);
-        $deletedCount = User::whereIn('id', $selectedIds)->delete();
+        $ids = array_filter(explode(',', $validated['selected_ids']));
+
+        if (empty($ids)) {
+            return back()->with('error', 'Tidak ada siswa yang dipilih.');
+        }
+
+        $deletedCount = User::whereNotNull('nisn')
+            ->whereIn('id', $ids)
+            ->delete();
 
         return redirect()->route('admin.siswa')->with('success', $deletedCount . ' siswa berhasil dihapus!');
     }
@@ -395,7 +402,7 @@ class ManajemenSiswaController extends Controller
 
     public function getData($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::whereNotNull('nisn')->findOrFail($id);
         return response()->json([
             'id' => $user->id,
             'nisn' => $user->nisn,

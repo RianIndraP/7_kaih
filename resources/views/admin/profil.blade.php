@@ -84,12 +84,13 @@
                                oninput="checkChanges()">
                     </div>
 
-                    {{-- NIP --}}
+                    {{-- NIP — tidak bisa diubah dari sini, lihat Admin\DashboardController::updateProfil --}}
                     <div>
                         <label class="block text-sm font-semibold text-gray-800 mb-1">NIP</label>
-                        <input type="text" name="nip" value="{{ $user->nip }}" data-original="{{ $user->nip }}"
-                               class="editable-field w-full px-4 py-2.5 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-300 transition-colors bg-white"
-                               oninput="checkChanges()">
+                        <input type="text" name="nip_display"
+                               value="{{ $user->nip ?? '-' }}" readonly disabled
+                               class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <p class="text-xs text-gray-500 mt-1">NIP admin tidak dapat diubah dari halaman ini.</p>
                     </div>
 
                     {{-- Email --}}

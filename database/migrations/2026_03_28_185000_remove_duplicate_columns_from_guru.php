@@ -8,9 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('guru', function (Blueprint $table) {
-            // Hapus kolom yang sudah ada di tabel users
-            $table->dropColumn(['nip', 'nik', 'jenis_kelamin', 'no_telepon', 'email_pribadi']);
+        // Kolom ini sudah dihapus di database yang sekarang. Guard mencegah
+        // error "Can't DROP" baik di fresh install maupun database lama.
+        $columns = ['nip', 'nik', 'jenis_kelamin', 'no_telepon', 'email_pribadi'];
+
+        $existing = array_values(array_filter(
+            $columns,
+            fn (string $column) => Schema::hasColumn('guru', $column)
+        ));
+
+        if (empty($existing)) {
+            return;
+        }
+
+        Schema::table('guru', function (Blueprint $table) use ($existing) {
+            $table->dropColumn($existing);
         });
     }
 

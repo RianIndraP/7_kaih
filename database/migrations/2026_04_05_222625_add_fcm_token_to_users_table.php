@@ -11,9 +11,26 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->text('fcm_token')->nullable(); // Tempat simpan token
-            $table->timestamp('last_login_at')->nullable(); // Untuk logika ala Duolingo
+        // Guard: kolom sudah ada di database yang sekarang, dan fresh install
+        // juga sudah mendapatkannya dari create_core_tables. Tanpa guard ini
+        // migration gagal dengan "Duplicate column name".
+        $missing = array_values(array_filter(
+            ['fcm_token', 'last_login_at'],
+            fn (string $column) => !Schema::hasColumn('users', $column)
+        ));
+
+        if (empty($missing)) {
+            return;
+        }
+
+        Schema::table('users', function (Blueprint $table) use ($missing) {
+            foreach ($missing as $column) {
+                if ($column === 'fcm_token') {
+                    $table->text('fcm_token')->nullable();
+                } else {
+                    $table->timestamp('last_login_at')->nullable();
+                }
+            }
         });
     }
 

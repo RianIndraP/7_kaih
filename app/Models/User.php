@@ -75,8 +75,12 @@ class User extends Authenticatable
             $user->nik = empty($user->nik) ? null : $user->nik;
             $user->username = empty($user->username) ? null : $user->username;
 
-            // If user is an admin (has username), ensure they cannot have nisn, nip, or nik
-            if ($user->isAdmin()) {
+            // If user is an admin (has username), ensure they cannot have nisn, nip, or nik.
+            // Perhatikan: isAdmin() memanggil isGuru() yang membaca $this->nip.
+            // Kalau nip sudah terisi sebelum baris ini, isAdmin() bernilai false
+            // dan guard ini tidak pernah kena — akun admin berubah jadi "guru".
+            // Karena itu username yang dicek langsung, bukan lewat isAdmin().
+            if (!empty($user->username) && empty($user->nisn)) {
                 $user->nisn = null;
                 $user->nip = null;
                 $user->nik = null;

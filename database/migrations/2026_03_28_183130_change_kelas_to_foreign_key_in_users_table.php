@@ -8,10 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // Hapus kolom kelas lama
-            $table->dropColumn('kelas');
-        });
+        // Kolom `kelas` (string) sudah tidak ada di database yang sekarang.
+        // Guard ini mencegah error "Can't DROP 'kelas'" baik di fresh install
+        // maupun database lama yang kolomnya sudah dihapus manual.
+        if (Schema::hasColumn('users', 'kelas')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('kelas');
+            });
+        }
+
+        if (Schema::hasColumn('users', 'kelas_id')) {
+            return;
+        }
 
         Schema::table('users', function (Blueprint $table) {
             // Tambah kolom kelas_id sebagai foreign key

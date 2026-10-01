@@ -84,9 +84,11 @@ class DashboardController extends Controller
 
     public function updateProfil(Request $request)
     {
+        // NIP sengaja TIDAK bisa diubah dari form profil admin.
+        // Admin teridentifikasi lewat absence nisn/nip/nik; bila nip terisi,
+        // isAdmin() jadi false dan akun terkunci dari /admin (AdminMiddleware).
         $request->validate([
             'name' => 'required|string|max:255',
-            'nip' => 'nullable|string|max:50',
             'email' => 'required|email|max:255',
             'tempat_lahir' => 'nullable|string|max:100',
             'birth_date' => 'nullable|date',
@@ -95,7 +97,7 @@ class DashboardController extends Controller
         ]);
 
         $user = Auth::user();
-        $data = $request->only(['name', 'nip', 'email', 'tempat_lahir', 'birth_date', 'no_telepon']);
+        $data = $request->only(['name', 'email', 'tempat_lahir', 'birth_date', 'no_telepon']);
 
         // Handle foto upload
         if ($request->hasFile('foto')) {
