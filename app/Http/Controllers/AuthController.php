@@ -208,10 +208,10 @@ class AuthController extends Controller
         }
 
         // Verify OTP
-        if ($request->otp === $otp) {
+        if (hash_equals($otp, $request->otp)) {
             // Clear OTP from session
-            session()->forget('forgot_otp');
-            session()->forget('forgot_otp_expires_at');
+            session()->forget(['forgot_otp', 'forgot_otp_expires_at']);
+            session(['otp_verified' => true]);
             return redirect()->route('create-new-password');
         }
 
@@ -240,6 +240,7 @@ class AuthController extends Controller
         // Update OTP in session
         session(['forgot_otp' => $otp]);
         session(['forgot_otp_expires_at' => now()->addMinutes(10)]);
+        session(['otp_verified' => false]);
 
         // Send OTP via email
         try {
@@ -262,7 +263,9 @@ class AuthController extends Controller
         if (!$user) {
             return redirect()->route('forgot-password');
         }
-
+        if (!session('otp_verified')) {
+            return redirect()->route('verify-data');
+        }
         return view('auth.create-new-password', ['user' => $user]);
     }
 
@@ -277,11 +280,17 @@ class AuthController extends Controller
             return redirect()->route('forgot-password');
         }
 
+        if (!session('otp_verified')) {
+            return redirect()->route('verify-data');
+        }
+
         $user->password = Hash::make($request->password);
         $user->save();
 
         // Clear session
-        session()->forget('forgot_user');
+        session()->forget(['forgot_user', 'otp_verified']);
+        session()->invalidate();
+        session()->regenerateToken();
 
         return redirect()->route('password-success');
     }
